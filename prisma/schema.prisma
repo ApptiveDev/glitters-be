@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Member {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique @db.VarChar(255)
+  name      String   @db.VarChar(20)
+  password  String   @db.VarChar(88)
+  joined_at DateTime
+
+  posts              Post[]
+  authoredChatRooms  ChatRoom[] @relation("AuthoredRooms")
+  requestedChatRooms ChatRoom[] @relation("RequestedRooms")
+  sentChats          Chat[]     @relation("SentChats")
+  receivedChats      Chat[]     @relation("ReceivedChats")
+
+  @@map("members")
+}
+
+model Post {
+  id         Int      @id @default(autoincrement())
+  author_id  Int
+  title      String   @db.VarChar(255)
+  content    String
+  created_at DateTime
+  latitude   Float
+  longitude  Float
+
+  author   Member     @relation(fields: [author_id], references: [id])
+  chatRoom ChatRoom[]
+
+  @@map("posts")
+}
+
+model ChatRoom {
+  id                 Int    @id @default(autoincrement())
+  post_id            Int
+  author_id          Int
+  requester_id       Int
+  created_at         Int
+  author_nickname    String @db.VarChar(20)
+  requester_nickname String @db.VarChar(20)
+
+  post      Post   @relation(fields: [post_id], references: [id])
+  author    Member @relation("AuthoredRooms", fields: [author_id], references: [id])
+  requester Member @relation("RequestedRooms", fields: [requester_id], references: [id])
+  chats     Chat[]
+
+  @@map("chatrooms")
+}
+
+model Chat {
+  id          Int      @id @default(autoincrement())
+  chatroom_id Int
+  sender_id   Int
+  receiver_id Int
+  is_read     Boolean
+  created_at  DateTime
+
+  chatroom ChatRoom @relation(fields: [chatroom_id], references: [id])
+  sender   Member   @relation("SentChats", fields: [sender_id], references: [id])
+  receiver Member   @relation("ReceivedChats", fields: [receiver_id], references: [id])
+
+  @@map("chats")
+}
+
+model EmailVerification {
+  id                  Int     @id @default(autoincrement())
+  is_verified         Boolean
+  verification_number String  @db.VarChar(6)
+  email               String  @db.VarChar(255)
+
+  @@index([email])
+  @@map("verifications")
+}
