@@ -32,8 +32,16 @@
     "@prisma/client": "6.5.0",
     "bcryptjs": "^3.0.2",
     "express": "^4.21.2",
+    "http-status-codes": "^2.3.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "rotating-file-stream": "^3.2.6"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma"
+    ]
   }
 }
