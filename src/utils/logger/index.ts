@@ -1,10 +1,10 @@
-import rfs from 'rotating-file-stream';
+import { createStream } from 'rotating-file-stream';
 import path from 'node:path';
 import morgan from 'morgan';
 
-const logDirectory = path.join(__dirname, '../logs');
+const logDirectory = path.join(__dirname, '../../../logs');
 
-const defaultLogStream = rfs.createStream((time) => {
+const defaultLogStream = createStream((time) => {
   if (!time) return 'access.log'; // 최초 요청 시
 
   time = time instanceof Date ? time : new Date(time);
