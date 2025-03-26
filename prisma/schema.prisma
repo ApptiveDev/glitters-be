@@ -13,7 +13,7 @@ model Member {
   email     String   @unique @db.VarChar(255)
   name      String   @db.VarChar(20)
   password  String   @db.VarChar(88)
-  joined_at DateTime
+  joined_at DateTime @default(now())
 
   posts              Post[]
   authoredChatRooms  ChatRoom[] @relation("AuthoredRooms")
@@ -29,7 +29,7 @@ model Post {
   author_id  Int
   title      String   @db.VarChar(255)
   content    String
-  created_at DateTime
+  created_at DateTime @default(now())
   latitude   Float
   longitude  Float
 
@@ -40,13 +40,13 @@ model Post {
 }
 
 model ChatRoom {
-  id                 Int    @id @default(autoincrement())
+  id                 Int      @id @default(autoincrement())
   post_id            Int
   author_id          Int
   requester_id       Int
-  created_at         Int
-  author_nickname    String @db.VarChar(20)
-  requester_nickname String @db.VarChar(20)
+  created_at         DateTime @default(now())
+  author_nickname    String   @db.VarChar(20)
+  requester_nickname String   @db.VarChar(20)
 
   post      Post   @relation(fields: [post_id], references: [id])
   author    Member @relation("AuthoredRooms", fields: [author_id], references: [id])
@@ -62,7 +62,7 @@ model Chat {
   sender_id   Int
   receiver_id Int
   is_read     Boolean
-  created_at  DateTime
+  created_at  DateTime @default(now())
 
   chatroom ChatRoom @relation(fields: [chatroom_id], references: [id])
   sender   Member   @relation("SentChats", fields: [sender_id], references: [id])
@@ -72,10 +72,12 @@ model Chat {
 }
 
 model EmailVerification {
-  id                  Int     @id @default(autoincrement())
+  id                  Int      @id @default(autoincrement())
   is_verified         Boolean
-  verification_number String  @db.VarChar(6)
-  email               String  @db.VarChar(255)
+  verification_number String   @db.VarChar(6)
+  email               String   @db.VarChar(255)
+  createdAt           DateTime @default(now())
+  expiresAt           DateTime
 
   @@index([email])
   @@map("verifications")
