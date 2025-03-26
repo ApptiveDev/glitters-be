@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { Member } from '@prisma/client';
+import { Member } from '.prisma/client';
 import { AuthenticatedJWTPayload } from '@/domains/auth/types';
 
 const SECRET = process.env.JWT_SECRET as string;
