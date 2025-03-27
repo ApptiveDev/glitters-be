@@ -6,8 +6,10 @@
   "scripts": {
     "test": "vitest",
     "test:ci": "vitest run",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
     "start": "cross-env NODE_ENV=production node dist/index.js",
-    "build": "tsc -p . && tsc-alias",
+    "build": "pnpm db:generate && tsc -p . && tsc-alias",
     "dev": "cross-env NODE_ENV=development nodemon -e ts,js --exec \"ts-node -r tsconfig-paths/register src/index.ts\""
   },
   "keywords": [],
