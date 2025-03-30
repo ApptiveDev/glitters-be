@@ -39,7 +39,7 @@ model Post {
   longitude  Float
 
   author   Member     @relation(fields: [author_id], references: [id])
-  chatRoom ChatRoom[]
+  chatroom ChatRoom[]
 
   @@map("posts")
 }
@@ -81,8 +81,8 @@ model EmailVerification {
   is_verified         Boolean
   verification_number String   @db.VarChar(6)
   email               String   @db.VarChar(255)
-  createdAt           DateTime @default(now())
-  expiresAt           DateTime
+  created_at          DateTime @default(now())
+  expires_at          DateTime
 
   @@index([email])
   @@map("verifications")
