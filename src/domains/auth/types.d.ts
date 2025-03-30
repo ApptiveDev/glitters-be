@@ -1,6 +1,13 @@
-import { Member } from '.prisma/client';
+import { Member } from '.zod';
 import { Request, Response } from 'express';
-import { PasswordExcludedMember } from '@/domains/member/types';
+import { z } from 'zod';
+import {
+  EmailVerifyRequestBodySchema,
+  LoginRequestBodySchema,
+  LoginResponseBodySchema,
+  RegisterRequestBodySchema,
+} from '@/domains/auth/schema';
+import { PasswordExcludedMemberSchema } from '@/domains/member/schema';
 
 export interface AuthenticatedJWTPayload extends JWTPayload {
   name: Member['name'];
@@ -10,20 +17,11 @@ export interface AuthenticatedJWTPayload extends JWTPayload {
 
 export interface AuthenticatedRequest<Params = {}, ReqBody = {}, ReqQuery = {}> extends Request<
   Params, {}, ReqBody, ReqQuery> {
-  member?: Omit<Member, 'password'>;
+  member?: z.infer<typeof PasswordExcludedMemberSchema>;
 }
 
-export interface EmailVerifyRequestBody {
-  email: string;
-}
-export type EmailVerifyRequest = Request<{}, {}, EmailVerifyRequestBody>;
-
-export type RegisterRequestBody = Pick<Member, 'email' | 'password' | 'name'>;
-export type LoginRequestBody = Pick<Member, 'email' | 'password'>;
-
-export type RegisterRequest = Request<{}, {}, RegisterRequestBody>;
-export type LoginRequest = Request<{}, {}, LoginRequestBody>;
-
-export type LoginResponseBody = { member: PasswordExcludedMember, token: string };
-export type RegisterResponse = Response<Member>;
-export type LoginResponse = Response<LoginResponseBody>;
+export type EmailVerifyRequest = Request<{}, {}, z.infer<typeof EmailVerifyRequestBodySchema>>;
+export type RegisterRequest = Request<{}, {}, z.infer<typeof RegisterRequestBodySchema>>;
+export type LoginRequest = Request<{}, {}, z.infer<typeof LoginRequestBodySchema>>;
+export type RegisterResponse = Response<z.infer<typeof RegisterRequestBodySchema>>;
+export type LoginResponse = Response<z.infer<typeof LoginResponseBodySchema>>;
