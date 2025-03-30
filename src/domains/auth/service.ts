@@ -2,10 +2,10 @@ import prisma from '@/utils/database';
 import {
   comparePassword,
   generateToken,
-  hashPassword,
+  hashPassword, sendVerificationCodeEmail,
 } from '@/domains/auth/utils';
 import {
-  // EmailVerifyRequest,
+  EmailVerifyRequest,
   LoginRequest,
   LoginResponse,
   RegisterRequest,
@@ -14,11 +14,27 @@ import { Response } from 'express';
 import { sendAndTrace, sendError } from '@/utils/network';
 import { StatusCodes } from 'http-status-codes';
 import { getPasswordExcludedMember } from '@/domains/member/utils';
+import { EmailVerifyRequestBodySchema } from '@/domains/auth/schema';
 
-//
-// export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Response) {
-//   const { email } = req.body;
-// }
+
+export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Response) {
+  try {
+    const { email } = EmailVerifyRequestBodySchema.parse(req.body);
+    const code = await sendVerificationCodeEmail(email);
+    // TODO: 인증 가능한 이메일 기록
+    await prisma.emailVerification.create({
+      data: {
+        email,
+        verification_number: code,
+        is_verified: false,
+        expires_at: new Date(Date.now() + 5 * 60 * 1000),
+      }
+    });
+    res.status(StatusCodes.ACCEPTED).send();
+  } catch (error) {
+    sendAndTrace(res, error);
+  }
+}
 
 export async function handleRegister(req: RegisterRequest, res: Response) {
   const { email, name, password } = req.body;
@@ -28,12 +44,12 @@ export async function handleRegister(req: RegisterRequest, res: Response) {
       where: {
         email,
         is_verified: true,
-        expiresAt: {
+        expires_at: {
           gt: new Date(),
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        created_at: 'desc',
       },
     });
     if (! verifiedEmail) {
@@ -68,13 +84,13 @@ export async function handleLogin(req: LoginRequest, res: LoginResponse) {
       where: { email },
     });
     if (!member) {
-      sendError(res, '잘못된 계정이나 비밀번호입니다.', StatusCodes.BAD_REQUEST);
+      sendError(res, '잘못된 이메일이나 비밀번호입니다.', StatusCodes.BAD_REQUEST);
       return;
     }
 
     const valid = await comparePassword(password, member.password);
     if (!valid) {
-      sendError(res, '잘못된 계정이나 비밀번호입니다.', StatusCodes.BAD_REQUEST);
+      sendError(res, '잘못된 이메일이나 비밀번호입니다.', StatusCodes.BAD_REQUEST);
       return;
     }
 
