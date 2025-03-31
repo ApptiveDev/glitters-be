@@ -2,7 +2,7 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [main, develop, ISSUE_33-backend-setup]
+    branches: [main, develop, ISSUE-33-backend-setup]
   pull_request:
     branches: [main, develop]
 
