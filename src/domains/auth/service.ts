@@ -5,23 +5,69 @@ import {
   hashPassword, sendVerificationCodeEmail,
 } from '@/domains/auth/utils';
 import {
+  EmailCodeInputRequest,
   EmailVerifyRequest,
+  EmailVerifyResponse,
   LoginRequest,
   LoginResponse,
   RegisterRequest,
+  RegisterResponse,
 } from '@/domains/auth/types';
 import { Response } from 'express';
 import { sendAndTrace, sendError } from '@/utils/network';
 import { StatusCodes } from 'http-status-codes';
 import { getPasswordExcludedMember } from '@/domains/member/utils';
-import { EmailVerifyRequestBodySchema } from '@/domains/auth/schema';
+import {
+  EmailCodeInputRequestBodySchema,
+  EmailVerifyRequestBodySchema,
+} from '@/domains/auth/schema';
 
+export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: EmailVerifyResponse) {
+  try {
+    const { email, code } = EmailCodeInputRequestBodySchema.parse(req.body);
+    const targetEmail = await prisma.emailVerification.findFirst({
+      where: {
+        email,
+        verification_number: code,
+        is_verified: false,
+        expires_at: {
+          gt: new Date(),
+        }
+      },
+      orderBy: {
+        created_at: 'desc',
+      }
+    });
+    if(! targetEmail) {
+      sendError(res, '인증이 만료되었거나 유효한 이메일이 아닙니다.', StatusCodes.BAD_REQUEST);
+      return;
+    }
+    await prisma.emailVerification.update({
+      where: {
+        id: targetEmail.id
+      },
+      data: {
+        is_verified: true,
+      }
+    });
+    res.status(StatusCodes.ACCEPTED).send();
+  } catch (error) {
+    sendAndTrace(res, error);
+  }
+}
 
 export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Response) {
   try {
     const { email } = EmailVerifyRequestBodySchema.parse(req.body);
     const code = await sendVerificationCodeEmail(email);
-    // TODO: 인증 가능한 이메일 기록
+    await prisma.emailVerification.updateMany({
+      where: {
+        email,
+      },
+      data: {
+        expires_at: new Date(),
+      }
+    })
     await prisma.emailVerification.create({
       data: {
         email,
@@ -36,7 +82,7 @@ export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Res
   }
 }
 
-export async function handleRegister(req: RegisterRequest, res: Response) {
+export async function handleRegister(req: RegisterRequest, res: RegisterResponse) {
   const { email, name, password } = req.body;
 
   try {
@@ -70,7 +116,8 @@ export async function handleRegister(req: RegisterRequest, res: Response) {
         password: hashedPassword,
       },
     });
-    res.json(getPasswordExcludedMember(member));
+    const token = generateToken(member);
+    res.json({ token, member: getPasswordExcludedMember(member)} );
   } catch (error) {
     sendAndTrace(res, error);
   }
