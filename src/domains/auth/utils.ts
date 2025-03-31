@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { Member } from '.prisma/client';
 import { AuthenticatedJWTPayload } from '@/domains/auth/types';
 import { sendEmail } from '@/utils/email';
