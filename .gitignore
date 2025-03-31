@@ -4,3 +4,6 @@ dist
 *.env
 .idea
 .DS_Store
+
+logs
+src/schemas
