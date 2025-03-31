@@ -1,0 +1,67 @@
+name: Continuous Deploy For Test Server
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Enable and setup pnpm via corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.6.5 --activate
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.CONTAINER_NAME }}:test .
+
+      - name: Push Docker image to DockerHub
+        run: docker push ${{ secrets.CONTAINER_NAME }}:test
+
+      - name: Prepare SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Create .env file from secret
+        run: |
+          echo "${{ secrets.TEST_ENV_FILE }}" > .env
+
+      - name: Copy .env to EC2
+        run: |
+          scp -o StrictHostKeyChecking=no .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/glitters-be-test.env
+
+      - name: Deploy to EC2 via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+            docker pull ${{ secrets.CONTAINER_NAME }}:test
+            docker stop glitters-be-test || true
+            docker rm glitters-be-test || true
+            docker run -d \
+              --name glitters-be-test \
+              --env-file /home/${{ secrets.EC2_USER }}/glitters-be-test.env \
+              -p 3030:3030 \
+              ${{ secrets.CONTAINER_NAME }}:test
+          EOF
