@@ -15,4 +15,4 @@ COPY . .
 RUN pnpm build
 
 # 실행
-CMD ["pnpm", "dev"]
+CMD ["pnpm", "start"]
