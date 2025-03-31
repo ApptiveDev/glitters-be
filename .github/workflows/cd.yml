@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - ISSUE-33-backend-setup
 
 jobs:
   build-and-deploy:
