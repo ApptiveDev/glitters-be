@@ -56,6 +56,7 @@ jobs:
       - name: Deploy to EC2 via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker pull ${{ secrets.CONTAINER_NAME }}
             docker stop glitters-be || true
             docker rm glitters-be || true
