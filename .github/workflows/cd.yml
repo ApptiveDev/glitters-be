@@ -61,8 +61,7 @@ jobs:
             docker rm glitters-be || true
             docker run -d \
               --name glitters-be \
-              --env-file /app/.env \
-              -v /home/${{ secrets.EC2_USER }}/glitters-be.env:/app/.env \
+              --env-file /home/${{ secrets.EC2_USER }}/glitters-be.env \
               -p 3000:3000 \
               ${{ secrets.CONTAINER_NAME }}
           EOF
