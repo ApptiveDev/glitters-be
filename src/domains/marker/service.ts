@@ -1,7 +1,8 @@
-import { GetMarkersRequest, GetMarkersResponse } from '@/domains/marker/types';
+import { GetMarkersResponse } from '@/domains/marker/types';
 import prisma from '@/utils/database';
+import { AuthenticatedRequest } from '@/domains/auth/types';
 
-export async function getMarkers(_: GetMarkersRequest, res: GetMarkersResponse) {
+export async function getMarkers(_: AuthenticatedRequest, res: GetMarkersResponse) {
   const markers = await prisma.marker.findMany({
     include: {
       post: {

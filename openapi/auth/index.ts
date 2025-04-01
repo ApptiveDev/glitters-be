@@ -2,7 +2,6 @@ import { currentApiPrefix } from '../../src/constants';
 import {
   EmailCodeInputRequestBodySchema,
   EmailVerifyRequestBodySchema,
-  EmailVerifyResponseBodySchema,
   LoginRequestBodySchema,
   LoginResponseBodySchema,
   RegisterRequestBodySchema,
@@ -25,11 +24,6 @@ export const authApiPaths = {
       responses: {
         202: {
           description: '인증 코드 전송 성공',
-          content: {
-            'application/json': {
-              schema: EmailVerifyResponseBodySchema,
-            },
-          },
         },
       },
     },
@@ -46,11 +40,6 @@ export const authApiPaths = {
       responses: {
         202: {
           description: '인증 성공',
-          content: {
-            'application/json': {
-              schema: EmailVerifyResponseBodySchema,
-            },
-          },
         },
         400: {
           description: '코드 오류 또는 만료',
@@ -66,7 +55,7 @@ export const authApiPaths = {
 
   [`${currentApiPrefix}/register`]: {
     post: {
-      summary: '회원가입',
+      summary: '회원가입 (인증된 이메일 필요)',
       requestBody: {
         required: true,
         content: {

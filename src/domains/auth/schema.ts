@@ -10,8 +10,6 @@ export const EmailVerifyRequestBodySchema = z.object({
   email: z.string().email(),
 });
 
-export const EmailVerifyResponseBodySchema = z.object({});
-
 export const RegisterRequestBodySchema = z.object({
   email: z.string().email(),
   password: z.string(),
