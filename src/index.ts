@@ -3,6 +3,7 @@ import logger from '@/utils/logger';
 import memberRouter from '@/domains/member/controller';
 import authRouter from '@/domains/auth/controller';
 import institutionRouter from '@/domains/institution/controller';
+import markerRouter from '@/domains/marker/controller';
 import { currentApiPrefix } from '@/constants';
 import '@/utils/config';
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(API_PREFIX, authRouter);
 app.use(API_PREFIX, memberRouter);
 app.use(API_PREFIX, institutionRouter);
+app.use(API_PREFIX, markerRouter);
 
 // TODO: production, staging 환경에서 ssl 설정
 
