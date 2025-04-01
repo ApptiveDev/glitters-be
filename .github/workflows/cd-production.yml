@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - ISSUE-47-production-staging-separation
 
 jobs:
   build-and-deploy:
