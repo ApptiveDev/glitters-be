@@ -1,7 +1,7 @@
-import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 
 const client = new SESClient({
-  region: "ap-northeast-2"
+  region: 'ap-northeast-2'
 });
 
 export async function sendEmail(destination: string, title: string, content: string, source: string) {
@@ -24,8 +24,8 @@ export async function sendEmail(destination: string, title: string, content: str
   try {
     const command = new SendEmailCommand(params);
     const response = await client.send(command);
-    console.log("이메일 전송 성공:", response.MessageId);
+    console.log('이메일 전송 성공:', response.MessageId);
   } catch (err) {
-    console.error("이메일 전송 실패:", err);
+    console.error('이메일 전송 실패:', err);
   }
 }

@@ -3,9 +3,7 @@ import bcrypt from 'bcryptjs';
 import { Member } from '.prisma/client';
 import { AuthenticatedJWTPayload } from '@/domains/auth/types';
 import { sendEmail } from '@/utils/email';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import '@/utils/config';
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 const PASSWORD_SECRET = process.env.PASSWORD_SECRET as string;
