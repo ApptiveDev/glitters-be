@@ -6,7 +6,6 @@ import {
   LoginRequestBodySchema,
   LoginResponseBodySchema,
   RegisterRequestBodySchema,
-  EmailVerifyResponseBodySchema,
   RegisterResponseBodySchema,
 } from '@/domains/auth/schema';
 import { PasswordExcludedMemberSchema } from '@/domains/member/schema';
@@ -24,7 +23,6 @@ export interface AuthenticatedRequest<Params = {}, ReqBody = {}, ReqQuery = {}> 
 
 export type EmailCodeInputRequest = Request<{}, {}, z.infer<typeof EmailVerifyRequestBodySchema>>;
 export type EmailVerifyRequest = Request<{}, {}, z.infer<typeof EmailVerifyRequestBodySchema>>;
-export type EmailVerifyResponse = Response<z.infer<typeof EmailVerifyResponseBodySchema>>;
 
 export type RegisterRequest = Request<{}, {}, z.infer<typeof RegisterRequestBodySchema>>;
 export type LoginRequest = Request<{}, {}, z.infer<typeof LoginRequestBodySchema>>;

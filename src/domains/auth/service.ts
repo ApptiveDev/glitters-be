@@ -7,7 +7,6 @@ import {
 import {
   EmailCodeInputRequest,
   EmailVerifyRequest,
-  EmailVerifyResponse,
   LoginRequest,
   LoginResponse,
   RegisterRequest,
@@ -22,7 +21,7 @@ import {
   EmailVerifyRequestBodySchema,
 } from '@/domains/auth/schema';
 
-export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: EmailVerifyResponse) {
+export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Response) {
   try {
     const { email, code } = EmailCodeInputRequestBodySchema.parse(req.body);
     const targetEmail = await prisma.emailVerification.findFirst({

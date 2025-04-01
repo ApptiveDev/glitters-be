@@ -2,12 +2,12 @@ import { currentApiPrefix } from '../../src/constants';
 import {
   EmailCodeInputRequestBodySchema,
   EmailVerifyRequestBodySchema,
-  EmailVerifyResponseBodySchema,
   LoginRequestBodySchema,
   LoginResponseBodySchema,
   RegisterRequestBodySchema,
   RegisterResponseBodySchema,
 } from '../../src/domains/auth/schema';
+import { ErrorSchema } from '../../src/domains/error/schema';
 
 export const authApiPaths = {
   [`${currentApiPrefix}/verify-email`]: {
@@ -24,11 +24,6 @@ export const authApiPaths = {
       responses: {
         202: {
           description: '인증 코드 전송 성공',
-          content: {
-            'application/json': {
-              schema: EmailVerifyResponseBodySchema,
-            },
-          },
         },
       },
     },
@@ -45,14 +40,14 @@ export const authApiPaths = {
       responses: {
         202: {
           description: '인증 성공',
-          content: {
-            'application/json': {
-              schema: EmailVerifyResponseBodySchema,
-            },
-          },
         },
         400: {
           description: '코드 오류 또는 만료',
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            }
+          }
         },
       },
     },
@@ -60,7 +55,7 @@ export const authApiPaths = {
 
   [`${currentApiPrefix}/register`]: {
     post: {
-      summary: '회원가입',
+      summary: '회원가입 (인증된 이메일 필요)',
       requestBody: {
         required: true,
         content: {
@@ -80,6 +75,11 @@ export const authApiPaths = {
         },
         400: {
           description: '이메일 미인증 또는 중복',
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            }
+          }
         },
       },
     },
@@ -107,6 +107,11 @@ export const authApiPaths = {
         },
         400: {
           description: '이메일 또는 비밀번호 오류',
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            }
+          }
         },
       },
     },

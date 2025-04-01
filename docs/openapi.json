@@ -1,10 +1,15 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "반짝이 Openapi",
+    "title": "Auth API",
     "version": "1.0.0",
-    "description": "반짝이 앱 REST API docs"
+    "description": "회원가입, 로그인, 이메일 인증 API 명세"
   },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "servers": [
     {
       "url": "http://localhost:3000",
@@ -36,14 +41,7 @@
         },
         "responses": {
           "202": {
-            "description": "인증 코드 전송 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
+            "description": "인증 코드 전송 성공"
           }
         }
       },
@@ -75,24 +73,32 @@
         },
         "responses": {
           "202": {
-            "description": "인증 성공",
+            "description": "인증 성공"
+          },
+          "400": {
+            "description": "코드 오류 또는 만료",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
                 }
               }
             }
-          },
-          "400": {
-            "description": "코드 오류 또는 만료"
           }
         }
       }
     },
     "/api/register": {
       "post": {
-        "summary": "회원가입",
+        "summary": "회원가입 (인증된 이메일 필요)",
         "requestBody": {
           "required": true,
           "content": {
@@ -164,7 +170,22 @@
             }
           },
           "400": {
-            "description": "이메일 미인증 또는 중복"
+            "description": "이메일 미인증 또는 중복",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
           }
         }
       }
@@ -239,9 +260,388 @@
             }
           },
           "400": {
-            "description": "이메일 또는 비밀번호 오류"
+            "description": "이메일 또는 비밀번호 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
           }
         }
+      }
+    },
+    "/api/institutions": {
+      "get": {
+        "summary": "기관 목록 조회",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt-token>"
+            },
+            "description": "Bearer 토큰"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "기관 목록 반환",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "institutions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "email_domain": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "email_domain"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "institutions"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/institutions/bounds": {
+      "get": {
+        "summary": "기관 경계 정보 조회",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt-token>"
+            },
+            "description": "Bearer 토큰"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "기관 경계 정보 반환",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "bounds": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "institution_id": {
+                            "type": "integer"
+                          },
+                          "latitude": {
+                            "type": "number"
+                          },
+                          "longitude": {
+                            "type": "number"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "institution_id",
+                          "latitude",
+                          "longitude",
+                          "created_at",
+                          "updated_at"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "bounds"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/markers": {
+      "get": {
+        "summary": "마커 목록 조회",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt-token>"
+            },
+            "description": "Bearer 토큰"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "마커 목록 반환",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "markers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "post_id": {
+                            "type": "integer"
+                          },
+                          "latitude": {
+                            "type": "number"
+                          },
+                          "longitude": {
+                            "type": "number"
+                          },
+                          "expires_at": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "post_id",
+                          "latitude",
+                          "longitude",
+                          "expires_at"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "markers"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패 (토큰 누락 또는 유효하지 않음)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/members/me": {
+      "get": {
+        "summary": "내 정보 조회",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt-token>"
+            },
+            "description": "Bearer 토큰"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "회원 정보 반환",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "member": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "joined_at": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "name",
+                        "joined_at"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "member"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패 (토큰 누락 또는 유효하지 않음)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

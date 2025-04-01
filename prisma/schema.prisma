@@ -35,13 +35,24 @@ model Post {
   title      String   @db.VarChar(255)
   content    String
   created_at DateTime @default(now())
-  latitude   Float
-  longitude  Float
+  expires_at DateTime
 
   author   Member     @relation(fields: [author_id], references: [id])
   chatroom ChatRoom[]
+  marker   Marker?    @relation("PostMarker")
 
   @@map("posts")
+}
+
+model Marker {
+  id        Int   @id @default(autoincrement())
+  post_id   Int   @unique
+  latitude  Float
+  longitude Float
+
+  post Post @relation("PostMarker", fields: [post_id], references: [id])
+
+  @@map("markers")
 }
 
 model ChatRoom {
@@ -86,4 +97,29 @@ model EmailVerification {
 
   @@index([email])
   @@map("verifications")
+}
+
+model Institution {
+  id           Int                @id @default(autoincrement())
+  name         String             @unique
+  email_domain String             @unique
+  is_active    Boolean            @default(true)
+  created_at   DateTime           @default(now())
+  updated_at   DateTime           @updatedAt
+  bounds       InstitutionBound[]
+
+  @@map("institutions")
+}
+
+model InstitutionBound {
+  id             Int      @id @default(autoincrement())
+  institution_id Int
+  latitude       Float
+  longitude      Float
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  institution Institution @relation(fields: [institution_id], references: [id], onDelete: Cascade)
+
+  @@map("institution_bounds")
 }

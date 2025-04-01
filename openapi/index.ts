@@ -3,6 +3,9 @@ import { authApiPaths } from './auth';
 import fs from 'fs';
 import path from 'path';
 import yaml from 'yaml';
+import { institutionApiPaths } from './institution';
+import { markerApiPaths } from './marker';
+import { memberApiPaths } from './member';
 
 export const openApiDocument = createDocument({
   openapi: '3.1.0',
@@ -11,6 +14,20 @@ export const openApiDocument = createDocument({
     version: '1.0.0',
     description: '회원가입, 로그인, 이메일 인증 API 명세',
   },
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+    },
+  },
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   servers: [
     {
       url: 'http://localhost:3000',
@@ -19,6 +36,9 @@ export const openApiDocument = createDocument({
   ],
   paths: {
     ...authApiPaths,
+    ...institutionApiPaths,
+    ...markerApiPaths,
+    ...memberApiPaths,
   },
 });
 
