@@ -67,7 +67,7 @@ export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Res
       data: {
         expires_at: new Date(),
       }
-    })
+    });
     await prisma.emailVerification.create({
       data: {
         email,

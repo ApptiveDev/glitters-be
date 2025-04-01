@@ -1,4 +1,4 @@
-name: Continuous Deploy
+name: Continuous Deploy (production)
 
 on:
   push:
@@ -12,22 +12,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Enable and setup pnpm via corepack
-        run: |
-          corepack enable
-          corepack prepare pnpm@10.6.5 --activate
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Build project
-        run: pnpm build
 
       - name: Log in to DockerHub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
@@ -44,24 +28,27 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      - name: Create .env file from secret
+      - name: Create .env.development file from secret
         run: |
-          echo "${{ secrets.ENV_FILE }}" > .env
+          echo "${{ secrets.ENV_PRODUCTION }}" > .env
 
-      - name: Copy .env to EC2
+      - name: Copy .env.development to EC2
         run: |
-          scp -o StrictHostKeyChecking=no .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/glitters-be.env
+          scp -o StrictHostKeyChecking=no .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/.env.production
 
       - name: Deploy to EC2 via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+            mkdir -p /home/${{ secrets.EC2_USER }}/logs/${{ github.ref_name }}
             docker pull ${{ secrets.CONTAINER_NAME }}
-            docker stop glitters-be || true
-            docker rm glitters-be || true
+            docker stop glitters-be-${{ github.ref_name }} || true
+            docker rm glitters-be-${{ github.ref_name }} || true
             docker run -d \
-              --name glitters-be \
-              --env-file /home/${{ secrets.EC2_USER }}/glitters-be.env \
-              -p 3000:3000 \
+              -v /home/${{ secrets.EC2_USER }}/logs/production:/app/logs \
+              --name glitters-be-${{ github.ref_name }} \
+              -e SERVER_PORT=${{ secrets.PORT_PRODUCTION }} \
+              --env-file /home/${{ secrets.EC2_USER }}/.env.production \
+              -p ${{ secrets.PORT_PRODUCTION }}:${{ secrets.PORT_PRODUCTION }} \
               ${{ secrets.CONTAINER_NAME }}
           EOF
