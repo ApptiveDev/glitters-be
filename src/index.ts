@@ -6,6 +6,7 @@ import institutionRouter from '@/domains/institution/controller';
 import markerRouter from '@/domains/marker/controller';
 import { currentApiPrefix } from '@/constants';
 import '@/utils/config';
+import postRouter from '@/domains/post/controller';
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 3000;
@@ -18,6 +19,7 @@ app.use(API_PREFIX, authRouter);
 app.use(API_PREFIX, memberRouter);
 app.use(API_PREFIX, institutionRouter);
 app.use(API_PREFIX, markerRouter);
+app.use(API_PREFIX, postRouter);
 
 // TODO: production, staging 환경에서 ssl 설정
 

@@ -1,4 +1,4 @@
-import { createDocument } from 'zod-openapi';
+import { createDocument, ZodOpenApiPathsObject } from 'zod-openapi';
 import { authApiPaths } from './auth';
 import fs from 'fs';
 import path from 'path';
@@ -6,6 +6,7 @@ import yaml from 'yaml';
 import { institutionApiPaths } from './institution';
 import { markerApiPaths } from './marker';
 import { memberApiPaths } from './member';
+import { postApiPaths } from './post';
 
 export const openApiDocument = createDocument({
   openapi: '3.1.0',
@@ -39,7 +40,8 @@ export const openApiDocument = createDocument({
     ...institutionApiPaths,
     ...markerApiPaths,
     ...memberApiPaths,
-  },
+    ...postApiPaths,
+  } as ZodOpenApiPathsObject,
 });
 
 const outputDir = path.resolve(__dirname, '../docs');

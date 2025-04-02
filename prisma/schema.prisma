@@ -14,32 +14,38 @@ datasource db {
 }
 
 model Member {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique @db.VarChar(255)
-  name      String   @db.VarChar(20)
-  password  String   @db.VarChar(88)
-  joined_at DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  email          String   @unique @db.VarChar(255)
+  name           String   @db.VarChar(20)
+  password       String   @db.VarChar(88)
+  joined_at      DateTime @default(now())
+  reported_count Int      @default(0)
 
   posts              Post[]
   authoredChatRooms  ChatRoom[] @relation("AuthoredRooms")
   requestedChatRooms ChatRoom[] @relation("RequestedRooms")
   sentChats          Chat[]     @relation("SentChats")
   receivedChats      Chat[]     @relation("ReceivedChats")
+  createdReports     Report[]   @relation("CreatedReports") // 신고 내역 (신고자 기준)
+  reportedReports    Report[]   @relation("ReportedReports")
 
   @@map("members")
 }
 
 model Post {
-  id         Int      @id @default(autoincrement())
-  author_id  Int
-  title      String   @db.VarChar(255)
-  content    String
-  created_at DateTime @default(now())
-  expires_at DateTime
+  id             Int      @id @default(autoincrement())
+  author_id      Int
+  title          String   @db.VarChar(255)
+  content        String
+  created_at     DateTime @default(now())
+  expires_at     DateTime
+  address        String   @db.VarChar(255)
+  address_detail String?  @db.VarChar(255)
 
   author   Member     @relation(fields: [author_id], references: [id])
   chatroom ChatRoom[]
   marker   Marker?    @relation("PostMarker")
+  reports  Report[]
 
   @@map("posts")
 }
@@ -64,9 +70,10 @@ model ChatRoom {
   author_nickname    String   @db.VarChar(20)
   requester_nickname String   @db.VarChar(20)
 
-  post      Post   @relation(fields: [post_id], references: [id])
-  author    Member @relation("AuthoredRooms", fields: [author_id], references: [id])
-  requester Member @relation("RequestedRooms", fields: [requester_id], references: [id])
+  post      Post     @relation(fields: [post_id], references: [id])
+  author    Member   @relation("AuthoredRooms", fields: [author_id], references: [id])
+  requester Member   @relation("RequestedRooms", fields: [requester_id], references: [id])
+  reports   Report[]
   chats     Chat[]
 
   @@map("chatrooms")
@@ -105,7 +112,7 @@ model Institution {
   email_domain String             @unique
   is_active    Boolean            @default(true)
   created_at   DateTime           @default(now())
-  updated_at   DateTime           @updatedAt
+  updated_at   DateTime           @default(now()) @updatedAt
   bounds       InstitutionBound[]
 
   @@map("institutions")
@@ -114,12 +121,36 @@ model Institution {
 model InstitutionBound {
   id             Int      @id @default(autoincrement())
   institution_id Int
-  latitude       Float
-  longitude      Float
+  start_lat      Float
+  start_lon      Float
+  end_lat        Float
+  end_lon        Float
   created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
+  updated_at     DateTime @default(now()) @updatedAt
 
   institution Institution @relation(fields: [institution_id], references: [id], onDelete: Cascade)
 
   @@map("institution_bounds")
+}
+
+model Report {
+  id          Int        @id @default(autoincrement())
+  report_type ReportType
+  post_id     Int?
+  chatroom_id Int?
+  reporter_id Int
+  reported_id Int
+  created_at  DateTime   @default(now())
+
+  post     Post?     @relation(fields: [post_id], references: [id])
+  chatroom ChatRoom? @relation(fields: [chatroom_id], references: [id])
+  reporter Member    @relation("CreatedReports", fields: [reporter_id], references: [id])
+  reported Member    @relation("ReportedReports", fields: [reported_id], references: [id])
+
+  @@map("reports")
+}
+
+enum ReportType {
+  POST_REPORT
+  CHATROOM_REPORT
 }
