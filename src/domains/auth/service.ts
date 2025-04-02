@@ -2,7 +2,9 @@ import prisma from '@/utils/database';
 import {
   comparePassword,
   generateToken,
-  hashPassword, sendVerificationCodeEmail,
+  hashPassword,
+  isValidEmail,
+  sendVerificationCodeEmail,
 } from '@/domains/auth/utils';
 import {
   EmailCodeInputRequest,
@@ -58,6 +60,10 @@ export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Resp
 export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Response) {
   try {
     const { email } = EmailVerifyRequestBodySchema.parse(req.body);
+    if(! await isValidEmail(email)) {
+      sendError(res, '등록되지 않은 이메일 도메인입니다.', StatusCodes.BAD_REQUEST);
+      return;
+    }
     const code = await sendVerificationCodeEmail(email);
     await prisma.emailVerification.updateMany({
       where: {
