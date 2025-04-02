@@ -399,6 +399,148 @@ paths:
                     type: string
                 required:
                   - message
+  /api/posts/{post_id}:
+    get:
+      summary: 게시글 단일 조회
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a1
+      responses:
+        "200":
+          description: 게시글 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  content:
+                    type: string
+                  created_at:
+                    type: string
+                  expires_at:
+                    type: string
+                  address:
+                    type: string
+                  address_detail:
+                    type:
+                      - string
+                      - "null"
+                required:
+                  - id
+                  - title
+                  - content
+                  - created_at
+                  - expires_at
+                  - address
+                  - address_detail
+        "404":
+          description: 게시글 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+    delete:
+      summary: 게시글 삭제
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a1
+      responses:
+        "200":
+          description: 삭제 성공
+        "400":
+          description: 삭제 권한 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "404":
+          description: 게시글 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+  /api/posts:
+    post:
+      summary: 게시글 생성
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                address:
+                  type: string
+                address_detail:
+                  type:
+                    - string
+                    - "null"
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+              required:
+                - title
+                - content
+                - address
+                - address_detail
+                - latitude
+                - longitude
+      responses:
+        "200":
+          description: 생성 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  post_id:
+                    type: number
+                  marker_id:
+                    type: number
+                required:
+                  - post_id
+                  - marker_id
+        "400":
+          description: 요청 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
 components:
   securitySchemes:
     bearerAuth:
