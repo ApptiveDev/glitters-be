@@ -105,7 +105,7 @@ model Institution {
   email_domain String             @unique
   is_active    Boolean            @default(true)
   created_at   DateTime           @default(now())
-  updated_at   DateTime           @updatedAt
+  updated_at   DateTime           @default(now()) @updatedAt
   bounds       InstitutionBound[]
 
   @@map("institutions")
@@ -114,10 +114,12 @@ model Institution {
 model InstitutionBound {
   id             Int      @id @default(autoincrement())
   institution_id Int
-  latitude       Float
-  longitude      Float
+  start_lat      Float
+  start_lon      Float
+  end_lat        Float
+  end_lon        Float
   created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
+  updated_at     DateTime @default(now()) @updatedAt
 
   institution Institution @relation(fields: [institution_id], references: [id], onDelete: Cascade)
 
