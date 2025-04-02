@@ -1,2 +1,3 @@
 pnpm test:ci
+pnpm gen:openapi
 pnpm eslint
