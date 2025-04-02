@@ -148,13 +148,17 @@
                         },
                         "joined_at": {
                           "type": "string"
+                        },
+                        "reported_count": {
+                          "type": "integer"
                         }
                       },
                       "required": [
                         "id",
                         "email",
                         "name",
-                        "joined_at"
+                        "joined_at",
+                        "reported_count"
                       ]
                     },
                     "token": {
@@ -238,13 +242,17 @@
                         },
                         "joined_at": {
                           "type": "string"
+                        },
+                        "reported_count": {
+                          "type": "integer"
                         }
                       },
                       "required": [
                         "id",
                         "email",
                         "name",
-                        "joined_at"
+                        "joined_at",
+                        "reported_count"
                       ]
                     },
                     "token": {
@@ -398,10 +406,16 @@
                           "institution_id": {
                             "type": "integer"
                           },
-                          "latitude": {
+                          "start_lat": {
                             "type": "number"
                           },
-                          "longitude": {
+                          "start_lon": {
+                            "type": "number"
+                          },
+                          "end_lat": {
+                            "type": "number"
+                          },
+                          "end_lon": {
                             "type": "number"
                           },
                           "created_at": {
@@ -414,8 +428,10 @@
                         "required": [
                           "id",
                           "institution_id",
-                          "latitude",
-                          "longitude",
+                          "start_lat",
+                          "start_lon",
+                          "end_lat",
+                          "end_lon",
                           "created_at",
                           "updated_at"
                         ]
@@ -597,13 +613,17 @@
                         },
                         "joined_at": {
                           "type": "string"
+                        },
+                        "reported_count": {
+                          "type": "integer"
                         }
                       },
                       "required": [
                         "id",
                         "email",
                         "name",
-                        "joined_at"
+                        "joined_at",
+                        "reported_count"
                       ]
                     }
                   },
