@@ -34,7 +34,7 @@ export async function authMiddleware(
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    sendError(res, '토큰이 필요합니다.', StatusCodes.BAD_REQUEST);
+    sendError(res, '토큰이 필요합니다.', StatusCodes.UNAUTHORIZED);
     return;
   }
 
@@ -51,7 +51,7 @@ export async function authMiddleware(
     });
 
     if (!member) {
-      sendError(res, '토큰 검증 실패', StatusCodes.BAD_REQUEST);
+      sendError(res, '토큰 검증 실패', StatusCodes.UNAUTHORIZED);
       return;
     }
 
