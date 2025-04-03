@@ -677,9 +677,9 @@
         }
       }
     },
-    "/api/members/last_created": {
+    "/api/members/active_posts": {
       "get": {
-        "summary": "마지막 게시글 생성시간 조회",
+        "summary": "하루동안 생성한 게시글 개수 조회",
         "security": [
           {
             "bearerAuth": []
@@ -699,18 +699,18 @@
         ],
         "responses": {
           "200": {
-            "description": "최근 게시글 생성시간 반환",
+            "description": "24시간 이내 작성한 게시글 개수 반환",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "createdAt": {
-                      "type": "string"
+                    "count": {
+                      "type": "number"
                     }
                   },
                   "required": [
-                    "createdAt"
+                    "count"
                   ]
                 }
               }
