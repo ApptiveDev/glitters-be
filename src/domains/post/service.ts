@@ -12,7 +12,10 @@ import {
   CreatePostRequestBodySchema,
   DeletePostPathSchema,
   GetPostPathSchema,
+  GetPostResponseSchema,
 } from '@/domains/post/schema';
+import { z } from 'zod';
+import { Post } from '@/schemas';
 
 export async function getPost(req: GetPostRequest, res: GetPostResponse) {
   try {
@@ -21,15 +24,17 @@ export async function getPost(req: GetPostRequest, res: GetPostResponse) {
       where: {
         id: postId
       },
-      omit: {
-        authorId: true,
-      }
     });
     if (!post) {
       sendError(res, '존재하지 않는 post입니다.', StatusCodes.NOT_FOUND);
       return;
     }
-    res.json(post);
+    delete (post as Partial<Post>).authorId;
+    const ret: z.infer<typeof GetPostResponseSchema> = {
+      ...post,
+      isWrittenBySelf: postId === req.member?.id
+    };
+    res.json(ret);
   } catch(error) {
     sendAndTrace(res, error);
   }
