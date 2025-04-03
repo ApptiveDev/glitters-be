@@ -29,14 +29,14 @@ export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Resp
     const targetEmail = await prisma.emailVerification.findFirst({
       where: {
         email,
-        verification_number: code,
-        is_verified: false,
-        expires_at: {
+        verificationNumber: code,
+        isVerified: false,
+        expiresAt: {
           gt: new Date(),
         }
       },
       orderBy: {
-        created_at: 'desc',
+        createdAt: 'desc',
       }
     });
     if(! targetEmail) {
@@ -48,7 +48,7 @@ export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Resp
         id: targetEmail.id
       },
       data: {
-        is_verified: true,
+        isVerified: true,
       }
     });
     res.status(StatusCodes.ACCEPTED).send();
@@ -70,15 +70,15 @@ export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Res
         email,
       },
       data: {
-        expires_at: new Date(),
+        expiresAt: new Date(),
       }
     });
     await prisma.emailVerification.create({
       data: {
         email,
-        verification_number: code,
-        is_verified: false,
-        expires_at: new Date(Date.now() + 5 * 60 * 1000),
+        verificationNumber: code,
+        isVerified: false,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       }
     });
     res.status(StatusCodes.ACCEPTED).send();
@@ -94,13 +94,13 @@ export async function handleRegister(req: RegisterRequest, res: RegisterResponse
     const verifiedEmail = await prisma.emailVerification.findFirst({
       where: {
         email,
-        is_verified: true,
-        expires_at: {
+        isVerified: true,
+        expiresAt: {
           gt: new Date(),
         },
       },
       orderBy: {
-        created_at: 'desc',
+        createdAt: 'desc',
       },
     });
     if (! verifiedEmail) {

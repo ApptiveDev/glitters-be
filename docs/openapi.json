@@ -146,10 +146,10 @@
                         "name": {
                           "type": "string"
                         },
-                        "joined_at": {
+                        "joinedAt": {
                           "type": "string"
                         },
-                        "reported_count": {
+                        "reportedCount": {
                           "type": "integer"
                         }
                       },
@@ -157,8 +157,8 @@
                         "id",
                         "email",
                         "name",
-                        "joined_at",
-                        "reported_count"
+                        "joinedAt",
+                        "reportedCount"
                       ]
                     },
                     "token": {
@@ -240,10 +240,10 @@
                         "name": {
                           "type": "string"
                         },
-                        "joined_at": {
+                        "joinedAt": {
                           "type": "string"
                         },
-                        "reported_count": {
+                        "reportedCount": {
                           "type": "integer"
                         }
                       },
@@ -251,8 +251,8 @@
                         "id",
                         "email",
                         "name",
-                        "joined_at",
-                        "reported_count"
+                        "joinedAt",
+                        "reportedCount"
                       ]
                     },
                     "token": {
@@ -298,14 +298,14 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
             "in": "header",
+            "name": "Authorization",
             "required": true,
+            "description": "Bearer 토큰",
             "schema": {
               "type": "string",
               "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
+            }
           }
         ],
         "responses": {
@@ -327,14 +327,14 @@
                           "name": {
                             "type": "string"
                           },
-                          "email_domain": {
+                          "emailDomain": {
                             "type": "string"
                           }
                         },
                         "required": [
                           "id",
                           "name",
-                          "email_domain"
+                          "emailDomain"
                         ]
                       }
                     }
@@ -377,14 +377,14 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
             "in": "header",
+            "name": "Authorization",
             "required": true,
+            "description": "Bearer 토큰",
             "schema": {
               "type": "string",
               "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
+            }
           }
         ],
         "responses": {
@@ -403,37 +403,37 @@
                           "id": {
                             "type": "integer"
                           },
-                          "institution_id": {
+                          "institutionId": {
                             "type": "integer"
                           },
-                          "start_lat": {
+                          "startLat": {
                             "type": "number"
                           },
-                          "start_lon": {
+                          "startLon": {
                             "type": "number"
                           },
-                          "end_lat": {
+                          "endLat": {
                             "type": "number"
                           },
-                          "end_lon": {
+                          "endLon": {
                             "type": "number"
                           },
-                          "created_at": {
+                          "createdAt": {
                             "type": "string"
                           },
-                          "updated_at": {
+                          "updatedAt": {
                             "type": "string"
                           }
                         },
                         "required": [
                           "id",
-                          "institution_id",
-                          "start_lat",
-                          "start_lon",
-                          "end_lat",
-                          "end_lon",
-                          "created_at",
-                          "updated_at"
+                          "institutionId",
+                          "startLat",
+                          "startLon",
+                          "endLat",
+                          "endLon",
+                          "createdAt",
+                          "updatedAt"
                         ]
                       }
                     }
@@ -476,14 +476,14 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
             "in": "header",
+            "name": "Authorization",
             "required": true,
+            "description": "Bearer 토큰",
             "schema": {
               "type": "string",
               "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
+            }
           }
         ],
         "responses": {
@@ -502,7 +502,7 @@
                           "id": {
                             "type": "integer"
                           },
-                          "post_id": {
+                          "postId": {
                             "type": "integer"
                           },
                           "latitude": {
@@ -511,16 +511,16 @@
                           "longitude": {
                             "type": "number"
                           },
-                          "expires_at": {
+                          "expiresAt": {
                             "type": "string"
                           }
                         },
                         "required": [
                           "id",
-                          "post_id",
+                          "postId",
                           "latitude",
                           "longitude",
-                          "expires_at"
+                          "expiresAt"
                         ]
                       }
                     }
@@ -581,14 +581,14 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
             "in": "header",
+            "name": "Authorization",
             "required": true,
+            "description": "Bearer 토큰",
             "schema": {
               "type": "string",
               "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
+            }
           }
         ],
         "responses": {
@@ -611,10 +611,10 @@
                         "name": {
                           "type": "string"
                         },
-                        "joined_at": {
+                        "joinedAt": {
                           "type": "string"
                         },
-                        "reported_count": {
+                        "reportedCount": {
                           "type": "integer"
                         }
                       },
@@ -622,8 +622,8 @@
                         "id",
                         "email",
                         "name",
-                        "joined_at",
-                        "reported_count"
+                        "joinedAt",
+                        "reportedCount"
                       ]
                     }
                   },
@@ -655,7 +655,7 @@
         }
       }
     },
-    "/api/posts/{post_id}": {
+    "/api/posts/{postId}": {
       "get": {
         "summary": "게시글 단일 조회",
         "security": [
@@ -665,14 +665,14 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
             "in": "header",
+            "name": "Authorization",
             "required": true,
+            "description": "Bearer 토큰",
             "schema": {
               "type": "string",
               "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
+            }
           }
         ],
         "responses": {
@@ -692,16 +692,16 @@
                     "content": {
                       "type": "string"
                     },
-                    "created_at": {
+                    "createdAt": {
                       "type": "string"
                     },
-                    "expires_at": {
+                    "expiresAt": {
                       "type": "string"
                     },
                     "address": {
                       "type": "string"
                     },
-                    "address_detail": {
+                    "addressDetail": {
                       "type": [
                         "string",
                         "null"
@@ -712,10 +712,10 @@
                     "id",
                     "title",
                     "content",
-                    "created_at",
-                    "expires_at",
+                    "createdAt",
+                    "expiresAt",
                     "address",
-                    "address_detail"
+                    "addressDetail"
                   ]
                 }
               }
@@ -746,18 +746,6 @@
         "security": [
           {
             "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
           }
         ],
         "responses": {
@@ -811,18 +799,6 @@
             "bearerAuth": []
           }
         ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -839,7 +815,7 @@
                   "address": {
                     "type": "string"
                   },
-                  "address_detail": {
+                  "addressDetail": {
                     "type": [
                       "string",
                       "null"
@@ -856,7 +832,7 @@
                   "title",
                   "content",
                   "address",
-                  "address_detail",
+                  "addressDetail",
                   "latitude",
                   "longitude"
                 ]
@@ -872,16 +848,16 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "post_id": {
+                    "postId": {
                       "type": "number"
                     },
-                    "marker_id": {
+                    "markerId": {
                       "type": "number"
                     }
                   },
                   "required": [
-                    "post_id",
-                    "marker_id"
+                    "postId",
+                    "markerId"
                   ]
                 }
               }

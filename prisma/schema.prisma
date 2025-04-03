@@ -14,35 +14,35 @@ datasource db {
 }
 
 model Member {
-  id             Int      @id @default(autoincrement())
-  email          String   @unique @db.VarChar(255)
-  name           String   @db.VarChar(20)
-  password       String   @db.VarChar(88)
-  joined_at      DateTime @default(now())
-  reported_count Int      @default(0)
+  id            Int      @id @default(autoincrement()) @map("id")
+  email         String   @unique @map("email") @db.VarChar(255)
+  name          String   @map("name") @db.VarChar(20)
+  password      String   @map("password") @db.VarChar(88)
+  joinedAt      DateTime @default(now()) @map("joined_at")
+  reportedCount Int      @default(0) @map("reported_count")
 
   posts              Post[]
   authoredChatRooms  ChatRoom[] @relation("AuthoredRooms")
   requestedChatRooms ChatRoom[] @relation("RequestedRooms")
   sentChats          Chat[]     @relation("SentChats")
   receivedChats      Chat[]     @relation("ReceivedChats")
-  createdReports     Report[]   @relation("CreatedReports") // 신고 내역 (신고자 기준)
+  createdReports     Report[]   @relation("CreatedReports")
   reportedReports    Report[]   @relation("ReportedReports")
 
   @@map("members")
 }
 
 model Post {
-  id             Int      @id @default(autoincrement())
-  author_id      Int
-  title          String   @db.VarChar(255)
-  content        String
-  created_at     DateTime @default(now())
-  expires_at     DateTime
-  address        String   @db.VarChar(255)
-  address_detail String?  @db.VarChar(255)
+  id            Int      @id @default(autoincrement()) @map("id")
+  authorId      Int      @map("author_id")
+  title         String   @map("title") @db.VarChar(255)
+  content       String   @map("content")
+  createdAt     DateTime @default(now()) @map("created_at")
+  expiresAt     DateTime @map("expires_at")
+  address       String   @map("address") @db.VarChar(255)
+  addressDetail String?  @map("address_detail") @db.VarChar(255)
 
-  author   Member     @relation(fields: [author_id], references: [id])
+  author   Member     @relation(fields: [authorId], references: [id])
   chatroom ChatRoom[]
   marker   Marker?    @relation("PostMarker")
   reports  Report[]
@@ -51,28 +51,28 @@ model Post {
 }
 
 model Marker {
-  id        Int   @id @default(autoincrement())
-  post_id   Int   @unique
-  latitude  Float
-  longitude Float
+  id        Int   @id @default(autoincrement()) @map("id")
+  postId    Int   @unique @map("post_id")
+  latitude  Float @map("latitude")
+  longitude Float @map("longitude")
 
-  post Post @relation("PostMarker", fields: [post_id], references: [id])
+  post Post @relation("PostMarker", fields: [postId], references: [id])
 
   @@map("markers")
 }
 
 model ChatRoom {
-  id                 Int      @id @default(autoincrement())
-  post_id            Int
-  author_id          Int
-  requester_id       Int
-  created_at         DateTime @default(now())
-  author_nickname    String   @db.VarChar(20)
-  requester_nickname String   @db.VarChar(20)
+  id                Int      @id @default(autoincrement()) @map("id")
+  postId            Int      @map("post_id")
+  authorId          Int      @map("author_id")
+  requesterId       Int      @map("requester_id")
+  createdAt         DateTime @default(now()) @map("created_at")
+  authorNickname    String   @map("author_nickname") @db.VarChar(20)
+  requesterNickname String   @map("requester_nickname") @db.VarChar(20)
 
-  post      Post     @relation(fields: [post_id], references: [id])
-  author    Member   @relation("AuthoredRooms", fields: [author_id], references: [id])
-  requester Member   @relation("RequestedRooms", fields: [requester_id], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+  author    Member   @relation("AuthoredRooms", fields: [authorId], references: [id])
+  requester Member   @relation("RequestedRooms", fields: [requesterId], references: [id])
   reports   Report[]
   chats     Chat[]
 
@@ -80,72 +80,72 @@ model ChatRoom {
 }
 
 model Chat {
-  id          Int      @id @default(autoincrement())
-  chatroom_id Int
-  sender_id   Int
-  receiver_id Int
-  is_read     Boolean
-  created_at  DateTime @default(now())
+  id         Int      @id @default(autoincrement()) @map("id")
+  chatroomId Int      @map("chatroom_id")
+  senderId   Int      @map("sender_id")
+  receiverId Int      @map("receiver_id")
+  isRead     Boolean  @map("is_read")
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  chatroom ChatRoom @relation(fields: [chatroom_id], references: [id])
-  sender   Member   @relation("SentChats", fields: [sender_id], references: [id])
-  receiver Member   @relation("ReceivedChats", fields: [receiver_id], references: [id])
+  chatroom ChatRoom @relation(fields: [chatroomId], references: [id])
+  sender   Member   @relation("SentChats", fields: [senderId], references: [id])
+  receiver Member   @relation("ReceivedChats", fields: [receiverId], references: [id])
 
   @@map("chats")
 }
 
 model EmailVerification {
-  id                  Int      @id @default(autoincrement())
-  is_verified         Boolean
-  verification_number String   @db.VarChar(6)
-  email               String   @db.VarChar(255)
-  created_at          DateTime @default(now())
-  expires_at          DateTime
+  id                 Int      @id @default(autoincrement()) @map("id")
+  isVerified         Boolean  @map("is_verified")
+  verificationNumber String   @map("verification_number") @db.VarChar(6)
+  email              String   @map("email") @db.VarChar(255)
+  createdAt          DateTime @default(now()) @map("created_at")
+  expiresAt          DateTime @map("expires_at")
 
   @@index([email])
   @@map("verifications")
 }
 
 model Institution {
-  id           Int                @id @default(autoincrement())
-  name         String             @unique
-  email_domain String             @unique
-  is_active    Boolean            @default(true)
-  created_at   DateTime           @default(now())
-  updated_at   DateTime           @default(now()) @updatedAt
-  bounds       InstitutionBound[]
+  id          Int                @id @default(autoincrement()) @map("id")
+  name        String             @unique @map("name")
+  emailDomain String             @unique @map("email_domain")
+  isActive    Boolean            @default(true) @map("is_active")
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @default(now()) @updatedAt @map("updated_at")
+  bounds      InstitutionBound[]
 
   @@map("institutions")
 }
 
 model InstitutionBound {
-  id             Int      @id @default(autoincrement())
-  institution_id Int
-  start_lat      Float
-  start_lon      Float
-  end_lat        Float
-  end_lon        Float
-  created_at     DateTime @default(now())
-  updated_at     DateTime @default(now()) @updatedAt
+  id            Int      @id @default(autoincrement()) @map("id")
+  institutionId Int      @map("institution_id")
+  startLat      Float    @map("start_lat")
+  startLon      Float    @map("start_lon")
+  endLat        Float    @map("end_lat")
+  endLon        Float    @map("end_lon")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
 
-  institution Institution @relation(fields: [institution_id], references: [id], onDelete: Cascade)
+  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
 
   @@map("institution_bounds")
 }
 
 model Report {
-  id          Int        @id @default(autoincrement())
-  report_type ReportType
-  post_id     Int?
-  chatroom_id Int?
-  reporter_id Int
-  reported_id Int
-  created_at  DateTime   @default(now())
+  id         Int        @id @default(autoincrement()) @map("id")
+  reportType ReportType @map("report_type")
+  postId     Int?       @map("post_id")
+  chatroomId Int?       @map("chatroom_id")
+  reporterId Int        @map("reporter_id")
+  reportedId Int        @map("reported_id")
+  createdAt  DateTime   @default(now()) @map("created_at")
 
-  post     Post?     @relation(fields: [post_id], references: [id])
-  chatroom ChatRoom? @relation(fields: [chatroom_id], references: [id])
-  reporter Member    @relation("CreatedReports", fields: [reporter_id], references: [id])
-  reported Member    @relation("ReportedReports", fields: [reported_id], references: [id])
+  post     Post?     @relation(fields: [postId], references: [id])
+  chatroom ChatRoom? @relation(fields: [chatroomId], references: [id])
+  reporter Member    @relation("CreatedReports", fields: [reporterId], references: [id])
+  reported Member    @relation("ReportedReports", fields: [reportedId], references: [id])
 
   @@map("reports")
 }

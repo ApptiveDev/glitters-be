@@ -7,17 +7,17 @@ export async function getMarkers(_: AuthenticatedRequest, res: GetMarkersRespons
     include: {
       post: {
         select: {
-          expires_at: true,
+          expiresAt: true,
         }
       }
     }
   });
   const flattened = markers.map(marker => ({
     id: marker.id,
-    post_id: marker.post_id,
+    postId: marker.postId,
     latitude: marker.latitude,
     longitude: marker.longitude,
-    expires_at: marker.post?.expires_at ?? null,
+    expiresAt: marker.post?.expiresAt ?? null,
   }));
   res.json({
     markers: flattened,

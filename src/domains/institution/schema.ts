@@ -3,9 +3,9 @@ import { InstitutionBoundSchema, InstitutionSchema } from '@/schemas';
 
 export const GetInstitutionsResponseBodySchema = z.object({
   institutions: z.array(InstitutionSchema.omit({
-    is_active: true,
-    created_at: true,
-    updated_at: true,
+    isActive: true,
+    createdAt: true,
+    updatedAt: true,
   })),
 });
 

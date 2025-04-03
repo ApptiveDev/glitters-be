@@ -97,16 +97,16 @@ paths:
                         type: string
                       name:
                         type: string
-                      joined_at:
+                      joinedAt:
                         type: string
-                      reported_count:
+                      reportedCount:
                         type: integer
                     required:
                       - id
                       - email
                       - name
-                      - joined_at
-                      - reported_count
+                      - joinedAt
+                      - reportedCount
                   token:
                     type: string
                 required:
@@ -158,16 +158,16 @@ paths:
                         type: string
                       name:
                         type: string
-                      joined_at:
+                      joinedAt:
                         type: string
-                      reported_count:
+                      reportedCount:
                         type: integer
                     required:
                       - id
                       - email
                       - name
-                      - joined_at
-                      - reported_count
+                      - joinedAt
+                      - reportedCount
                   token:
                     type: string
                 required:
@@ -190,14 +190,13 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - &a1
+        - in: header
           name: Authorization
-          in: header
           required: true
+          description: Bearer 토큰
           schema:
             type: string
             example: Bearer <your-jwt-token>
-          description: Bearer 토큰
       responses:
         "200":
           description: 기관 목록 반환
@@ -215,12 +214,12 @@ paths:
                           type: integer
                         name:
                           type: string
-                        email_domain:
+                        emailDomain:
                           type: string
                       required:
                         - id
                         - name
-                        - email_domain
+                        - emailDomain
                 required:
                   - institutions
         "400":
@@ -240,7 +239,13 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - *a1
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
       responses:
         "200":
           description: 기관 경계 정보 반환
@@ -256,29 +261,29 @@ paths:
                       properties:
                         id:
                           type: integer
-                        institution_id:
+                        institutionId:
                           type: integer
-                        start_lat:
+                        startLat:
                           type: number
-                        start_lon:
+                        startLon:
                           type: number
-                        end_lat:
+                        endLat:
                           type: number
-                        end_lon:
+                        endLon:
                           type: number
-                        created_at:
+                        createdAt:
                           type: string
-                        updated_at:
+                        updatedAt:
                           type: string
                       required:
                         - id
-                        - institution_id
-                        - start_lat
-                        - start_lon
-                        - end_lat
-                        - end_lon
-                        - created_at
-                        - updated_at
+                        - institutionId
+                        - startLat
+                        - startLon
+                        - endLat
+                        - endLon
+                        - createdAt
+                        - updatedAt
                 required:
                   - bounds
         "400":
@@ -298,7 +303,13 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - *a1
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
       responses:
         "200":
           description: 마커 목록 반환
@@ -314,20 +325,20 @@ paths:
                       properties:
                         id:
                           type: integer
-                        post_id:
+                        postId:
                           type: integer
                         latitude:
                           type: number
                         longitude:
                           type: number
-                        expires_at:
+                        expiresAt:
                           type: string
                       required:
                         - id
-                        - post_id
+                        - postId
                         - latitude
                         - longitude
-                        - expires_at
+                        - expiresAt
                 required:
                   - markers
         "400":
@@ -358,7 +369,13 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - *a1
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
       responses:
         "200":
           description: 회원 정보 반환
@@ -376,16 +393,16 @@ paths:
                         type: string
                       name:
                         type: string
-                      joined_at:
+                      joinedAt:
                         type: string
-                      reported_count:
+                      reportedCount:
                         type: integer
                     required:
                       - id
                       - email
                       - name
-                      - joined_at
-                      - reported_count
+                      - joinedAt
+                      - reportedCount
                 required:
                   - member
         "401":
@@ -399,13 +416,19 @@ paths:
                     type: string
                 required:
                   - message
-  /api/posts/{post_id}:
+  /api/posts/{postId}:
     get:
       summary: 게시글 단일 조회
       security:
         - bearerAuth: []
       parameters:
-        - *a1
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
       responses:
         "200":
           description: 게시글 조회 성공
@@ -420,13 +443,13 @@ paths:
                     type: string
                   content:
                     type: string
-                  created_at:
+                  createdAt:
                     type: string
-                  expires_at:
+                  expiresAt:
                     type: string
                   address:
                     type: string
-                  address_detail:
+                  addressDetail:
                     type:
                       - string
                       - "null"
@@ -434,10 +457,10 @@ paths:
                   - id
                   - title
                   - content
-                  - created_at
-                  - expires_at
+                  - createdAt
+                  - expiresAt
                   - address
-                  - address_detail
+                  - addressDetail
         "404":
           description: 게시글 없음
           content:
@@ -453,8 +476,6 @@ paths:
       summary: 게시글 삭제
       security:
         - bearerAuth: []
-      parameters:
-        - *a1
       responses:
         "200":
           description: 삭제 성공
@@ -485,8 +506,6 @@ paths:
       summary: 게시글 생성
       security:
         - bearerAuth: []
-      parameters:
-        - *a1
       requestBody:
         required: true
         content:
@@ -500,7 +519,7 @@ paths:
                   type: string
                 address:
                   type: string
-                address_detail:
+                addressDetail:
                   type:
                     - string
                     - "null"
@@ -512,7 +531,7 @@ paths:
                 - title
                 - content
                 - address
-                - address_detail
+                - addressDetail
                 - latitude
                 - longitude
       responses:
@@ -523,13 +542,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  post_id:
+                  postId:
                     type: number
-                  marker_id:
+                  markerId:
                     type: number
                 required:
-                  - post_id
-                  - marker_id
+                  - postId
+                  - markerId
         "400":
           description: 요청 오류
           content:

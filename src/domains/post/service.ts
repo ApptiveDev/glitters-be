@@ -16,13 +16,13 @@ import {
 
 export async function getPost(req: GetPostRequest, res: GetPostResponse) {
   try {
-    const { post_id: postId } = GetPostPathSchema.parse(req.params);
+    const { postId } = GetPostPathSchema.parse(req.params);
     const post = await prisma.post.findUnique({
       where: {
         id: postId
       },
       omit: {
-        author_id: true,
+        authorId: true,
       }
     });
     if (!post) {
@@ -37,7 +37,7 @@ export async function getPost(req: GetPostRequest, res: GetPostResponse) {
 
 export async function deletePost(req: DeletePostRequest, res: Response) {
   try {
-    const { post_id: postId } = DeletePostPathSchema.parse(req.params);
+    const { postId } = DeletePostPathSchema.parse(req.params);
     const post = await prisma.post.findUnique({
       where: {
         id: postId,
@@ -47,7 +47,7 @@ export async function deletePost(req: DeletePostRequest, res: Response) {
       sendError(res, '해당하는 게시글을 찾을 수 없습니다.', StatusCodes.NOT_FOUND);
       return;
     }
-    if(post.author_id !== req.member?.id) {
+    if(post.authorId !== req.member?.id) {
       sendError(res, '삭제 권한이 없습니다.', StatusCodes.BAD_REQUEST);
       return;
     }
@@ -59,28 +59,28 @@ export async function deletePost(req: DeletePostRequest, res: Response) {
 
 export async function createPost(req: CreatePostRequest, res: CreatePostResponse) {
   try {
-    const { latitude, longitude, title, content, address_detail, address } = CreatePostRequestBodySchema.parse(req.body);
+    const { latitude, longitude, title, content, addressDetail, address } = CreatePostRequestBodySchema.parse(req.body);
     const expiresAt = new Date((new Date()).getTime() + 24 * 60 * 60 * 1000);
     const post = await prisma.post.create({
       data: {
         title,
         content,
-        address_detail,
+        addressDetail,
         address,
-        expires_at: expiresAt,
-        author_id: req.member?.id as number,
+        expiresAt: expiresAt,
+        authorId: req.member?.id as number,
       }
     });
     const marker = await prisma.marker.create({
       data: {
-        post_id: post.id,
+        postId: post.id,
         longitude,
         latitude,
       }
     });
     res.json({
-      marker_id: marker.id,
-      post_id: post.id,
+      markerId: marker.id,
+      postId: post.id,
     });
   } catch(error) {
     sendAndTrace(res, error);

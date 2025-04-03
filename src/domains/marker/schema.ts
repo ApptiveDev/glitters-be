@@ -3,6 +3,6 @@ import { MarkerSchema, PostSchema } from '@/schemas';
 
 export const GetMarkersResponseBodySchema = z.object({
   markers: z.array(MarkerSchema.merge(
-    PostSchema.pick({ expires_at: true })
+    PostSchema.pick({ expiresAt: true })
   )),
 });
