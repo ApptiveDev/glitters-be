@@ -5,8 +5,11 @@ import authRouter from '@/domains/auth/controller';
 import institutionRouter from '@/domains/institution/controller';
 import markerRouter from '@/domains/marker/controller';
 import { currentApiPrefix } from '@/constants';
+import swaggerUi from 'swagger-ui-express';
 import '@/utils/config';
 import postRouter from '@/domains/post/controller';
+import path from 'path';
+import fs from 'fs';
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 3000;
@@ -28,3 +31,8 @@ app.get('/', (_, res) => {
 app.listen(PORT, () => {
   console.log(`서버가 http://localhost:${PORT} 에서 실행 중입니다.`);
 });
+
+const swaggerPath = path.join(__dirname, '../docs/openapi.json');
+const swaggerDocument = JSON.parse(fs.readFileSync(swaggerPath, 'utf8'));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
