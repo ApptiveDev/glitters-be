@@ -190,14 +190,13 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - &a1
+        - in: header
           name: Authorization
-          in: header
           required: true
+          description: Bearer 토큰
           schema:
             type: string
             example: Bearer <your-jwt-token>
-          description: Bearer 토큰
       responses:
         "200":
           description: 기관 목록 반환
@@ -240,7 +239,13 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - *a1
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
       responses:
         "200":
           description: 기관 경계 정보 반환
@@ -298,7 +303,13 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - *a1
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
       responses:
         "200":
           description: 마커 목록 반환
@@ -358,7 +369,13 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - *a1
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
       responses:
         "200":
           description: 회원 정보 반환
@@ -405,7 +422,13 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - *a1
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
       responses:
         "200":
           description: 게시글 조회 성공
@@ -453,8 +476,6 @@ paths:
       summary: 게시글 삭제
       security:
         - bearerAuth: []
-      parameters:
-        - *a1
       responses:
         "200":
           description: 삭제 성공
@@ -485,8 +506,6 @@ paths:
       summary: 게시글 생성
       security:
         - bearerAuth: []
-      parameters:
-        - *a1
       requestBody:
         required: true
         content:

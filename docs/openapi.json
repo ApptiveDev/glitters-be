@@ -298,14 +298,14 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
             "in": "header",
+            "name": "Authorization",
             "required": true,
+            "description": "Bearer 토큰",
             "schema": {
               "type": "string",
               "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
+            }
           }
         ],
         "responses": {
@@ -377,14 +377,14 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
             "in": "header",
+            "name": "Authorization",
             "required": true,
+            "description": "Bearer 토큰",
             "schema": {
               "type": "string",
               "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
+            }
           }
         ],
         "responses": {
@@ -476,14 +476,14 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
             "in": "header",
+            "name": "Authorization",
             "required": true,
+            "description": "Bearer 토큰",
             "schema": {
               "type": "string",
               "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
+            }
           }
         ],
         "responses": {
@@ -581,14 +581,14 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
             "in": "header",
+            "name": "Authorization",
             "required": true,
+            "description": "Bearer 토큰",
             "schema": {
               "type": "string",
               "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
+            }
           }
         ],
         "responses": {
@@ -665,14 +665,14 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
             "in": "header",
+            "name": "Authorization",
             "required": true,
+            "description": "Bearer 토큰",
             "schema": {
               "type": "string",
               "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
+            }
           }
         ],
         "responses": {
@@ -748,18 +748,6 @@
             "bearerAuth": []
           }
         ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
-          }
-        ],
         "responses": {
           "200": {
             "description": "삭제 성공"
@@ -809,18 +797,6 @@
         "security": [
           {
             "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer <your-jwt-token>"
-            },
-            "description": "Bearer 토큰"
           }
         ],
         "requestBody": {
