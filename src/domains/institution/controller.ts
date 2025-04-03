@@ -3,11 +3,12 @@ import {
   getInstitutionBounds,
   getInstitutions,
 } from '@/domains/institution/service';
+import { authMiddleware } from '@/domains/auth/middleware';
 
 const institutionRouter = express.Router();
 const routerPrefix = '/institutions';
 
-institutionRouter.get(`${routerPrefix}`, getInstitutions); // TODO: Token Filter 추가
-institutionRouter.get(`${routerPrefix}/bounds`, getInstitutionBounds);
+institutionRouter.get(`${routerPrefix}`, authMiddleware, getInstitutions);
+institutionRouter.get(`${routerPrefix}/bounds`, authMiddleware, getInstitutionBounds);
 
 export default institutionRouter;
