@@ -21,8 +21,6 @@ app.use(API_PREFIX, institutionRouter);
 app.use(API_PREFIX, markerRouter);
 app.use(API_PREFIX, postRouter);
 
-// TODO: production, staging 환경에서 ssl 설정
-
 app.get('/', (_, res) => {
   res.send('Hello, Express!');
 });
