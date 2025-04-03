@@ -11,9 +11,9 @@ import { postApiPaths } from './post';
 export const openApiDocument = createDocument({
   openapi: '3.1.0',
   info: {
-    title: 'Auth API',
+    title: '반짝이 API',
     version: '1.0.0',
-    description: '회원가입, 로그인, 이메일 인증 API 명세',
+    description: '반짝이 앱 API 명세',
   },
   components: {
     securitySchemes: {
@@ -31,8 +31,8 @@ export const openApiDocument = createDocument({
   ],
   servers: [
     {
-      url: 'http://localhost:3000',
-      description: '로컬 개발 서버',
+      url: 'https://banjjak.me:8444',
+      description: '개발 서버',
     },
   ],
   paths: {
