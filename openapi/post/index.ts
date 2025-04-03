@@ -9,7 +9,7 @@ import { ErrorSchema } from '../../src/domains/error/schema';
 import { ZodOpenApiPathsObject } from 'zod-openapi';
 
 export const postApiPaths: ZodOpenApiPathsObject = {
-  [`${currentApiPrefix}/posts/{post_id}`]: {
+  [`${currentApiPrefix}/posts/{postId}`]: {
     get: {
       summary: '게시글 단일 조회',
       security: [{ bearerAuth: [] }],

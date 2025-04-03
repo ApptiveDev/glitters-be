@@ -5,8 +5,8 @@ const postRouter = express.Router();
 
 const apiPrefix = '/posts';
 
-postRouter.get(`${apiPrefix}/:post_id`, getPost); // TODO: 토큰 필터 추가
-postRouter.delete(`${apiPrefix}/:post_id`, deletePost);
+postRouter.get(`${apiPrefix}/:postId`, getPost); // TODO: 토큰 필터 추가
+postRouter.delete(`${apiPrefix}/:postId`, deletePost);
 postRouter.post(`${apiPrefix}`, getPost);
 
 export default postRouter;
