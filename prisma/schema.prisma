@@ -42,7 +42,7 @@ model Post {
   address       String   @map("address") @db.VarChar(255)
   addressDetail String?  @map("address_detail") @db.VarChar(255)
 
-  author   Member     @relation(fields: [authorId], references: [id])
+  author   Member     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   chatroom ChatRoom[]
   marker   Marker?    @relation("PostMarker")
   reports  Report[]

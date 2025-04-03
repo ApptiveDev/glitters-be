@@ -36,6 +36,7 @@ export const postApiPaths: ZodOpenApiPathsObject = {
     delete: {
       summary: '게시글 삭제',
       security: [{ bearerAuth: [] }],
+      parameters: [tokenHeader],
       responses: {
         200: {
           description: '삭제 성공',
@@ -63,6 +64,7 @@ export const postApiPaths: ZodOpenApiPathsObject = {
     post: {
       summary: '게시글 생성',
       security: [{ bearerAuth: [] }],
+      parameters: [tokenHeader],
       requestBody: {
         required: true,
         content: {

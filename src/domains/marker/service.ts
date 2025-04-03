@@ -2,12 +2,13 @@ import { GetMarkersResponse } from '@/domains/marker/types';
 import prisma from '@/utils/database';
 import { AuthenticatedRequest } from '@/domains/auth/types';
 
-export async function getMarkers(_: AuthenticatedRequest, res: GetMarkersResponse) {
+export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersResponse) {
   const markers = await prisma.marker.findMany({
     include: {
       post: {
         select: {
           expiresAt: true,
+          authorId: true,
         }
       }
     }
@@ -18,6 +19,7 @@ export async function getMarkers(_: AuthenticatedRequest, res: GetMarkersRespons
     latitude: marker.latitude,
     longitude: marker.longitude,
     expiresAt: marker.post?.expiresAt ?? null,
+    isWrittenBySelf: marker.post?.authorId === req.member?.id
   }));
   res.json({
     markers: flattened,

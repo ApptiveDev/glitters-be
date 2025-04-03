@@ -1,13 +1,13 @@
 openapi: 3.1.0
 info:
-  title: Auth API
+  title: 반짝이 API
   version: 1.0.0
-  description: 회원가입, 로그인, 이메일 인증 API 명세
+  description: 반짝이 앱 API 명세
 security:
   - bearerAuth: []
 servers:
-  - url: http://localhost:3000
-    description: 로컬 개발 서버
+  - url: https://banjjak.me:8444
+    description: 개발 서버
 paths:
   /api/verify-email:
     post:
@@ -27,6 +27,17 @@ paths:
       responses:
         "202":
           description: 인증 코드 전송 성공
+        "400":
+          description: 등록되지 않은 이메일 도메인
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
     put:
       summary: 이메일 인증 코드 확인
       requestBody:
@@ -61,7 +72,7 @@ paths:
                   - message
   /api/register:
     post:
-      summary: 회원가입 (인증된 이메일 필요)
+      summary: 회원가입 (이메일 인증 선행 필요)
       requestBody:
         required: true
         content:
@@ -333,12 +344,15 @@ paths:
                           type: number
                         expiresAt:
                           type: string
+                        isWrittenBySelf:
+                          type: boolean
                       required:
                         - id
                         - postId
                         - latitude
                         - longitude
                         - expiresAt
+                        - isWrittenBySelf
                 required:
                   - markers
         "400":
@@ -406,6 +420,42 @@ paths:
                 required:
                   - member
         "401":
+          description: 인증 실패 또는 토큰 누락
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+  /api/members/last_created:
+    get:
+      summary: 마지막 게시글 생성시간 조회
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
+      responses:
+        "200":
+          description: 최근 게시글 생성시간 반환
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  createdAt:
+                    type: string
+                required:
+                  - createdAt
+        "401":
           description: 인증 실패 (토큰 누락 또는 유효하지 않음)
           content:
             application/json:
@@ -453,6 +503,8 @@ paths:
                     type:
                       - string
                       - "null"
+                  isWrittenBySelf:
+                    type: boolean
                 required:
                   - id
                   - title
@@ -461,6 +513,7 @@ paths:
                   - expiresAt
                   - address
                   - addressDetail
+                  - isWrittenBySelf
         "404":
           description: 게시글 없음
           content:
@@ -476,6 +529,14 @@ paths:
       summary: 게시글 삭제
       security:
         - bearerAuth: []
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
       responses:
         "200":
           description: 삭제 성공
@@ -506,6 +567,14 @@ paths:
       summary: 게시글 생성
       security:
         - bearerAuth: []
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
       requestBody:
         required: true
         content:

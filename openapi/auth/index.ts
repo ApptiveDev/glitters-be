@@ -25,6 +25,14 @@ export const authApiPaths = {
         202: {
           description: '인증 코드 전송 성공',
         },
+        400: {
+          description: '등록되지 않은 이메일 도메인',
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            },
+          },
+        },
       },
     },
     put: {
@@ -46,8 +54,8 @@ export const authApiPaths = {
           content: {
             'application/json': {
               schema: ErrorSchema,
-            }
-          }
+            },
+          },
         },
       },
     },
@@ -55,7 +63,7 @@ export const authApiPaths = {
 
   [`${currentApiPrefix}/register`]: {
     post: {
-      summary: '회원가입 (인증된 이메일 필요)',
+      summary: '회원가입 (이메일 인증 선행 필요)',
       requestBody: {
         required: true,
         content: {
@@ -78,8 +86,8 @@ export const authApiPaths = {
           content: {
             'application/json': {
               schema: ErrorSchema,
-            }
-          }
+            },
+          },
         },
       },
     },
@@ -110,8 +118,8 @@ export const authApiPaths = {
           content: {
             'application/json': {
               schema: ErrorSchema,
-            }
-          }
+            },
+          },
         },
       },
     },
