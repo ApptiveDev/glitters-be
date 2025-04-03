@@ -11,7 +11,6 @@ export async function getLastCreatedPost(req: AuthenticatedRequest, res: GetLast
   const createdAt = await prisma.post.findFirst({
     where: {
       authorId: memberId,
-      isDeleted: false,
     },
     select: {
       createdAt: true,
