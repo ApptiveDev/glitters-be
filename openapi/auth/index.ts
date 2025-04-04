@@ -22,7 +22,7 @@ export const authApiPaths = {
         },
       },
       responses: {
-        202: {
+        201: {
           description: '인증 코드 전송 성공',
         },
         400: {
@@ -46,7 +46,7 @@ export const authApiPaths = {
         },
       },
       responses: {
-        202: {
+        201: {
           description: '인증 성공',
         },
         400: {

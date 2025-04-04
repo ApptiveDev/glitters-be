@@ -51,7 +51,7 @@ export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Resp
         isVerified: true,
       }
     });
-    res.status(StatusCodes.ACCEPTED).send();
+    res.status(StatusCodes.CREATED).send();
   } catch (error) {
     sendAndTrace(res, error);
   }
@@ -81,7 +81,7 @@ export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Res
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       }
     });
-    res.status(StatusCodes.ACCEPTED).send();
+    res.status(StatusCodes.CREATED).send();
   } catch (error) {
     sendAndTrace(res, error);
   }
@@ -91,6 +91,16 @@ export async function handleRegister(req: RegisterRequest, res: RegisterResponse
   const { email, name, password } = req.body;
 
   try {
+    const blacklisted = await prisma.blacklist.findFirst({
+      where: {
+        email
+      }
+    });
+    if(blacklisted) {
+      const date = blacklisted.createdAt;
+      sendError(res, `이용약관을 위반하여 재가입이 제한된 이메일입니다(${date.toDateString()}). 관리자에게 문의해주세요`, StatusCodes.FORBIDDEN);
+      return;
+    }
     const verifiedEmail = await prisma.emailVerification.findFirst({
       where: {
         email,
