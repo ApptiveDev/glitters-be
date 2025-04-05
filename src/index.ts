@@ -11,8 +11,10 @@ import swaggerUi from 'swagger-ui-express';
 import '@/utils/config';
 import path from 'path';
 import fs from 'fs';
+import { createServer } from 'http';
 
 const app = express();
+const httpServer = createServer(app);
 const PORT = process.env.SERVER_PORT || 3000;
 const API_PREFIX = currentApiPrefix;
 
@@ -30,11 +32,11 @@ app.get('/', (_, res) => {
   res.send('Hello, Express!');
 });
 
-app.listen(PORT, () => {
-  console.log(`서버가 http://localhost:${PORT} 에서 실행 중입니다.`);
-});
-
 const swaggerPath = path.join(__dirname, '../docs/openapi.json');
 const swaggerDocument = JSON.parse(fs.readFileSync(swaggerPath, 'utf8'));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+httpServer.listen(PORT, () => {
+  console.log(`서버가 http://localhost:${PORT} 에서 실행 중입니다.`);
+});
