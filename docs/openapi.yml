@@ -626,16 +626,16 @@ paths:
               properties:
                 title:
                   type: string
+                  maxLength: 63
                 content:
                   type: string
+                  maxLength: 255
                 address:
                   type: string
+                  maxLength: 63
                 addressDetail:
-                  type:
-                    - string
-                    - "null"
-                isDeactivated:
-                  type: boolean
+                  type: string
+                  maxLength: 63
                 latitude:
                   type: number
                 longitude:
@@ -645,7 +645,6 @@ paths:
                 - content
                 - address
                 - addressDetail
-                - isDeactivated
                 - latitude
                 - longitude
       responses:
