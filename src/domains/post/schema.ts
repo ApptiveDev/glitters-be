@@ -21,6 +21,7 @@ export const CreatePostRequestBodySchema = PostSchema.omit({
   id: true,
   createdAt: true,
   expiresAt: true,
+  isDeactivated: true,
 }).merge(MarkerSchema.pick({
   latitude: true,
   longitude: true,
