@@ -302,6 +302,10 @@ paths:
                           type: number
                         startLon:
                           type: number
+                        defaultLat:
+                          type: number
+                        defaultLon:
+                          type: number
                         endLat:
                           type: number
                         endLon:
@@ -315,6 +319,8 @@ paths:
                         - institutionId
                         - startLat
                         - startLon
+                        - defaultLat
+                        - defaultLon
                         - endLat
                         - endLon
                         - createdAt

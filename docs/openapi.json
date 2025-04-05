@@ -462,6 +462,12 @@
                           "startLon": {
                             "type": "number"
                           },
+                          "defaultLat": {
+                            "type": "number"
+                          },
+                          "defaultLon": {
+                            "type": "number"
+                          },
                           "endLat": {
                             "type": "number"
                           },
@@ -480,6 +486,8 @@
                           "institutionId",
                           "startLat",
                           "startLon",
+                          "defaultLat",
+                          "defaultLon",
                           "endLat",
                           "endLon",
                           "createdAt",
