@@ -21,6 +21,7 @@ import { getPasswordExcludedMember } from '@/domains/member/utils';
 import {
   EmailCodeInputRequestBodySchema,
   EmailVerifyRequestBodySchema,
+  RegisterRequestBodySchema,
 } from '@/domains/auth/schema';
 
 export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Response) {
@@ -88,9 +89,8 @@ export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Res
 }
 
 export async function handleRegister(req: RegisterRequest, res: RegisterResponse) {
-  const { email, name, password } = req.body;
-
   try {
+    const { email, name, password, birth, termsAccepted } = RegisterRequestBodySchema.parse(req.body);
     const blacklisted = await prisma.blacklist.findFirst({
       where: {
         email
@@ -128,6 +128,8 @@ export async function handleRegister(req: RegisterRequest, res: RegisterResponse
       data: {
         email,
         name,
+        birth,
+        termsAccepted,
         password: hashedPassword,
       },
     });
