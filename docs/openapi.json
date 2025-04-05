@@ -973,22 +973,20 @@
                 "type": "object",
                 "properties": {
                   "title": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 63
                   },
                   "content": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                   },
                   "address": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 63
                   },
                   "addressDetail": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "isDeactivated": {
-                    "type": "boolean"
+                    "type": "string",
+                    "maxLength": 63
                   },
                   "latitude": {
                     "type": "number"
@@ -1002,7 +1000,6 @@
                   "content",
                   "address",
                   "addressDetail",
-                  "isDeactivated",
                   "latitude",
                   "longitude"
                 ]

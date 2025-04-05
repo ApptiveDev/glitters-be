@@ -38,12 +38,12 @@ model Member {
 model Post {
   id            Int      @id @default(autoincrement()) @map("id")
   authorId      Int      @map("author_id")
-  title         String   @map("title") @db.VarChar(255)
-  content       String   @map("content")
+  title         String   @map("title") @db.VarChar(63)
+  content       String   @map("content") @db.VarChar(255)
   createdAt     DateTime @default(now()) @map("created_at")
   expiresAt     DateTime @map("expires_at")
-  address       String   @map("address") @db.VarChar(255)
-  addressDetail String?  @map("address_detail") @db.VarChar(255)
+  address       String   @map("address") @db.VarChar(63)
+  addressDetail String?  @map("address_detail") @db.VarChar(63)
   isDeactivated Boolean  @default(false) @map("is_deactivated")
 
   author   Member     @relation(fields: [authorId], references: [id])
