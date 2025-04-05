@@ -138,6 +138,8 @@ model InstitutionBound {
   institutionId Int      @map("institution_id")
   startLat      Float    @map("start_lat")
   startLon      Float    @map("start_lon")
+  defaultLat    Float    @map("default_lat")
+  defaultLon    Float    @map("default_lon")
   endLat        Float    @map("end_lat")
   endLon        Float    @map("end_lon")
   createdAt     DateTime @default(now()) @map("created_at")
