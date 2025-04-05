@@ -32,6 +32,7 @@ export async function deactivateMember(member: Member | number) {
       email: '',
       name: '탈퇴한 사용자',
       password: '',
+      birth: new Date('1970-01-01'),
       isDeactivated: true,
     }
   });
