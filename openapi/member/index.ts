@@ -2,7 +2,7 @@ import { currentApiPrefix } from '../../src/constants';
 import { tokenHeader } from '../headers';
 import {
   GetMyInfoSchema,
-  GetLastPostResponseBodySchema,
+  GetActivePostCountResponseBodySchema,
 } from '../../src/domains/member/schema';
 import { ErrorSchema } from '../../src/domains/error/schema';
 
@@ -33,17 +33,17 @@ export const memberApiPaths = {
     },
   },
 
-  [`${currentApiPrefix}/members/last_created`]: {
+  [`${currentApiPrefix}/members/active_posts`]: {
     get: {
-      summary: '마지막 게시글 생성시간 조회',
+      summary: '하루동안 생성한 게시글 개수 조회',
       security: [{ bearerAuth: [] }],
       parameters: [tokenHeader],
       responses: {
         200: {
-          description: '최근 게시글 생성시간 반환',
+          description: '24시간 이내 작성한 게시글 개수 반환',
           content: {
             'application/json': {
-              schema: GetLastPostResponseBodySchema,
+              schema: GetActivePostCountResponseBodySchema,
             },
           },
         },

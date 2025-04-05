@@ -54,6 +54,11 @@ export async function authMiddleware(
       sendError(res, '토큰 검증 실패', StatusCodes.UNAUTHORIZED);
       return;
     }
+    
+    if (member.isDeactivated) {
+      sendError(res, '탈퇴한 사용자의 인증 정보입니다.', StatusCodes.FORBIDDEN);
+      return;
+    }
 
     req.member = member;
     next();

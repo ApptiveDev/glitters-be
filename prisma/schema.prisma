@@ -18,8 +18,11 @@ model Member {
   email         String   @unique @map("email") @db.VarChar(255)
   name          String   @map("name") @db.VarChar(20)
   password      String   @map("password") @db.VarChar(88)
+  birth         DateTime @default(now())
   joinedAt      DateTime @default(now()) @map("joined_at")
   reportedCount Int      @default(0) @map("reported_count")
+  isDeactivated Boolean  @default(false) @map("is_deactivated")
+  termsAccepted Boolean  @default(false) @map("terms_accepted")
 
   posts              Post[]
   authoredChatRooms  ChatRoom[] @relation("AuthoredRooms")
@@ -41,10 +44,11 @@ model Post {
   expiresAt     DateTime @map("expires_at")
   address       String   @map("address") @db.VarChar(255)
   addressDetail String?  @map("address_detail") @db.VarChar(255)
+  isDeactivated Boolean  @default(false) @map("is_deactivated")
 
-  author   Member     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author   Member     @relation(fields: [authorId], references: [id])
   chatroom ChatRoom[]
-  marker   Marker?    @relation("PostMarker")
+  marker   Marker?
   reports  Report[]
 
   @@map("posts")
@@ -56,7 +60,7 @@ model Marker {
   latitude  Float @map("latitude")
   longitude Float @map("longitude")
 
-  post Post @relation("PostMarker", fields: [postId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
 
   @@map("markers")
 }
@@ -69,6 +73,7 @@ model ChatRoom {
   createdAt         DateTime @default(now()) @map("created_at")
   authorNickname    String   @map("author_nickname") @db.VarChar(20)
   requesterNickname String   @map("requester_nickname") @db.VarChar(20)
+  isDeactivated     Boolean  @default(false) @map("is_deactivated")
 
   post      Post     @relation(fields: [postId], references: [id])
   author    Member   @relation("AuthoredRooms", fields: [authorId], references: [id])
@@ -106,6 +111,16 @@ model EmailVerification {
   @@map("verifications")
 }
 
+model Blacklist {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+  memberId  Int      @map("member_id")
+
+  @@index([email])
+  @@map("blacklists")
+}
+
 model Institution {
   id          Int                @id @default(autoincrement()) @map("id")
   name        String             @unique @map("name")
@@ -141,6 +156,7 @@ model Report {
   reporterId Int        @map("reporter_id")
   reportedId Int        @map("reported_id")
   createdAt  DateTime   @default(now()) @map("created_at")
+  reason     String     @db.VarChar(255)
 
   post     Post?     @relation(fields: [postId], references: [id])
   chatroom ChatRoom? @relation(fields: [chatroomId], references: [id])

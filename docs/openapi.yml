@@ -25,7 +25,7 @@ paths:
               required:
                 - email
       responses:
-        "202":
+        "201":
           description: 인증 코드 전송 성공
         "400":
           description: 등록되지 않은 이메일 도메인
@@ -57,7 +57,7 @@ paths:
                 - email
                 - code
       responses:
-        "202":
+        "201":
           description: 인증 성공
         "400":
           description: 코드 오류 또는 만료
@@ -82,15 +82,21 @@ paths:
               properties:
                 email:
                   type: string
-                  format: email
                 password:
                   type: string
                 name:
                   type: string
+                birth:
+                  type: string
+                termsAccepted:
+                  type: boolean
+                  const: true
               required:
                 - email
                 - password
                 - name
+                - birth
+                - termsAccepted
       responses:
         "200":
           description: 회원가입 성공
@@ -108,16 +114,25 @@ paths:
                         type: string
                       name:
                         type: string
+                      birth:
+                        type: string
                       joinedAt:
                         type: string
                       reportedCount:
                         type: integer
+                      isDeactivated:
+                        type: boolean
+                      termsAccepted:
+                        type: boolean
                     required:
                       - id
                       - email
                       - name
+                      - birth
                       - joinedAt
                       - reportedCount
+                      - isDeactivated
+                      - termsAccepted
                   token:
                     type: string
                 required:
@@ -169,16 +184,25 @@ paths:
                         type: string
                       name:
                         type: string
+                      birth:
+                        type: string
                       joinedAt:
                         type: string
                       reportedCount:
                         type: integer
+                      isDeactivated:
+                        type: boolean
+                      termsAccepted:
+                        type: boolean
                     required:
                       - id
                       - email
                       - name
+                      - birth
                       - joinedAt
                       - reportedCount
+                      - isDeactivated
+                      - termsAccepted
                   token:
                     type: string
                 required:
@@ -407,16 +431,25 @@ paths:
                         type: string
                       name:
                         type: string
+                      birth:
+                        type: string
                       joinedAt:
                         type: string
                       reportedCount:
                         type: integer
+                      isDeactivated:
+                        type: boolean
+                      termsAccepted:
+                        type: boolean
                     required:
                       - id
                       - email
                       - name
+                      - birth
                       - joinedAt
                       - reportedCount
+                      - isDeactivated
+                      - termsAccepted
                 required:
                   - member
         "401":
@@ -430,9 +463,9 @@ paths:
                     type: string
                 required:
                   - message
-  /api/members/last_created:
+  /api/members/active_posts:
     get:
-      summary: 마지막 게시글 생성시간 조회
+      summary: 하루동안 생성한 게시글 개수 조회
       security:
         - bearerAuth: []
       parameters:
@@ -445,16 +478,16 @@ paths:
             example: Bearer <your-jwt-token>
       responses:
         "200":
-          description: 최근 게시글 생성시간 반환
+          description: 24시간 이내 작성한 게시글 개수 반환
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  createdAt:
-                    type: string
+                  count:
+                    type: number
                 required:
-                  - createdAt
+                  - count
         "401":
           description: 인증 실패 (토큰 누락 또는 유효하지 않음)
           content:
@@ -503,6 +536,8 @@ paths:
                     type:
                       - string
                       - "null"
+                  isDeactivated:
+                    type: boolean
                   isWrittenBySelf:
                     type: boolean
                 required:
@@ -513,6 +548,7 @@ paths:
                   - expiresAt
                   - address
                   - addressDetail
+                  - isDeactivated
                   - isWrittenBySelf
         "404":
           description: 게시글 없음
@@ -592,6 +628,8 @@ paths:
                   type:
                     - string
                     - "null"
+                isDeactivated:
+                  type: boolean
                 latitude:
                   type: number
                 longitude:
@@ -601,6 +639,7 @@ paths:
                 - content
                 - address
                 - addressDetail
+                - isDeactivated
                 - latitude
                 - longitude
       responses:
@@ -620,6 +659,69 @@ paths:
                   - markerId
         "400":
           description: 요청 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+  /api/reports:
+    post:
+      summary: 신고 등록
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reportType:
+                  type: string
+                  enum:
+                    - POST_REPORT
+                    - CHATROOM_REPORT
+                postId:
+                  type:
+                    - integer
+                    - "null"
+                chatroomId:
+                  type:
+                    - integer
+                    - "null"
+                reason:
+                  type: string
+              required:
+                - reportType
+                - reason
+      responses:
+        "201":
+          description: 신고 등록 성공
+        "400":
+          description: 잘못된 요청 또는 자기 자신 신고 시도
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+        "404":
+          description: 대상 사용자를 찾을 수 없음
           content:
             application/json:
               schema:

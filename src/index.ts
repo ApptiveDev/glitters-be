@@ -4,10 +4,11 @@ import memberRouter from '@/domains/member/controller';
 import authRouter from '@/domains/auth/controller';
 import institutionRouter from '@/domains/institution/controller';
 import markerRouter from '@/domains/marker/controller';
+import postRouter from '@/domains/post/controller';
+import reportRouter from '@/domains/report/controller';
 import { currentApiPrefix } from '@/constants';
 import swaggerUi from 'swagger-ui-express';
 import '@/utils/config';
-import postRouter from '@/domains/post/controller';
 import path from 'path';
 import fs from 'fs';
 
@@ -23,6 +24,7 @@ app.use(API_PREFIX, memberRouter);
 app.use(API_PREFIX, institutionRouter);
 app.use(API_PREFIX, markerRouter);
 app.use(API_PREFIX, postRouter);
+app.use(API_PREFIX, reportRouter);
 
 app.get('/', (_, res) => {
   res.send('Hello, Express!');

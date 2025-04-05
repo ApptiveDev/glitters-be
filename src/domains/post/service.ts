@@ -22,7 +22,8 @@ export async function getPost(req: GetPostRequest, res: GetPostResponse) {
     const { postId } = GetPostPathSchema.parse(req.params);
     const post = await prisma.post.findUnique({
       where: {
-        id: postId
+        id: postId,
+        isDeactivated: false,
       },
     });
     if (!post) {
@@ -56,6 +57,14 @@ export async function deletePost(req: DeletePostRequest, res: Response) {
       sendError(res, '삭제 권한이 없습니다.', StatusCodes.BAD_REQUEST);
       return;
     }
+    await prisma.post.update({
+      where: {
+        id: post.id,
+      },
+      data: {
+        isDeactivated: true,
+      }
+    });
     res.json({ message: '삭제가 완료되었습니다.' });
   } catch(error) {
     sendAndTrace(res, error);
