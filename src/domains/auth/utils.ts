@@ -22,7 +22,7 @@ export async function isValidEmail(email: string) {
   const domain = email.split('@')[1];
   const institutions = await prisma.institution.findMany({
     where: {
-      emailDomain: domain,
+      emailDomain: `@${domain}`
     }
   });
   return institutions.length > 0;
