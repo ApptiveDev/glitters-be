@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - ISSUE-82-registration-schema
 
 jobs:
   build-and-deploy:
@@ -28,11 +29,11 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      - name: Create .env.development file from secret
+      - name: Create .env file from secret
         run: |
-          echo "${{ secrets.ENV_STAGING }}" > .env
+          printf '%s' "${{ secrets.ENV_STAGING }}" > .env
 
-      - name: Copy .env.development to EC2
+      - name: Copy .env to EC2
         run: |
           scp -o StrictHostKeyChecking=no .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/.env.staging
 
