@@ -31,7 +31,7 @@ jobs:
 
       - name: Create .env file from secret
         run: |
-          printf '%s' "${{ secrets.ENV_STAGING }}" > .env
+          echo "${{ secrets.ENV_STAGING_B64 }}" | base64 -d > .env
 
       - name: Copy .env to EC2
         run: |
