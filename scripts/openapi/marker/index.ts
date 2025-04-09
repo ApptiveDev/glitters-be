@@ -1,8 +1,8 @@
-import { currentApiPrefix } from '../../src/constants';
+import { currentApiPrefix } from '../../../src/constants';
 import {
   GetMarkersResponseBodySchema,
-} from '../../src/domains/marker/schema';
-import { ErrorSchema } from '../../src/domains/error/schema';
+} from '../../../src/domains/marker/schema';
+import { ErrorSchema } from '../../../src/domains/error/schema';
 import { tokenHeader } from '../headers';
 
 export const markerApiPaths = {

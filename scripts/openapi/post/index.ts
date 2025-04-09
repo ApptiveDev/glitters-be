@@ -1,11 +1,11 @@
-import { currentApiPrefix } from '../../src/constants';
+import { currentApiPrefix } from '../../../src/constants';
 import { tokenHeader } from '../headers';
 import {
   CreatePostRequestBodySchema,
   CreatePostResponseBodySchema,
   GetPostResponseSchema,
-} from '../../src/domains/post/schema';
-import { ErrorSchema } from '../../src/domains/error/schema';
+} from '../../../src/domains/post/schema';
+import { ErrorSchema } from '../../../src/domains/error/schema';
 import { ZodOpenApiPathsObject } from 'zod-openapi';
 
 export const postApiPaths: ZodOpenApiPathsObject = {

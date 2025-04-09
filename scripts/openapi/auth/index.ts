@@ -1,4 +1,4 @@
-import { currentApiPrefix } from '../../src/constants';
+import { currentApiPrefix } from '../../../src/constants';
 import {
   EmailCodeInputRequestBodySchema,
   EmailVerifyRequestBodySchema,
@@ -6,8 +6,8 @@ import {
   LoginResponseBodySchema,
   RegisterRequestBodySchema,
   RegisterResponseBodySchema,
-} from '../../src/domains/auth/schema';
-import { ErrorSchema } from '../../src/domains/error/schema';
+} from '../../../src/domains/auth/schema';
+import { ErrorSchema } from '../../../src/domains/error/schema';
 
 export const authApiPaths = {
   [`${currentApiPrefix}/verify-email`]: {

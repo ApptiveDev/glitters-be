@@ -1,6 +1,6 @@
-import { currentApiPrefix } from '../../src/constants';
-import { CreateReportRequestBodySchema } from '../../src/domains/report/schema';
-import { ErrorSchema } from '../../src/domains/error/schema';
+import { currentApiPrefix } from '../../../src/constants';
+import { CreateReportRequestBodySchema } from '../../../src/domains/report/schema';
+import { ErrorSchema } from '../../../src/domains/error/schema';
 import { tokenHeader } from '../headers';
 
 export const reportApiPaths = {
