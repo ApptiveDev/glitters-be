@@ -46,7 +46,7 @@ export const openApiDocument = createDocument({
   },
 });
 
-const outputDir = path.resolve(__dirname, '../docs');
+const outputDir = path.resolve(__dirname, '../../docs');
 const jsonPath = path.join(outputDir, 'openapi.json');
 const yamlPath = path.join(outputDir, 'openapi.yml');
 

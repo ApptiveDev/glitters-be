@@ -1,9 +1,9 @@
-import { currentApiPrefix } from '../../src/constants';
+import { currentApiPrefix } from '../../../src/constants';
 import {
   GetInstitutionsResponseBodySchema,
   GetInstitutionBoundsResponseBodySchema,
-} from '../../src/domains/institution/schema';
-import { ErrorSchema } from '../../src/domains/error/schema';
+} from '../../../src/domains/institution/schema';
+import { ErrorSchema } from '../../../src/domains/error/schema';
 import { tokenHeader } from '../headers';
 
 export const institutionApiPaths = {

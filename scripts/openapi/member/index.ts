@@ -1,10 +1,10 @@
-import { currentApiPrefix } from '../../src/constants';
+import { currentApiPrefix } from '../../../src/constants';
 import { tokenHeader } from '../headers';
 import {
   GetMyInfoSchema,
   GetActivePostCountResponseBodySchema,
-} from '../../src/domains/member/schema';
-import { ErrorSchema } from '../../src/domains/error/schema';
+} from '../../../src/domains/member/schema';
+import { ErrorSchema } from '../../../src/domains/error/schema';
 
 export const memberApiPaths = {
   [`${currentApiPrefix}/members/me`]: {
