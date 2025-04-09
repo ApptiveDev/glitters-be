@@ -18,8 +18,15 @@ export const RegisterRequestBodySchema = MemberSchema.pick({
 }).extend({
   birth: z.coerce.date()
     .min(new Date('1990-01-01'))
-    .max(new Date(new Date().getFullYear() - 20, 0, 1)),
+    .max(new Date(new Date().getFullYear() - 21, 0, 1)),
   termsAccepted: z.literal(true),
+  password: z.string()
+  .min(10)
+  .max(25)
+  .regex(
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[{\]};:'",.<>/?\\|`~]).{10,25}$/,
+  ),
+
 });
 
 export const LoginRequestBodySchema = z.object({

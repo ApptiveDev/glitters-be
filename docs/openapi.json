@@ -128,7 +128,10 @@
                     "type": "string"
                   },
                   "password": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_\\-+=[{\\]};:'\",.<>/?\\\\|`~]).{10,25}$",
+                    "minLength": 10,
+                    "maxLength": 25
                   },
                   "name": {
                     "type": "string"
