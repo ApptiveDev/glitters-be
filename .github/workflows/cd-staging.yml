@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - develop
-      - ISSUE-82-registration-schema
 
 jobs:
   build-and-deploy:
