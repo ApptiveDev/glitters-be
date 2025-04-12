@@ -553,6 +553,8 @@ paths:
                     type: integer
                   isWrittenBySelf:
                     type: boolean
+                  isLikedBySelf:
+                    type: boolean
                 required:
                   - id
                   - title
@@ -565,6 +567,7 @@ paths:
                   - likeCount
                   - viewCount
                   - isWrittenBySelf
+                  - isLikedBySelf
         "404":
           description: 게시글 없음
           content:

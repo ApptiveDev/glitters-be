@@ -855,6 +855,9 @@
                     },
                     "isWrittenBySelf": {
                       "type": "boolean"
+                    },
+                    "isLikedBySelf": {
+                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -868,7 +871,8 @@
                     "isDeactivated",
                     "likeCount",
                     "viewCount",
-                    "isWrittenBySelf"
+                    "isWrittenBySelf",
+                    "isLikedBySelf"
                   ]
                 }
               }
