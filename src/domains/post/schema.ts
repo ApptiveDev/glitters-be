@@ -14,7 +14,7 @@ export const DeletePostPathSchema = GetPostPathSchema;
 
 export const GetPostResponseSchema = PostSchema.omit({
   authorId: true,
-}).extend({ isWrittenBySelf: z.boolean() });
+}).extend({ isWrittenBySelf: z.boolean(), isLikedBySelf: z.boolean() });
 
 export const CreatePostRequestBodySchema = z.object({
   title: z.string().max(63),
