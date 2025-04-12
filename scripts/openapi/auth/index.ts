@@ -33,6 +33,14 @@ export const authApiPaths = {
             },
           },
         },
+        403: {
+          description: '가입이 제한된 이메일',
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            },
+          }
+        }
       },
     },
     put: {
