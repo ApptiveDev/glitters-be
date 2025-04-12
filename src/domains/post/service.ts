@@ -16,6 +16,8 @@ import {
 } from '@/domains/post/schema';
 import { z } from 'zod';
 import { Post } from '@/schemas';
+import { PasswordExcludedMember } from '@/domains/member/types';
+import redis from '@/utils/redis';
 
 export async function getPost(req: GetPostRequest, res: GetPostResponse) {
   try {
@@ -35,10 +37,30 @@ export async function getPost(req: GetPostRequest, res: GetPostResponse) {
       ...post,
       isWrittenBySelf: postId === req.member?.id
     };
+    await applyPostView(req.member!, post);
     res.json(ret);
   } catch(error) {
     sendAndTrace(res, error);
   }
+}
+
+export async function applyPostView(member: PasswordExcludedMember, post: Post) {
+  const ttl = 60 * 60 * 24;
+  const viewCountKey = `viewed:${member.id}:${post.id}`;
+
+  if(await redis.exists(viewCountKey))
+    return;
+  await redis.set(viewCountKey, '1', 'EX', ttl);
+  await prisma.post.update({
+    data: {
+      viewCount: {
+        increment: 1,
+      }
+    },
+    where: {
+      id: post.id
+    }
+  });
 }
 
 export async function deletePost(req: DeletePostRequest, res: Response) {
