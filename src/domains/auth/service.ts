@@ -65,6 +65,16 @@ export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Res
       sendError(res, '등록되지 않은 이메일 도메인입니다.', StatusCodes.BAD_REQUEST);
       return;
     }
+    const blacklisted = await prisma.blacklist.findFirst({
+      where: {
+        email
+      }
+    });
+    if(blacklisted) {
+      const date = blacklisted.createdAt;
+      sendError(res, `이용약관을 위반하여 재가입이 제한된 이메일입니다(${date.toDateString()}). 관리자에게 문의해주세요`, StatusCodes.FORBIDDEN);
+      return;
+    }
     const code = await sendVerificationCodeEmail(email);
     await prisma.emailVerification.updateMany({
       where: {
