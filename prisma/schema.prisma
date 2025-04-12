@@ -25,6 +25,7 @@ model Member {
   termsAccepted Boolean  @default(false) @map("terms_accepted")
 
   posts              Post[]
+  likes              Like[]
   authoredChatRooms  ChatRoom[] @relation("AuthoredRooms")
   requestedChatRooms ChatRoom[] @relation("RequestedRooms")
   sentChats          Chat[]     @relation("SentChats")
@@ -45,17 +46,30 @@ model Post {
   address       String   @map("address") @db.VarChar(63)
   addressDetail String?  @map("address_detail") @db.VarChar(63)
   isDeactivated Boolean  @default(false) @map("is_deactivated")
+  likeCount     Int      @default(0) @map("like_count")
+  viewCount     Int      @default(0) @map("view_count")
 
   author   Member     @relation(fields: [authorId], references: [id])
   chatroom ChatRoom[]
   marker   Marker?
   reports  Report[]
+  likes    Like[]
 
   @@map("posts")
 }
 
+model Like {
+  id        Int      @id @default(autoincrement())
+  postId    Int      @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  memberId  Int      @map("member_id")
+
+  member Member @relation(fields: [memberId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
+}
+
 model Marker {
-  id        Int   @id @default(autoincrement()) @map("id")
+  id        Int   @id @default(autoincrement())
   postId    Int   @unique @map("post_id")
   latitude  Float @map("latitude")
   longitude Float @map("longitude")

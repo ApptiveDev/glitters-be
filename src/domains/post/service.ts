@@ -16,11 +16,13 @@ import {
 } from '@/domains/post/schema';
 import { z } from 'zod';
 import { Post } from '@/schemas';
+import { PasswordExcludedMember } from '@/domains/member/types';
+import redis from '@/utils/redis';
 
 export async function getPost(req: GetPostRequest, res: GetPostResponse) {
   try {
     const { postId } = GetPostPathSchema.parse(req.params);
-    const post = await prisma.post.findUnique({
+    let post = await prisma.post.findUnique({
       where: {
         id: postId,
         isDeactivated: false,
@@ -30,15 +32,42 @@ export async function getPost(req: GetPostRequest, res: GetPostResponse) {
       sendError(res, '존재하지 않는 post입니다.', StatusCodes.NOT_FOUND);
       return;
     }
+    post = await applyPostView(req.member!, post);
+    const liked = await prisma.like.findFirst({
+      where: {
+        postId,
+        memberId: req.member!.id,
+      }
+    });
     delete (post as Partial<Post>).authorId;
     const ret: z.infer<typeof GetPostResponseSchema> = {
       ...post,
-      isWrittenBySelf: postId === req.member?.id
+      isWrittenBySelf: postId === req.member?.id,
+      isLikedBySelf: !!liked,
     };
     res.json(ret);
   } catch(error) {
     sendAndTrace(res, error);
   }
+}
+
+export async function applyPostView(member: PasswordExcludedMember, post: Post) {
+  const ttl = 60 * 60 * 24;
+  const viewCountKey = `viewed:${member.id}:${post.id}`;
+
+  if(await redis.exists(viewCountKey))
+    return post;
+  await redis.set(viewCountKey, '1', 'EX', ttl);
+  return prisma.post.update({
+    data: {
+      viewCount: {
+        increment: 1,
+      }
+    },
+    where: {
+      id: post.id
+    }
+  })!;
 }
 
 export async function deletePost(req: DeletePostRequest, res: Response) {

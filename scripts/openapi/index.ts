@@ -8,6 +8,7 @@ import { markerApiPaths } from './marker';
 import { memberApiPaths } from './member';
 import { postApiPaths } from './post';
 import { reportApiPaths } from './report';
+import { likeApiPaths } from './like';
 
 export const openApiDocument = createDocument({
   openapi: '3.1.0',
@@ -43,6 +44,7 @@ export const openApiDocument = createDocument({
     ...memberApiPaths,
     ...postApiPaths,
     ...reportApiPaths,
+    ...likeApiPaths,
   },
 });
 
