@@ -6,6 +6,7 @@ import institutionRouter from '@/domains/institution/controller';
 import markerRouter from '@/domains/marker/controller';
 import postRouter from '@/domains/post/controller';
 import reportRouter from '@/domains/report/controller';
+import likeRouter from '@/domains/like/controller';
 import { currentApiPrefix } from '@/constants';
 import swaggerUi from 'swagger-ui-express';
 import '@/utils/config';
@@ -25,6 +26,7 @@ app.use(API_PREFIX, institutionRouter);
 app.use(API_PREFIX, markerRouter);
 app.use(API_PREFIX, postRouter);
 app.use(API_PREFIX, reportRouter);
+app.use(API_PREFIX, likeRouter);
 
 app.set('trust proxy', 1);
 
