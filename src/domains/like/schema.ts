@@ -1,5 +1,8 @@
 import { LikeSchema } from '@/schemas';
 import { z } from 'zod';
+import { extendZodWithOpenApi } from 'zod-openapi';
+
+extendZodWithOpenApi(z);
 
 export const LikePostRequestQuerySchema = LikeSchema.pick({
   postId: true
@@ -10,4 +13,13 @@ export const LikePostRequestQuerySchema = LikeSchema.pick({
     }
     return val;
   }, z.number()),
+}).openapi({
+  param: {
+    name: 'postId',
+    in: 'query',
+    required: true,
+    schema: {
+      type: 'integer',
+    },
+  }
 });
