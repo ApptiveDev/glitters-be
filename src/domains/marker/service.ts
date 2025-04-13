@@ -8,8 +8,14 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
       post: {
         select: {
           expiresAt: true,
+          createdAt: true,
           authorId: true,
         }
+      }
+    },
+    orderBy: {
+      post: {
+        createdAt: 'desc',
       }
     }
   });
