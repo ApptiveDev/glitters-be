@@ -25,6 +25,7 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
     latitude: marker.latitude,
     longitude: marker.longitude,
     expiresAt: marker.post?.expiresAt ?? null,
+    createdAt: marker.post?.createdAt,
     isWrittenBySelf: marker.post?.authorId === req.member?.id
   }));
   res.json({
