@@ -34,7 +34,7 @@ export const likeApiPaths = {
         LikePostRequestQuerySchema
       ],
       responses: {
-        204: {
+        200: {
           description: '좋아요 취소 성공',
         },
         400: {

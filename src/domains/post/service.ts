@@ -102,13 +102,12 @@ export async function deletePost(req: DeletePostRequest, res: Response) {
 
 export async function createPost(req: CreatePostRequest, res: CreatePostResponse) {
   try {
-    const { latitude, longitude, title, content, addressDetail, address } = CreatePostRequestBodySchema.parse(req.body);
+    const { latitude, longitude, title, content, address } = CreatePostRequestBodySchema.parse(req.body);
     const expiresAt = new Date((new Date()).getTime() + 24 * 60 * 60 * 1000);
     const post = await prisma.post.create({
       data: {
         title,
         content,
-        addressDetail,
         address,
         expiresAt: expiresAt,
         authorId: req.member?.id as number,
