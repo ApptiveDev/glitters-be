@@ -66,6 +66,8 @@ model Like {
 
   member Member @relation(fields: [memberId], references: [id])
   post   Post   @relation(fields: [postId], references: [id])
+
+  @@map("likes")
 }
 
 model Marker {
