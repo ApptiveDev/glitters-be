@@ -39,10 +39,11 @@ export async function getPost(req: GetPostRequest, res: GetPostResponse) {
         memberId: req.member!.id,
       }
     });
+    const isWrittenBySelf = post.authorId === req.member?.id;
     delete (post as Partial<Post>).authorId;
     const ret: z.infer<typeof GetPostResponseSchema> = {
       ...post,
-      isWrittenBySelf: postId === req.member?.id,
+      isWrittenBySelf,
       isLikedBySelf: !!liked,
     };
     res.json(ret);
