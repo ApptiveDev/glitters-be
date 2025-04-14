@@ -8,7 +8,7 @@ import { authMiddleware } from '@/domains/auth/middleware';
 const institutionRouter = express.Router();
 const routerPrefix = '/institutions';
 
-institutionRouter.get(`${routerPrefix}`, authMiddleware, getInstitutions);
+institutionRouter.get(`${routerPrefix}`, getInstitutions);
 institutionRouter.get(`${routerPrefix}/bounds`, authMiddleware, getInstitutionBounds);
 
 export default institutionRouter;
