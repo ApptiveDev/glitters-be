@@ -425,6 +425,21 @@ paths:
                 required:
                   - message
   /api/members/me:
+    delete:
+      summary: 회원 탈퇴
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
+      responses:
+        "200":
+          description: 회원탈퇴 완료
     get:
       summary: 내 정보 조회
       security:
