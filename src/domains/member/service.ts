@@ -1,7 +1,9 @@
 import { AuthenticatedRequest } from '@/domains/auth/types';
 import { GetActivePostCountResponse, GetMyInfoResponse } from '@/domains/member/types';
+import { Response } from 'express';
 import prisma from '@/utils/database';
 import { Member } from '.prisma/client';
+import { StatusCodes } from 'http-status-codes';
 
 export async function getMyInfo(req: AuthenticatedRequest, res: GetMyInfoResponse) {
   res.json({ member: req.member });
@@ -18,6 +20,12 @@ export async function getActivePostCount(req: AuthenticatedRequest, res: GetActi
     }
   });
   res.json({ count });
+}
+
+export async function deactivateSelf(req: AuthenticatedRequest, res: Response) {
+  const { member } = req;
+  await deactivateMember(member!.id);
+  res.status(StatusCodes.OK).send();
 }
 
 export async function deactivateMember(member: Member | number) {
