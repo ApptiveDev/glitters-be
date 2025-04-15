@@ -8,6 +8,16 @@ import { ErrorSchema } from '../../../src/domains/error/schema';
 
 export const memberApiPaths = {
   [`${currentApiPrefix}/members/me`]: {
+    delete: {
+      summary: '회원 탈퇴',
+      security: [{ bearerAuth: [] }],
+      parameters: [tokenHeader],
+      responses: {
+        200: {
+          description: '회원탈퇴 완료'
+        }
+      }
+    },
     get: {
       summary: '내 정보 조회',
       security: [{ bearerAuth: [] }],
