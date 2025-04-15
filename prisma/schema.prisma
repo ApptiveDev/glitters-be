@@ -64,7 +64,7 @@ model Like {
   memberId  Int      @map("member_id")
 
   member Member @relation(fields: [memberId], references: [id])
-  post   Post   @relation(fields: [postId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@map("likes")
 }
@@ -75,7 +75,7 @@ model Marker {
   latitude  Float @map("latitude")
   longitude Float @map("longitude")
 
-  post Post @relation(fields: [postId], references: [id])
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@map("markers")
 }
