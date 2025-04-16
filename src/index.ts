@@ -12,6 +12,7 @@ import swaggerUi from 'swagger-ui-express';
 import '@/utils/config';
 import path from 'path';
 import fs from 'fs';
+import { getMarkdownHtml } from '@/utils/docs';
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 3000;
@@ -30,8 +31,8 @@ app.use(API_PREFIX, likeRouter);
 
 app.set('trust proxy', 1);
 
-app.get('/', (_, res) => {
-  res.send('Hello, Express!');
+app.get('/ping', (_, res) => {
+  res.send('Pong!');
 });
 
 app.listen(PORT, () => {
@@ -42,3 +43,9 @@ const swaggerPath = path.join(__dirname, '../docs/openapi.json');
 const swaggerDocument = JSON.parse(fs.readFileSync(swaggerPath, 'utf8'));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.get('/privacy-policy', async(_, res) => {
+  res.send(await getMarkdownHtml('privacy_policy.md'));
+});
+app.get('/terms-of-service', async(_, res) => {
+  res.send(await getMarkdownHtml('terms_of_service.md'));
+});
