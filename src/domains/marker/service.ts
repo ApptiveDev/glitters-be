@@ -13,6 +13,13 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
         }
       }
     },
+    where: {
+      post: {
+        expiresAt: {
+          gt: new Date()
+        },
+      },
+    },
     orderBy: {
       post: {
         createdAt: 'desc',
