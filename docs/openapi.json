@@ -143,7 +143,8 @@
                 "type": "object",
                 "properties": {
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "email"
                   },
                   "password": {
                     "type": "string",
@@ -188,7 +189,10 @@
                           "type": "integer"
                         },
                         "email": {
-                          "type": "string"
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         },
                         "name": {
                           "type": "string"
@@ -294,7 +298,10 @@
                           "type": "integer"
                         },
                         "email": {
-                          "type": "string"
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         },
                         "name": {
                           "type": "string"
@@ -718,7 +725,10 @@
                           "type": "integer"
                         },
                         "email": {
-                          "type": "string"
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         },
                         "name": {
                           "type": "string"
@@ -870,6 +880,9 @@
                     "id": {
                       "type": "integer"
                     },
+                    "iconIdx": {
+                      "type": "integer"
+                    },
                     "title": {
                       "type": "string"
                     },
@@ -903,6 +916,7 @@
                   },
                   "required": [
                     "id",
+                    "iconIdx",
                     "title",
                     "content",
                     "createdAt",
@@ -1039,6 +1053,9 @@
                     "type": "string",
                     "maxLength": 63
                   },
+                  "iconIdx": {
+                    "type": "integer"
+                  },
                   "latitude": {
                     "type": "number"
                   },
@@ -1050,6 +1067,7 @@
                   "title",
                   "content",
                   "address",
+                  "iconIdx",
                   "latitude",
                   "longitude"
                 ]
