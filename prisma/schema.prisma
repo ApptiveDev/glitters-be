@@ -39,6 +39,7 @@ model Member {
 model Post {
   id            Int      @id @default(autoincrement()) @map("id")
   authorId      Int      @map("author_id")
+  iconIdx       Int      @default(0) @map("icon_idx")
   title         String   @map("title") @db.VarChar(63)
   content       String   @map("content") @db.VarChar(255)
   createdAt     DateTime @default(now()) @map("created_at")
