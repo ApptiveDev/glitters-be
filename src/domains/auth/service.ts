@@ -182,7 +182,7 @@ export async function handleLogout(req: AuthenticatedRequest, res: Response) {
   try {
     const token = req.headers.authorization!.split(' ')[1];
     await saveInvalidatedToken(token);
-    res.status(StatusCodes.OK);
+    res.status(StatusCodes.OK).send();
   } catch(error) {
     sendAndTrace(res, error);
   }
