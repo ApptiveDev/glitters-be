@@ -8,6 +8,7 @@ import {
   RegisterResponseBodySchema,
 } from '../../../src/domains/auth/schema';
 import { ErrorSchema } from '../../../src/domains/error/schema';
+import { tokenHeader } from '../headers';
 
 export const authApiPaths = {
   [`${currentApiPrefix}/verify-email`]: {
@@ -99,6 +100,20 @@ export const authApiPaths = {
         },
       },
     },
+  },
+  [`${currentApiPrefix}/logout`]: {
+    post: {
+      summary: '로그아웃',
+      security: [{bearerAuth: []}],
+      parameters: [
+        tokenHeader,
+      ],
+      responses: {
+        200: {
+          description: '로그아웃 완료',
+        }
+      }
+    }
   },
 
   [`${currentApiPrefix}/login`]: {

@@ -7,6 +7,7 @@ import {
   sendVerificationCodeEmail,
 } from '@/domains/auth/utils';
 import {
+  AuthenticatedJWTPayload, AuthenticatedRequest,
   EmailCodeInputRequest,
   EmailVerifyRequest,
   LoginRequest,
@@ -23,6 +24,8 @@ import {
   EmailVerifyRequestBodySchema,
   RegisterRequestBodySchema,
 } from '@/domains/auth/schema';
+import jwt from 'jsonwebtoken';
+import redis from '@/utils/redis';
 
 export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Response) {
   try {
@@ -173,4 +176,32 @@ export async function handleLogin(req: LoginRequest, res: LoginResponse) {
   } catch (error) {
     sendAndTrace(res, error);
   }
+}
+
+export async function handleLogout(req: AuthenticatedRequest, res: Response) {
+  try {
+    const token = req.headers.authorization!.split(' ')[1];
+    await saveInvalidatedToken(token);
+    res.status(StatusCodes.OK).send();
+  } catch(error) {
+    sendAndTrace(res, error);
+  }
+}
+
+async function saveInvalidatedToken(accessToken: string) {
+  const decoded = jwt.decode(accessToken) as AuthenticatedJWTPayload;
+
+  if (!decoded || !decoded.exp) {
+    return;
+  }
+
+  const exp = decoded.exp;
+  const now = Math.floor(Date.now() / 1000);
+  const ttl = exp - now;
+
+  if (ttl <= 0) {
+    return;
+  }
+
+  await redis.set(`access_token:${accessToken}`, 'valid', 'EX', ttl);
 }

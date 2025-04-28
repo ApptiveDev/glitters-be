@@ -6,6 +6,7 @@
   "scripts": {
     "test": "vitest",
     "test:ci": "vitest run",
+    "test:type": "tsc --noEmit",
     "lint": "eslint",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
