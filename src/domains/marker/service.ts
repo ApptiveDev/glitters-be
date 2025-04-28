@@ -18,6 +18,7 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
         expiresAt: {
           gt: new Date()
         },
+        isDeactivated: false,
       },
     },
     orderBy: {
