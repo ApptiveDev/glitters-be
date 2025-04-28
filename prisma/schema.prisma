@@ -15,7 +15,7 @@ datasource db {
 
 model Member {
   id            Int      @id @default(autoincrement()) @map("id")
-  email         String   @unique @map("email") @db.VarChar(255)
+  email         String?  @unique @map("email") @db.VarChar(255)
   name          String   @map("name") @db.VarChar(20)
   password      String   @map("password") @db.VarChar(88)
   birth         DateTime @default(now())
