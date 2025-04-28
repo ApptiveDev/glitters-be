@@ -53,6 +53,9 @@ export async function createReport(req: CreateReportRequest, res: Response) {
 }
 
 async function handleReportIncrement(updateResult: Member) {
+  if(updateResult.isDeactivated || !updateResult.email) { // 이미 탈퇴한 사용자인 경우
+    return;
+  }
   // 경고 5회 이상일 경우 계정 삭제 및 블랙리스트 등록
   if(updateResult.reportedCount >= 5) {
     // 이미 블랙리스트인 경우
