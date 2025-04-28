@@ -15,6 +15,7 @@
     "gen:openapi": "pnpm db:generate && tsx scripts/openapi/index.ts",
     "gen:env:stag": "cross-env NODE_ENV=staging tsx scripts/env/encode.ts",
     "gen:env:prod": "cross-env NODE_ENV=production tsx scripts/env/encode.ts",
+    "seed:posts": "cross-env NODE_ENV=staging tsx scripts/mock/createPost.ts",
     "prepare": "husky"
   },
   "keywords": [],
