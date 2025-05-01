@@ -2,12 +2,14 @@ import prisma from '@/utils/database';
 import {
   comparePassword,
   generateToken,
-  hashPassword, sendVerificationCodeEmail,
+  hashPassword,
+  isValidEmail,
+  sendVerificationCodeEmail,
 } from '@/domains/auth/utils';
 import {
+  AuthenticatedJWTPayload, AuthenticatedRequest,
   EmailCodeInputRequest,
   EmailVerifyRequest,
-  EmailVerifyResponse,
   LoginRequest,
   LoginResponse,
   RegisterRequest,
@@ -20,22 +22,25 @@ import { getPasswordExcludedMember } from '@/domains/member/utils';
 import {
   EmailCodeInputRequestBodySchema,
   EmailVerifyRequestBodySchema,
+  RegisterRequestBodySchema,
 } from '@/domains/auth/schema';
+import jwt from 'jsonwebtoken';
+import redis from '@/utils/redis';
 
-export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: EmailVerifyResponse) {
+export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Response) {
   try {
     const { email, code } = EmailCodeInputRequestBodySchema.parse(req.body);
     const targetEmail = await prisma.emailVerification.findFirst({
       where: {
         email,
-        verification_number: code,
-        is_verified: false,
-        expires_at: {
+        verificationNumber: code,
+        isVerified: false,
+        expiresAt: {
           gt: new Date(),
         }
       },
       orderBy: {
-        created_at: 'desc',
+        createdAt: 'desc',
       }
     });
     if(! targetEmail) {
@@ -47,10 +52,10 @@ export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Emai
         id: targetEmail.id
       },
       data: {
-        is_verified: true,
+        isVerified: true,
       }
     });
-    res.status(StatusCodes.ACCEPTED).send();
+    res.status(StatusCodes.CREATED).send();
   } catch (error) {
     sendAndTrace(res, error);
   }
@@ -59,43 +64,66 @@ export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Emai
 export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Response) {
   try {
     const { email } = EmailVerifyRequestBodySchema.parse(req.body);
+    if(! await isValidEmail(email)) {
+      sendError(res, '등록되지 않은 이메일 도메인입니다.', StatusCodes.BAD_REQUEST);
+      return;
+    }
+    const blacklisted = await prisma.blacklist.findFirst({
+      where: {
+        email
+      }
+    });
+    if(blacklisted) {
+      const date = blacklisted.createdAt;
+      sendError(res, `이용약관을 위반하여 재가입이 제한된 이메일입니다(${date.toDateString()}). 관리자에게 문의해주세요`, StatusCodes.FORBIDDEN);
+      return;
+    }
     const code = await sendVerificationCodeEmail(email);
     await prisma.emailVerification.updateMany({
       where: {
         email,
       },
       data: {
-        expires_at: new Date(),
+        expiresAt: new Date(),
       }
     });
     await prisma.emailVerification.create({
       data: {
         email,
-        verification_number: code,
-        is_verified: false,
-        expires_at: new Date(Date.now() + 5 * 60 * 1000),
+        verificationNumber: code,
+        isVerified: false,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       }
     });
-    res.status(StatusCodes.ACCEPTED).send();
+    res.status(StatusCodes.CREATED).send();
   } catch (error) {
     sendAndTrace(res, error);
   }
 }
 
 export async function handleRegister(req: RegisterRequest, res: RegisterResponse) {
-  const { email, name, password } = req.body;
-
   try {
+    const { email, name, password, birth, termsAccepted } = RegisterRequestBodySchema.parse(req.body);
+    const blacklisted = await prisma.blacklist.findFirst({
+      where: {
+        email
+      }
+    });
+    if(blacklisted) {
+      const date = blacklisted.createdAt;
+      sendError(res, `이용약관을 위반하여 재가입이 제한된 이메일입니다(${date.toDateString()}). 관리자에게 문의해주세요`, StatusCodes.FORBIDDEN);
+      return;
+    }
     const verifiedEmail = await prisma.emailVerification.findFirst({
       where: {
         email,
-        is_verified: true,
-        expires_at: {
+        isVerified: true,
+        expiresAt: {
           gt: new Date(),
         },
       },
       orderBy: {
-        created_at: 'desc',
+        createdAt: 'desc',
       },
     });
     if (! verifiedEmail) {
@@ -113,6 +141,8 @@ export async function handleRegister(req: RegisterRequest, res: RegisterResponse
       data: {
         email,
         name,
+        birth,
+        termsAccepted,
         password: hashedPassword,
       },
     });
@@ -146,4 +176,32 @@ export async function handleLogin(req: LoginRequest, res: LoginResponse) {
   } catch (error) {
     sendAndTrace(res, error);
   }
+}
+
+export async function handleLogout(req: AuthenticatedRequest, res: Response) {
+  try {
+    const token = req.headers.authorization!.split(' ')[1];
+    await saveInvalidatedToken(token);
+    res.status(StatusCodes.OK).send();
+  } catch(error) {
+    sendAndTrace(res, error);
+  }
+}
+
+async function saveInvalidatedToken(accessToken: string) {
+  const decoded = jwt.decode(accessToken) as AuthenticatedJWTPayload;
+
+  if (!decoded || !decoded.exp) {
+    return;
+  }
+
+  const exp = decoded.exp;
+  const now = Math.floor(Date.now() / 1000);
+  const ttl = exp - now;
+
+  if (ttl <= 0) {
+    return;
+  }
+
+  await redis.set(`access_token:${accessToken}`, 'valid', 'EX', ttl);
 }

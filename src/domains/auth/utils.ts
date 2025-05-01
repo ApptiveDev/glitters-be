@@ -4,6 +4,7 @@ import { Member } from '.prisma/client';
 import { AuthenticatedJWTPayload } from '@/domains/auth/types';
 import { sendEmail } from '@/utils/email';
 import '@/utils/config';
+import prisma from '@/utils/database';
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 const PASSWORD_SECRET = process.env.PASSWORD_SECRET as string;
@@ -15,6 +16,16 @@ function generateVerificationCode(length: number = 6): string {
     code += digits[Math.floor(Math.random() * digits.length)];
   }
   return code;
+}
+
+export async function isValidEmail(email: string) {
+  const domain = email.split('@')[1];
+  const institutions = await prisma.institution.findMany({
+    where: {
+      emailDomain: `@${domain}`
+    }
+  });
+  return institutions.length > 0;
 }
 
 export async function sendVerificationCodeEmail(

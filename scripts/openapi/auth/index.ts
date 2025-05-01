@@ -1,13 +1,14 @@
-import { currentApiPrefix } from '../../src/constants';
+import { currentApiPrefix } from '../../../src/constants';
 import {
   EmailCodeInputRequestBodySchema,
   EmailVerifyRequestBodySchema,
-  EmailVerifyResponseBodySchema,
   LoginRequestBodySchema,
   LoginResponseBodySchema,
   RegisterRequestBodySchema,
   RegisterResponseBodySchema,
-} from '../../src/domains/auth/schema';
+} from '../../../src/domains/auth/schema';
+import { ErrorSchema } from '../../../src/domains/error/schema';
+import { tokenHeader } from '../headers';
 
 export const authApiPaths = {
   [`${currentApiPrefix}/verify-email`]: {
@@ -22,14 +23,25 @@ export const authApiPaths = {
         },
       },
       responses: {
-        202: {
+        201: {
           description: '인증 코드 전송 성공',
+        },
+        400: {
+          description: '등록되지 않은 이메일 도메인',
           content: {
             'application/json': {
-              schema: EmailVerifyResponseBodySchema,
+              schema: ErrorSchema,
             },
           },
         },
+        403: {
+          description: '가입이 제한된 이메일',
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            },
+          }
+        }
       },
     },
     put: {
@@ -43,16 +55,16 @@ export const authApiPaths = {
         },
       },
       responses: {
-        202: {
+        201: {
           description: '인증 성공',
-          content: {
-            'application/json': {
-              schema: EmailVerifyResponseBodySchema,
-            },
-          },
         },
         400: {
           description: '코드 오류 또는 만료',
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            },
+          },
         },
       },
     },
@@ -60,7 +72,7 @@ export const authApiPaths = {
 
   [`${currentApiPrefix}/register`]: {
     post: {
-      summary: '회원가입',
+      summary: '회원가입 (이메일 인증 선행 필요)',
       requestBody: {
         required: true,
         content: {
@@ -80,9 +92,28 @@ export const authApiPaths = {
         },
         400: {
           description: '이메일 미인증 또는 중복',
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            },
+          },
         },
       },
     },
+  },
+  [`${currentApiPrefix}/logout`]: {
+    post: {
+      summary: '로그아웃',
+      security: [{bearerAuth: []}],
+      parameters: [
+        tokenHeader,
+      ],
+      responses: {
+        200: {
+          description: '로그아웃 완료',
+        }
+      }
+    }
   },
 
   [`${currentApiPrefix}/login`]: {
@@ -107,6 +138,11 @@ export const authApiPaths = {
         },
         400: {
           description: '이메일 또는 비밀번호 오류',
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            },
+          },
         },
       },
     },

@@ -7,6 +7,7 @@ import prisma from '@/utils/database';
 import { sendAndTrace, sendError } from '@/utils/network';
 import { StatusCodes } from 'http-status-codes';
 import rateLimit from 'express-rate-limit';
+import redis from '@/utils/redis';
 
 const oneDayInMs = 24 * 60 * 60 * 1000;
 
@@ -34,7 +35,7 @@ export async function authMiddleware(
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    sendError(res, '토큰이 필요합니다.', StatusCodes.BAD_REQUEST);
+    sendError(res, '토큰이 필요합니다.', StatusCodes.UNAUTHORIZED);
     return;
   }
 
@@ -42,6 +43,11 @@ export async function authMiddleware(
 
   try {
     const decoded = verifyToken(token);
+
+    if(await redis.exists(`access_token:${token}`)) {
+      sendError(res, '무효화된 토큰입니다.', StatusCodes.UNAUTHORIZED);
+      return;
+    }
 
     const member = await prisma.member.findUnique({
       where: { id: decoded.id },
@@ -51,7 +57,12 @@ export async function authMiddleware(
     });
 
     if (!member) {
-      sendError(res, '토큰 검증 실패', StatusCodes.BAD_REQUEST);
+      sendError(res, '토큰 검증 실패', StatusCodes.UNAUTHORIZED);
+      return;
+    }
+
+    if (member.isDeactivated) {
+      sendError(res, '탈퇴한 사용자의 인증 정보입니다.', StatusCodes.UNAUTHORIZED);
       return;
     }
 
