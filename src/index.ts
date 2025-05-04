@@ -67,7 +67,6 @@ export async function loadRouters() {
         apiRouter.use(currentApiPrefix, router);
       }
     } catch (err) {
-      console.error(err);
       console.warn(`controller${ext} not found in ${domain}, skipping`);
     }
   }
