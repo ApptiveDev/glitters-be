@@ -4,10 +4,9 @@ import {
 import { NextFunction, Response } from 'express';
 import { verifyToken } from '@/domains/auth/utils';
 import prisma from '@/utils/database';
-import { sendAndTrace, sendError } from '@/utils/network';
-import { StatusCodes } from 'http-status-codes';
 import rateLimit from 'express-rate-limit';
 import redis from '@/utils/redis';
+import { UnauthorizedError } from '@/domains/error/HttpError';
 
 const oneDayInMs = 24 * 60 * 60 * 1000;
 
@@ -29,46 +28,38 @@ export function verifyEmailCodeLimiter() {
 
 export async function authMiddleware(
   req: AuthenticatedRequest,
-  res: Response,
+  _: Response,
   next: NextFunction
 ) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    sendError(res, '토큰이 필요합니다.', StatusCodes.UNAUTHORIZED);
-    return;
+    throw new UnauthorizedError('토큰이 필요합니다.');
   }
 
   const token = authHeader.split(' ')[1];
 
-  try {
-    const decoded = verifyToken(token);
+  const decoded = verifyToken(token);
 
-    if(await redis.exists(`access_token:${token}`)) {
-      sendError(res, '무효화된 토큰입니다.', StatusCodes.UNAUTHORIZED);
-      return;
-    }
-
-    const member = await prisma.member.findUnique({
-      where: { id: decoded.id },
-      omit: {
-        password: true,
-      },
-    });
-
-    if (!member) {
-      sendError(res, '토큰 검증 실패', StatusCodes.UNAUTHORIZED);
-      return;
-    }
-
-    if (member.isDeactivated) {
-      sendError(res, '탈퇴한 사용자의 인증 정보입니다.', StatusCodes.UNAUTHORIZED);
-      return;
-    }
-
-    req.member = member;
-    next();
-  } catch (error: any) {
-    sendAndTrace(res, error);
+  if(await redis.exists(`access_token:${token}`)) {
+    throw new UnauthorizedError('토큰이 필요합니다.');
   }
+
+  const member = await prisma.member.findUnique({
+    where: { id: decoded.id },
+    omit: {
+      password: true,
+    },
+  });
+
+  if (!member) {
+    throw new UnauthorizedError('토큰 검증 실패');
+  }
+
+  if (member.isDeactivated) {
+    throw new UnauthorizedError('탈퇴한 사용자입니다.');
+  }
+
+  req.member = member;
+  next();
 }

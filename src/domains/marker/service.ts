@@ -1,6 +1,7 @@
 import { GetMarkersResponse } from '@/domains/marker/types';
 import prisma from '@/utils/database';
 import { AuthenticatedRequest } from '@/domains/auth/types';
+import { StatusCodes } from 'http-status-codes';
 
 export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersResponse) {
   const markers = await prisma.marker.findMany({
@@ -36,7 +37,7 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
     createdAt: marker.post?.createdAt,
     isWrittenBySelf: marker.post?.authorId === req.member?.id
   }));
-  res.json({
+  res.status(StatusCodes.OK).json({
     markers: flattened,
   });
 }

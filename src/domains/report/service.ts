@@ -1,55 +1,47 @@
 import { CreateReportRequest } from '@/domains/report/types';
 import { Response } from 'express';
 import { CreateReportRequestBodySchema } from '@/domains/report/schema';
-import { sendAndTrace, sendError } from '@/utils/network';
 import { StatusCodes } from 'http-status-codes';
 import { z } from 'zod';
 import { PasswordExcludedMember } from '@/domains/member/types';
 import prisma from '@/utils/database';
 import { Member } from '.prisma/client';
 import { deactivateMember } from '@/domains/member/service';
-
+import { BadRequestError, NotFoundError } from '@/domains/error/HttpError';
 export async function createReport(req: CreateReportRequest, res: Response) {
-  try {
-    const createInput = CreateReportRequestBodySchema.parse(req.body);
-    const reportType = createInput.reportType;
-    if((reportType === 'CHATROOM_REPORT' && ! createInput.chatroomId)
-      || (reportType === 'POST_REPORT' && ! createInput.postId)) {
-      sendError(res, '잘못된 요청입니다.', StatusCodes.BAD_REQUEST);
-      return;
-    }
-    const reportedId = await getReportedMemberId(createInput, req.member!);
-    const reporterId = req.member!.id;
-    if(! reportedId) {
-      sendError(res, '이미 탈퇴한 사용자이거나, 없는 게시글(채팅방)입니다.', StatusCodes.NOT_FOUND);
-      return;
-    }
-    if(reportedId === reporterId) {
-      sendError(res, '자기 자신이 작성한 글은 신고할 수 없습니다.', StatusCodes.BAD_REQUEST);
-      return;
-    }
-    await prisma.report.create({
-      data: {
-        ...createInput,
-        reporterId,
-        reportedId,
-      }
-    });
-    const updateResult = await prisma.member.update({
-      where: {
-        id: reportedId,
-      },
-      data: {
-        reportedCount: {
-          increment: 1,
-        }
-      }
-    });
-    await handleReportIncrement(updateResult);
-    res.status(StatusCodes.CREATED).send();
-  } catch(error) {
-    sendAndTrace(res, error);
+  const createInput = CreateReportRequestBodySchema.parse(req.body);
+  const reportType = createInput.reportType;
+  if((reportType === 'CHATROOM_REPORT' && ! createInput.chatroomId)
+    || (reportType === 'POST_REPORT' && ! createInput.postId)) {
+    throw new BadRequestError('잘못된 요청입니다.');
   }
+  const reportedId = await getReportedMemberId(createInput, req.member!);
+  const reporterId = req.member!.id;
+  if(! reportedId) {
+    throw new NotFoundError('이미 탈퇴한 사용자이거나, 없는 게시글(채팅방)입니다.');
+  }
+  if(reportedId === reporterId) {
+    throw new BadRequestError('자기 자신이 작성한 글은 신고할 수 없습니다.');
+  }
+  await prisma.report.create({
+    data: {
+      ...createInput,
+      reporterId,
+      reportedId,
+    }
+  });
+  const updateResult = await prisma.member.update({
+    where: {
+      id: reportedId,
+    },
+    data: {
+      reportedCount: {
+        increment: 1,
+      }
+    }
+  });
+  await handleReportIncrement(updateResult);
+  res.status(StatusCodes.CREATED).send();
 }
 
 async function handleReportIncrement(updateResult: Member) {
