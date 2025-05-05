@@ -64,7 +64,7 @@ export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Resp
 export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Response) {
   try {
     const { email } = EmailVerifyRequestBodySchema.parse(req.body);
-    if(! await isValidEmail(email)) {
+    if(! (await isValidEmail(email))) {
       sendError(res, '등록되지 않은 이메일 도메인입니다.', StatusCodes.BAD_REQUEST);
       return;
     }
