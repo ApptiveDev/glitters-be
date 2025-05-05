@@ -6,7 +6,7 @@ import { Member } from '.prisma/client';
 import { StatusCodes } from 'http-status-codes';
 
 export async function getMyInfo(req: AuthenticatedRequest, res: GetMyInfoResponse) {
-  res.json({ member: req.member });
+  res.status(StatusCodes.OK).json({ member: req.member });
 }
 
 export async function getActivePostCount(req: AuthenticatedRequest, res: GetActivePostCountResponse) {
@@ -19,7 +19,7 @@ export async function getActivePostCount(req: AuthenticatedRequest, res: GetActi
       }
     }
   });
-  res.json({ count });
+  res.status(StatusCodes.OK).json({ count });
 }
 
 export async function deactivateSelf(req: AuthenticatedRequest, res: Response) {
