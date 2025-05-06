@@ -23,6 +23,7 @@ model Member {
   reportedCount Int      @default(0) @map("reported_count")
   isDeactivated Boolean  @default(false) @map("is_deactivated")
   termsAccepted Boolean  @default(false) @map("terms_accepted")
+  expoToken     String?  @map("expo_token") @db.VarChar(255)
 
   posts              Post[]
   likes              Like[]
@@ -78,6 +79,7 @@ model Marker {
 
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
+  @@index([latitude, longitude])
   @@map("markers")
 }
 

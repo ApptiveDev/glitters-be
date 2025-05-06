@@ -15,7 +15,7 @@ import {
 } from '@/domains/post/schema';
 import { z } from 'zod';
 import { Post } from '@/schemas';
-import { PasswordExcludedMember } from '@/domains/member/types';
+import { PublicMember } from '@/domains/member/types';
 import redis from '@/utils/redis';
 import { BadRequestError, NotFoundError } from '@/domains/error/HttpError';
 
@@ -47,7 +47,7 @@ export async function getPost(req: GetPostRequest, res: GetPostResponse) {
   res.status(StatusCodes.OK).json(ret);
 }
 
-export async function applyPostView(member: PasswordExcludedMember, post: Post) {
+export async function applyPostView(member: PublicMember, post: Post) {
   const ttl = 60 * 60 * 24;
   const viewCountKey = `viewed:${member.id}:${post.id}`;
 

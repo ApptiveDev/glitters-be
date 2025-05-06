@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { CreateReportRequestBodySchema } from '@/domains/report/schema';
 import { StatusCodes } from 'http-status-codes';
 import { z } from 'zod';
-import { PasswordExcludedMember } from '@/domains/member/types';
+import { PublicMember } from '@/domains/member/types';
 import prisma from '@/utils/database';
 import { Member } from '.prisma/client';
 import { deactivateMember } from '@/domains/member/service';
@@ -63,7 +63,7 @@ async function handleReportIncrement(updateResult: Member) {
   }
 }
 
-async function getReportedMemberId(createInput: z.infer<typeof CreateReportRequestBodySchema>, reporter: PasswordExcludedMember) {
+async function getReportedMemberId(createInput: z.infer<typeof CreateReportRequestBodySchema>, reporter: PublicMember) {
   let reportedId = 0;
   if(createInput.reportType === 'CHATROOM_REPORT') {
     // 채팅방 신고의 경우 채팅 요청자나 채팅 작성자 모두 신고당할 수 있음

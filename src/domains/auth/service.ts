@@ -17,7 +17,7 @@ import {
 } from '@/domains/auth/types';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { getPasswordExcludedMember } from '@/domains/member/utils';
+import { omitPrivateFields } from '@/domains/member/utils';
 import {
   EmailCodeInputRequestBodySchema,
   EmailVerifyRequestBodySchema,
@@ -90,7 +90,8 @@ export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Res
   res.status(StatusCodes.CREATED).send();
 }
 
-export async function handleRegister(req: RegisterRequest, res: RegisterResponse) {const { email, name, password, birth, termsAccepted } = RegisterRequestBodySchema.parse(req.body);
+export async function handleRegister(req: RegisterRequest, res: RegisterResponse) {
+  const { email, name, password, birth, termsAccepted } = RegisterRequestBodySchema.parse(req.body);
   const blacklisted = await prisma.blacklist.findFirst({
     where: {
       email
@@ -131,7 +132,7 @@ export async function handleRegister(req: RegisterRequest, res: RegisterResponse
     },
   });
   const token = generateToken(member);
-  res.status(StatusCodes.OK).json({ token, member: getPasswordExcludedMember(member)});
+  res.status(StatusCodes.OK).json({ token, member: omitPrivateFields(member)});
 }
 
 export async function handleLogin(req: LoginRequest, res: LoginResponse) {
@@ -150,7 +151,7 @@ export async function handleLogin(req: LoginRequest, res: LoginResponse) {
   }
 
   const token = generateToken(member);
-  res.status(StatusCodes.OK).json({ token, member: getPasswordExcludedMember(member) });
+  res.status(StatusCodes.OK).json({ token, member: omitPrivateFields(member) });
 }
 
 export async function handleLogout(req: AuthenticatedRequest, res: Response) {

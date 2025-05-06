@@ -1,7 +1,8 @@
 import { Member } from '.prisma/client';
-import { PasswordExcludedMember } from '@/domains/member/types';
+import { InternalMember, PublicMember } from '@/domains/member/types';
 
-export function getPasswordExcludedMember(member: Member): PasswordExcludedMember {
+export function omitPrivateFields(member: Member | InternalMember): PublicMember {
   delete (member as Partial<Member>).password;
+  delete (member as Partial<Member>).expoToken;
   return member;
 }

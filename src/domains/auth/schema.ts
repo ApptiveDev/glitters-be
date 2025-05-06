@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PasswordExcludedMemberSchema } from '@/domains/member/schema';
+import { PublicMemberSchema } from '@/domains/member/schema';
 import { MemberSchema } from '@/schemas';
 
 export const EmailCodeInputRequestBodySchema = z.object({
@@ -35,7 +35,7 @@ export const LoginRequestBodySchema = z.object({
 });
 
 export const LoginResponseBodySchema = z.object({
-  member: PasswordExcludedMemberSchema,
+  member: PublicMemberSchema,
   token: z.string(),
 });
 

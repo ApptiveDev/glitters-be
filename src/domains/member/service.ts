@@ -4,9 +4,10 @@ import { Response } from 'express';
 import prisma from '@/utils/database';
 import { Member } from '.prisma/client';
 import { StatusCodes } from 'http-status-codes';
+import { omitPrivateFields } from '@/domains/member/utils';
 
 export async function getMyInfo(req: AuthenticatedRequest, res: GetMyInfoResponse) {
-  res.status(StatusCodes.OK).json({ member: req.member });
+  res.status(StatusCodes.OK).json({ member: omitPrivateFields(req.member!) });
 }
 
 export async function getActivePostCount(req: AuthenticatedRequest, res: GetActivePostCountResponse) {

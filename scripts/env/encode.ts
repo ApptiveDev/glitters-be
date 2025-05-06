@@ -1,8 +1,14 @@
 import fs from 'fs';
 
-const path = process.env.NODE_ENV === 'development' ? '.env' : `.env.${process.env.NODE_ENV}`;
-const content = Buffer.from(fs.readFileSync(path).toString()).toString('base64');
+const envFiles = fs
+.readdirSync('.')
+.filter((file) => file.startsWith('.env') && fs.statSync(file).isFile());
 
-console.log('base64 encode completed\n');
-console.log(content);
+for (const file of envFiles) {
+  const content = fs.readFileSync(file, 'utf-8');
+  const base64 = Buffer.from(content).toString('base64');
 
+  console.log(`File: ${file}`);
+  console.log(base64);
+  console.log('\n---\n');
+}

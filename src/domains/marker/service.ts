@@ -41,3 +41,25 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
     markers: flattened,
   });
 }
+
+export function getNearbyMarkerCount(lat: number, lon: number, radiusKm = 0.1): Promise<number> {
+  const latDelta = radiusKm / 111;
+  const lonDelta = radiusKm / (111 * Math.cos((lat * Math.PI) / 180));
+
+  return prisma.marker.count({
+    where: {
+      latitude: {
+        gte: lat - latDelta,
+        lte: lat + latDelta,
+      },
+      longitude: {
+        gte: lon - lonDelta,
+        lte: lon + lonDelta,
+      },
+      post: {
+        isDeactivated: false,
+      },
+    },
+  });
+}
+

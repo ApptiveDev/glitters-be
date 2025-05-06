@@ -8,7 +8,9 @@ import {
   RegisterRequestBodySchema,
   RegisterResponseBodySchema,
 } from '@/domains/auth/schema';
-import { PasswordExcludedMemberSchema } from '@/domains/member/schema';
+import {
+  InternalMemberSchema,
+} from '@/domains/member/schema';
 import { JwtPayload } from 'jsonwebtoken';
 
 export interface AuthenticatedJWTPayload extends JwtPayload {
@@ -19,7 +21,7 @@ export interface AuthenticatedJWTPayload extends JwtPayload {
 
 export interface AuthenticatedRequest<Params = {}, ReqBody = {}, ReqQuery = {}> extends Request<
   Params, {}, ReqBody, ReqQuery> {
-  member?: z.infer<typeof PasswordExcludedMemberSchema>;
+  member?: z.infer<typeof InternalMemberSchema>;
 }
 
 export type EmailCodeInputRequest = Request<{}, {}, z.infer<typeof EmailVerifyRequestBodySchema>>;

@@ -870,6 +870,85 @@ paths:
                     type: string
                 required:
                   - message
+  /api/locations:
+    post:
+      summary: 위치정보 제공
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+              required:
+                - latitude
+                - longitude
+      responses:
+        "200":
+          description: 위치정보 제공 성공
+        "400":
+          description: 권한 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+  /api/notifications:
+    put:
+      summary: 푸쉬토큰 업데이트
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+              required:
+                - token
+      responses:
+        "200":
+          description: 푸쉬토큰 업데이트 성공
+        "400":
+          description: 권한 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
 components:
   securitySchemes:
     bearerAuth:

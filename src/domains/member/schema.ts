@@ -1,9 +1,10 @@
 import { MemberSchema} from '@/schemas';
 import { z } from 'zod';
 
-export const PasswordExcludedMemberSchema = MemberSchema.omit({ password: true });
+export const PublicMemberSchema = MemberSchema.omit({ password: true, expoToken: true });
+export const InternalMemberSchema = MemberSchema.omit({ password: true });
 export const GetMyInfoSchema = z.object({
-  member: PasswordExcludedMemberSchema,
+  member: PublicMemberSchema
 });
 
 export const GetActivePostCountResponseBodySchema = z.object({
