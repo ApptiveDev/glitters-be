@@ -9,3 +9,5 @@ const notificationRouter = express.Router();
 
 notificationRouter.put('/notifications', authMiddleware, handleExpoTokenInput);
 notificationRouter.post('/locations', authMiddleware, handleLocationInput);
+
+export default notificationRouter;
