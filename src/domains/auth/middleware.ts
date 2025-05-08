@@ -2,10 +2,9 @@ import {
   AuthenticatedRequest,
 } from '@/domains/auth/types';
 import { NextFunction, Response } from 'express';
-import { verifyToken } from '@/domains/auth/utils';
+import { isInvalidatedToken, verifyToken } from '@/domains/auth/utils';
 import prisma from '@/utils/database';
 import rateLimit from 'express-rate-limit';
-import redis from '@/utils/redis';
 import { UnauthorizedError } from '@/domains/error/HttpError';
 
 const oneDayInMs = 24 * 60 * 60 * 1000;
@@ -41,7 +40,7 @@ export async function authMiddleware(
 
   const decoded = verifyToken(token);
 
-  if(await redis.exists(`access_token:${token}`)) {
+  if(await isInvalidatedToken(token)) {
     throw new UnauthorizedError('토큰이 필요합니다.');
   }
 
