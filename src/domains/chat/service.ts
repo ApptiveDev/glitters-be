@@ -75,7 +75,7 @@ export async function createChatroom(req: CreateChatroomRequest, res: CreateChat
   }
   if(chatroom) {
     const chat = createPublishableChat(chatroom, member, content);
-    await ChatServer.getInstance().sendOrNotificate(chat, post.authorId);
+    await ChatServer.getInstance().createChat(chat, post.authorId);
     const outboundChat = createOutboundChat(chat, chatroom);
     res.status(StatusCodes.OK).json({
       ...outboundChat,
@@ -99,7 +99,7 @@ export async function createChatroom(req: CreateChatroomRequest, res: CreateChat
   });
   const publishableChat = createPublishableChat(createdChatroom, member, content);
   const outboundChat = createOutboundChat(publishableChat, createdChatroom);
-  await ChatServer.getInstance().sendOrNotificate(publishableChat, post.authorId);
+  await ChatServer.getInstance().createChat(publishableChat, post.authorId);
   res.status(StatusCodes.OK).json({
     ...outboundChat,
     authorNickname: createdChatroom.authorNickname,
