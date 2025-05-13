@@ -7,6 +7,7 @@ import { PublishableChatSchema } from '@/domains/chat/schema';
 import prisma from '@/utils/database';
 import { sendPushToMember } from '@/domains/notification/utils';
 import { PublishableChat } from '@/domains/chat/types';
+import { JsonWebTokenError } from 'jsonwebtoken';
 
 export const REDIS_CHANNEL_PREFIX = 'chatroom:';
 export default class ChatServer {
@@ -34,8 +35,12 @@ export default class ChatServer {
       const client = new ChatClient(this, ws, memberId);
       this.registerClient(client);
     } catch(e) {
-      this.sendErrorAndClose(ws, '서버 연결 중 에러가 발생했습니다.');
       console.error(e);
+      if(e instanceof JsonWebTokenError) {
+        this.sendErrorAndClose(ws, '사용자 인증 정보가 유효하지 않습니다.');
+        return;
+      }
+      this.sendErrorAndClose(ws, '서버 연결 중 에러가 발생했습니다.');
     }
   }
   // send chat to another client or publish push message
