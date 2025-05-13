@@ -9,7 +9,11 @@ import {
   CreateChatroomRequestBodySchema,
 } from '@/domains/chat/schema';
 import prisma from '@/utils/database';
-import { BadRequestError, NotFoundError } from '@/domains/error/HttpError';
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} from '@/domains/error/HttpError';
 import {
   createAuthorNickname,
   createRequesterNickname,
@@ -20,6 +24,7 @@ import { ChatRoom } from '@/schemas';
 import { InternalMember, PublicMember } from '@/domains/member/types';
 import { Prisma } from '.prisma/client';
 import { AuthenticatedRequest } from '@/domains/auth/types';
+import { isBlocked } from '@/domains/block/service';
 
 export async function getChatrooms(req: AuthenticatedRequest, res: GetChatroomsResponse) {
   const member = req.member!;
@@ -33,6 +38,7 @@ export async function getChatrooms(req: AuthenticatedRequest, res: GetChatroomsR
       authorNickname: true,
       requesterNickname: true,
       id: true,
+      isDeactivated: false,
       post: {
         omit: {
           authorId: true,
@@ -76,6 +82,10 @@ export async function createChatroom(req: CreateChatroomRequest, res: CreateChat
   if(! post) {
     throw new NotFoundError('존재하지 않는 게시글입니다.');
   }
+  const { authorId } = post;
+  if(await isBlocked(authorId, member.id)) { // 게시글 작성자가 차단된 경우
+    throw new ForbiddenError('채팅방을 개설할 수 없습니다.');
+  }
   if(chatroom) {
     const chat = createPublishableChat(chatroom, member, content);
     await ChatServer.getInstance().createChat(chat, post.authorId);
@@ -118,6 +128,11 @@ export async function findUnreadChats(member: PublicMember | number, chatroomId?
       receiverId: member,
       isRead: false,
       ...(chatroomId && { chatroomId }),
+      ...(chatroomId && {
+        chatroom: {
+          isDeactivated: false,
+        }
+      }),
     },
     select: {
       chatroomId: true,
