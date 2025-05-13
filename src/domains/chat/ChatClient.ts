@@ -58,7 +58,7 @@ export default class ChatClient {
       content,
     };
     // redis publish
-    pub.publish(`${REDIS_CHANNEL_PREFIX}${receiverId}`, JSON.stringify(publishable));
+    pub.publish(`${REDIS_CHANNEL_PREFIX}${chatroomId}:${receiverId}`, JSON.stringify(publishable));
   }
 
 
