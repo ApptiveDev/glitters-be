@@ -14,7 +14,7 @@ import prisma from '@/utils/database';
 
 export async function handleLocationInput(req: LocationInputRequest, res: Response) {
   const { latitude, longitude } = LocationInputRequestBodySchema.parse(req.body);
-  const postCount = await getNearbyMarkerCount(latitude, longitude);
+  const postCount = await getNearbyMarkerCount(req.member!, latitude, longitude);
   if(postCount === 0) {
     return;
   }
