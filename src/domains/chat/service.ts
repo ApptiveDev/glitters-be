@@ -41,6 +41,9 @@ export async function getChatrooms(req: AuthenticatedRequest, res: GetChatroomsR
       chats: {
         take: 1,
         orderBy: { createdAt: 'desc' },
+        omit: {
+          senderId: true,
+        }
       }
     },
   });
