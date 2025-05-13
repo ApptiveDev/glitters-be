@@ -45,6 +45,10 @@ export default class ChatClient {
       this.sendError('참여 중인 채팅방이 아닙니다.');
       return;
     }
+    if(chatroom.isDeactivated) {
+      this.sendError('종료된 채팅방입니다. 더이상 메시지를 보낼 수 없습니다.');
+      return;
+    }
     // sender가 아닌 사용자가 receiver
     const receiverId = chatroom.requesterId === this.memberId ? chatroom.authorId : chatroom.requesterId;
     const senderNickname = chatroom.requesterId

@@ -2,8 +2,11 @@ import { GetMarkersResponse } from '@/domains/marker/types';
 import prisma from '@/utils/database';
 import { AuthenticatedRequest } from '@/domains/auth/types';
 import { StatusCodes } from 'http-status-codes';
+import { getBlockedMembers } from '@/domains/block/service';
+import { InternalMember } from '@/domains/member/types';
 
 export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersResponse) {
+  const blockedIds = await getBlockedMembers(req.member!);
   const markers = await prisma.marker.findMany({
     include: {
       post: {
@@ -20,6 +23,9 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
           gt: new Date()
         },
         isDeactivated: false,
+        authorId: {
+          notIn: blockedIds,
+        }
       },
     },
     orderBy: {
@@ -42,7 +48,8 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
   });
 }
 
-export function getNearbyMarkerCount(lat: number, lon: number, radiusKm = 0.1): Promise<number> {
+export async function getNearbyMarkerCount(member: InternalMember, lat: number, lon: number, radiusKm = 0.1): Promise<number> {
+  const blockedIds = await getBlockedMembers(member);
   const latDelta = radiusKm / 111;
   const lonDelta = radiusKm / (111 * Math.cos((lat * Math.PI) / 180));
 
@@ -58,6 +65,9 @@ export function getNearbyMarkerCount(lat: number, lon: number, radiusKm = 0.1): 
       },
       post: {
         isDeactivated: false,
+        authorId: {
+          notIn: blockedIds,
+        }
       },
     },
   });
