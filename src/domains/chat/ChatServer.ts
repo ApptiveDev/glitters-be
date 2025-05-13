@@ -51,8 +51,8 @@ export default class ChatServer {
     ws.close(4000, message);
   }
 
-  async sendOrNotificate(payload: PublishableChat, receiverId: number) {
-    // 온/오프라인 체크 후 메시지 전송 방식 결정
+  async createChat(payload: PublishableChat, receiverId: number) {
+    // 온/오프라인 체크 후 메시지 전송 방식 결정, 추후 db 쿼리와 전송 로직 분리
     const {
       content,
       createdAt,
@@ -86,9 +86,9 @@ export default class ChatServer {
   async handleMessagePublish(_: string, channel: string, message: string) {
     // 누군가 메시지 publish
     try {
-      const receiverId = parseInt(channel.split(':')[1]);
+      const receiverId = parseInt(channel.split(':')[2]);
       const payload = JSON.parse(message);
-      await this.sendOrNotificate(payload, receiverId);
+      await this.createChat(payload, receiverId);
     } catch(e) {
       console.error(e);
     }
