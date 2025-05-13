@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>채팅 클라이언트</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    #log { white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; margin-bottom: 10px; }
+    #inputArea { display: flex; gap: 10px; }
+    #inputArea input, #inputArea button { font-size: 1rem; }
+  </style>
+</head>
+<body>
+
+<h1>WebSocket 채팅 클라이언트</h1>
+
+<label>
+  토큰:
+  <input id="token" placeholder="JWT Token" style="width: 400px">
+</label>
+<button onclick="connect()">서버 연결</button>
+
+<div id="log"></div>
+
+<div id="inputArea">
+  <input id="chatroomId" type="number" placeholder="채팅방 ID">
+  <input id="message" placeholder="보낼 메시지">
+  <button onclick="sendMessage()">전송</button>
+</div>
+
+<script>
+  let socket;
+
+  function log(msg) {
+    const el = document.getElementById('log');
+    el.textContent += msg + '\n';
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function connect() {
+    const token = document.getElementById('token').value.trim();
+    if (!token) return alert("토큰을 입력하세요.");
+
+    socket = new WebSocket(`ws://localhost:3000?token=${token}`);
+
+    socket.addEventListener('open', () => log('✅ 서버에 연결됨'));
+    socket.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'receivedChat') {
+        log(`💬 [받음] 채팅방 ${data.chatroomId} → ${data.content}`);
+      } else if (data.type === 'unreadChats') {
+        data.chats.forEach(chat => {
+          log(`📨 [안읽음] 채팅방 ${chat.chatroomId} → ${chat.content}`);
+        });
+      } else if (data.type === 'error') {
+        log(`❌ 오류: ${data.message}`);
+      }
+    });
+    socket.addEventListener('close', () => log('🔌 연결 종료됨'));
+    socket.addEventListener('error', (e) => log('⚠ 연결 오류: ' + e.message));
+  }
+
+  function sendMessage() {
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+      return alert('서버에 연결되어 있지 않습니다.');
+    }
+    const chatroomId = parseInt(document.getElementById('chatroomId').value, 10);
+    const content = document.getElementById('message').value.trim();
+    if (!chatroomId || !content) return alert("채팅방 ID와 메시지를 모두 입력하세요.");
+
+    const payload = {
+      type: 'sentChat',
+      chatroomId,
+      content,
+    };
+    socket.send(JSON.stringify(payload));
+    document.getElementById('message').value = '';
+  }
+</script>
+
+</body>
+</html>
