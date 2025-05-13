@@ -17,6 +17,7 @@
     "dev": "cross-env NODE_ENV=development nodemon -e ts,js,.env --exec \"tsx watch src/index.ts\"",
     "gen:openapi": "pnpm db:generate && tsx scripts/openapi/index.ts",
     "gen:env": "tsx scripts/env/encode.ts",
+    "gen:jwt": "tsx scripts/jwt/index.ts",
     "seed:posts": "cross-env NODE_ENV=staging tsx scripts/mock/createPost.ts",
     "prepare": "husky"
   },
