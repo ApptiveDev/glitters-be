@@ -7,6 +7,8 @@ import logger from '@/utils/logger';
 import swaggerUi from 'swagger-ui-express';
 import { getMarkdownHtml } from '@/utils/docs';
 import { pathToFileURL } from 'node:url';
+import * as http from 'node:http';
+import ChatServer from '@/domains/chat/ChatServer';
 
 export async function start() {
   const app = express();
@@ -21,7 +23,10 @@ export async function start() {
   // privacy policy, tos, api docs
   await registerDocumentRoutes(app);
 
-  app.listen(PORT, () => {
+  const httpServer = http.createServer(app);
+  new ChatServer(httpServer);
+
+  httpServer.listen(PORT, () => {
     console.log(`서버가 http://localhost:${PORT} 에서 실행 중입니다.`);
   });
 }

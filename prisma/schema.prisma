@@ -109,11 +109,14 @@ model Chat {
   receiverId Int      @map("receiver_id")
   isRead     Boolean  @map("is_read")
   createdAt  DateTime @default(now()) @map("created_at")
+  content    String   @db.Text()
 
   chatroom ChatRoom @relation(fields: [chatroomId], references: [id])
   sender   Member   @relation("SentChats", fields: [senderId], references: [id])
   receiver Member   @relation("ReceivedChats", fields: [receiverId], references: [id])
 
+  @@index(chatroomId)
+  @@index(createdAt)
   @@map("chats")
 }
 

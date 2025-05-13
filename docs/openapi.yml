@@ -949,6 +949,139 @@ paths:
                     type: string
                 required:
                   - message
+  /api/chatrooms:
+    get:
+      summary: 채팅방 정보 반환
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
+      responses:
+        "200":
+          description: 채팅방 정보 반환 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chatrooms:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        peerNickname:
+                          type: string
+                        post:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            iconIdx:
+                              type: integer
+                            title:
+                              type: string
+                            content:
+                              type: string
+                            createdAt:
+                              type: string
+                            expiresAt:
+                              type: string
+                            address:
+                              type: string
+                            isDeactivated:
+                              type: boolean
+                            likeCount:
+                              type: integer
+                            viewCount:
+                              type: integer
+                          required:
+                            - id
+                            - iconIdx
+                            - title
+                            - content
+                            - createdAt
+                            - expiresAt
+                            - address
+                            - isDeactivated
+                            - likeCount
+                            - viewCount
+                        lastMessage:
+                          type: object
+                          properties:
+                            createdAt:
+                              type: string
+                            content:
+                              type: string
+                          required:
+                            - createdAt
+                            - content
+                      required:
+                        - id
+                        - peerNickname
+                        - post
+                        - lastMessage
+                required:
+                  - chatrooms
+    post:
+      summary: 채팅방 생성
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt-token>
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                postId:
+                  type: integer
+                content:
+                  type: string
+                  maxLength: 255
+              required:
+                - postId
+                - content
+      responses:
+        "200":
+          description: 채팅방 생성 완료
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    const: receivedChat
+                  chatroomId:
+                    type: integer
+                  content:
+                    type: string
+                  createdAt:
+                    type: string
+                  authorNickname:
+                    type: string
+                required:
+                  - type
+                  - chatroomId
+                  - content
+                  - createdAt
+                  - authorNickname
 components:
   securitySchemes:
     bearerAuth:

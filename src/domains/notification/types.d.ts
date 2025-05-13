@@ -5,5 +5,5 @@ import {
 } from '@/domains/notification/schema';
 import { z } from 'zod';
 
-export type LocationInputRequest = AuthenticatedRequest<z.infer<typeof LocationInputRequestBodySchema>>;
-export type ExpoTokenInputRequest = AuthenticatedRequest<z.infer<typeof ExpoTokenInputRequestBodySchema>>;
+export type LocationInputRequest = AuthenticatedRequest<{}, z.infer<typeof LocationInputRequestBodySchema>>;
+export type ExpoTokenInputRequest = AuthenticatedRequest<{}, z.infer<typeof ExpoTokenInputRequestBodySchema>>;
