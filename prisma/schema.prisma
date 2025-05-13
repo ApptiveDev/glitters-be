@@ -33,6 +33,8 @@ model Member {
   receivedChats      Chat[]     @relation("ReceivedChats")
   createdReports     Report[]   @relation("CreatedReports")
   reportedReports    Report[]   @relation("ReportedReports")
+  issuedBlocks       Block[]    @relation("IssuedBlocks")
+  targetedBlocks     Block[]    @relation("TargetedBlocks")
 
   @@map("members")
 }
@@ -55,8 +57,26 @@ model Post {
   marker   Marker?
   reports  Report[]
   likes    Like[]
+  blocks   Block[]
 
   @@map("posts")
+}
+
+model Block {
+  id         Int      @id @default(autoincrement())
+  postId     Int?     @map("post_id")
+  chatroomId Int?     @map("chatroom_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  issuerId   Int      @map("issuer_id")
+  targetId   Int      @map("target_id")
+
+  issuer   Member    @relation("IssuedBlocks", fields: [issuerId], references: [id])
+  target   Member    @relation("TargetedBlocks", fields: [targetId], references: [id])
+  post     Post?     @relation(fields: [postId], references: [id], onDelete: NoAction)
+  chatroom ChatRoom? @relation(fields: [chatroomId], references: [id], onDelete: NoAction)
+
+  @@index(issuerId)
+  @@map("blocks")
 }
 
 model Like {
@@ -98,6 +118,7 @@ model ChatRoom {
   requester Member   @relation("RequestedRooms", fields: [requesterId], references: [id])
   reports   Report[]
   chats     Chat[]
+  blocks    Block[]
 
   @@map("chatrooms")
 }
