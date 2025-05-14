@@ -2,11 +2,42 @@ import { currentApiPrefix } from '../../../src/constants';
 import { tokenHeader } from '../headers';
 import {
   CreateChatroomRequestBodySchema,
-  CreateChatroomResponseSchema, GetChatroomsResponseBodySchema,
+  CreateChatroomResponseSchema,
+  GetChatroomsResponseBodySchema,
+  GetChatsRequestQuerySchema,
+  GetChatsResponseBodySchema,
 } from '../../../src/domains/chat/schema';
 import { ErrorSchema } from '../../../src/domains/error/schema';
 
 export const chatApiPaths = {
+  [`${currentApiPrefix}/chatrooms/:id`]: {
+    get: {
+      summary: '채팅방의 채팅 내역 반환. 채팅 id값이 cursor-(limit+1)~cursor-1 인 채팅을 반환.',
+      security: [{ bearerAuth: [] }],
+      parameters: [tokenHeader],
+      requestParams: {
+        query: GetChatsRequestQuerySchema,
+      },
+      responses: {
+        200: {
+          description: 'id값이 cursor-(limit+1)~cursor-1 인 채팅을 반환.',
+          content: {
+            'application/json': {
+              schema: GetChatsResponseBodySchema,
+            }
+          }
+        },
+        403: {
+          description: '본인이 참여하지 않은 채팅방 정보 조회 시도',
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            }
+          }
+        }
+      }
+    }
+  },
   [`${currentApiPrefix}/chatrooms`]: {
     get: {
       summary: '채팅방 정보 반환',
