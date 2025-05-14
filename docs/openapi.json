@@ -1559,12 +1559,16 @@
                               "receivedChat",
                               "sentChat"
                             ]
+                          },
+                          "id": {
+                            "type": "number"
                           }
                         },
                         "required": [
                           "content",
                           "createdAt",
-                          "type"
+                          "type",
+                          "id"
                         ]
                       }
                     }

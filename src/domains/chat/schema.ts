@@ -98,6 +98,7 @@ export const GetChatsResponseBodySchema = z.object({
     createdAt: true,
   }).extend({
     type: z.enum([MessageType.enum.receivedChat, MessageType.enum.sentChat]),
+    id: z.number(),
   })),
 });
 
