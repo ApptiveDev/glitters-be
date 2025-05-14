@@ -18,7 +18,8 @@
     "gen:openapi": "pnpm db:generate && tsx scripts/openapi/index.ts",
     "gen:env": "tsx scripts/env/encode.ts",
     "gen:jwt": "tsx scripts/jwt/index.ts",
-    "seed:posts": "cross-env NODE_ENV=staging tsx scripts/mock/createPost.ts",
+    "seed:posts": "tsx scripts/mock/createPost.ts",
+    "seed:member": "tsx scripts/mock/createMember.ts",
     "prepare": "husky"
   },
   "keywords": [],
