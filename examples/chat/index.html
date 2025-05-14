@@ -16,7 +16,7 @@
 
 <label>
   토큰:
-  <input id="token" placeholder="JWT Token" style="width: 400px">
+  <input id="token" placeholder="JWT" style="width: 400px">
 </label>
 <button onclick="connect()">서버 연결</button>
 
@@ -74,6 +74,7 @@
       content,
     };
     socket.send(JSON.stringify(payload));
+    log(`💬 [보냄] 채팅방 ${chatroomId} → ${content}`);
     document.getElementById('message').value = '';
   }
 </script>

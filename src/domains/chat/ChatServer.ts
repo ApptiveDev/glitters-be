@@ -2,14 +2,14 @@ import http, { IncomingMessage } from 'node:http';
 import WebSocket, { WebSocketServer } from 'ws';
 import { isInvalidatedToken, verifyToken } from '@/domains/auth/utils';
 import ChatClient from '@/domains/chat/ChatClient';
-import { pub, sub } from '@/utils/redis';
+import { sub } from '@/utils/redis';
 import { PublishableChatSchema } from '@/domains/chat/schema';
 import prisma from '@/utils/database';
 import { sendPushToMember } from '@/domains/notification/utils';
 import { PublishableChat } from '@/domains/chat/types';
 import { JsonWebTokenError } from 'jsonwebtoken';
 
-export const REDIS_CHANNEL_PREFIX = 'chatroom:';
+export const REDIS_CHANNEL_PREFIX = `chatroom-${process.env.NODE_ENV}:`;
 export default class ChatServer {
 
   private readonly wss: WebSocketServer;
@@ -112,7 +112,7 @@ export default class ChatServer {
         console.error(err);
       }
     });
-    pub.on('pmessage', this.handleMessagePublish.bind(this));
+    sub.on('pmessage', this.handleMessagePublish.bind(this));
   }
 
   bindConnectionHandler() {
