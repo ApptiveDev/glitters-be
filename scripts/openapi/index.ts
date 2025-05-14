@@ -11,6 +11,7 @@ import { reportApiPaths } from './report';
 import { likeApiPaths } from './like';
 import { notificationApiPaths } from './notification';
 import { chatApiPaths } from './chats';
+import { blockApiPaths } from './block';
 
 export const openApiDocument = createDocument({
   openapi: '3.1.0',
@@ -49,6 +50,7 @@ export const openApiDocument = createDocument({
     ...likeApiPaths,
     ...notificationApiPaths,
     ...chatApiPaths,
+    ...blockApiPaths
   },
 });
 
