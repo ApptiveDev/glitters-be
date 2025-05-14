@@ -25,7 +25,7 @@ export async function blockByPostOrChatroom(req: BlockRequest, res: Response) {
   if(! isBlocked) {
     throw new NotFoundError('존재하지 않는 게시글입니다.');
   }
-  res.status(StatusCodes.CREATED);
+  res.status(StatusCodes.CREATED).send();
 }
 
 export async function blockByChatroomId(member: InternalMember, blockInput: z.infer<typeof BlockRequestQuerySchema> ) {
