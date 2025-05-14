@@ -2,11 +2,15 @@ import {
   CreateChatroomRequest,
   CreateChatroomResponse,
   GetChatroomsResponse,
+  GetChatsRequest,
+  GetChatsResponse,
   OutboundChat,
   PublishableChat,
 } from '@/domains/chat/types';
 import {
   CreateChatroomRequestBodySchema,
+  GetChatsRequestPathSchema,
+  GetChatsRequestQuerySchema, GetChatsResponseBodySchema,
 } from '@/domains/chat/schema';
 import prisma from '@/utils/database';
 import {
@@ -24,7 +28,37 @@ import { ChatRoom } from '@/schemas';
 import { InternalMember, PublicMember } from '@/domains/member/types';
 import { Prisma } from '.prisma/client';
 import { AuthenticatedRequest } from '@/domains/auth/types';
-import { isBlocked } from '@/domains/block/service';
+  import { isBlocked } from '@/domains/block/service';
+import { z } from 'zod';
+
+
+export async function getChats(req: GetChatsRequest, res: GetChatsResponse) {
+  const { id } = GetChatsRequestPathSchema.parse(req.params);
+  const { cursor, limit } = GetChatsRequestQuerySchema.parse(req.query);
+  const member = req.member!;
+
+  if(! await getJoinedChatroomWithId(member, id)) {
+    throw new ForbiddenError('참여한 채팅방이 아닙니다.');
+  }
+
+  const chatData = await prisma.chat.findMany({
+    where: { chatroomId: id },
+    take: limit,
+    ...(cursor && {
+      skip: 1,
+      cursor: { id: cursor },
+    }),
+    orderBy: { id: 'desc' },
+  });
+  const chats: z.infer<typeof GetChatsResponseBodySchema>['chats'] = chatData.map(chat => ({
+    type: chat.senderId === member.id ? 'sentChat' : 'receivedChat',
+    content: chat.content,
+    createdAt: chat.createdAt,
+  }));
+  res.status(StatusCodes.OK).json({
+    chats
+  });
+}
 
 export async function getChatrooms(req: AuthenticatedRequest, res: GetChatroomsResponse) {
   const member = req.member!;

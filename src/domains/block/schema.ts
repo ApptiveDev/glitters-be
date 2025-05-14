@@ -9,11 +9,11 @@ export const BlockRequestQuerySchema = z.object({
       return Number(val);
     }
     return val;
-  }, z.number().min(1)),
+  }, z.number().min(1).optional()),
   chatroomId: z.preprocess(val => {
     if (typeof val === 'string' && /^\d+$/.test(val)) {
       return Number(val);
     }
     return val;
-  }, z.number().min(1)),
+  }, z.number().min(1).optional()),
 });
