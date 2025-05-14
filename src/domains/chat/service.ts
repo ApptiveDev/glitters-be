@@ -49,6 +49,7 @@ export async function getChatrooms(req: AuthenticatedRequest, res: GetChatroomsR
         orderBy: { createdAt: 'desc' },
         omit: {
           senderId: true,
+          chatroomId: true,
         }
       }
     },
