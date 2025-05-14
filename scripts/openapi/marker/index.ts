@@ -13,7 +13,7 @@ export const markerApiPaths = {
       parameters: [tokenHeader],
       responses: {
         200: {
-          description: '마커 목록 반환',
+          description: '마커 목록 반환 (차단된 마커 제외)',
           content: {
             'application/json': {
               schema: GetMarkersResponseBodySchema,

@@ -178,7 +178,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       responses:
         "200":
           description: 로그아웃 완료
@@ -266,7 +266,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       responses:
         "200":
           description: 기관 목록 반환
@@ -315,7 +315,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       responses:
         "200":
           description: 기관 경계 정보 반환
@@ -385,10 +385,10 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       responses:
         "200":
-          description: 마커 목록 반환
+          description: 마커 목록 반환 (차단된 마커 제외)
           content:
             application/json:
               schema:
@@ -457,7 +457,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       responses:
         "200":
           description: 회원탈퇴 완료
@@ -472,7 +472,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       responses:
         "200":
           description: 회원 정보 반환
@@ -536,7 +536,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       responses:
         "200":
           description: 24시간 이내 작성한 게시글 개수 반환
@@ -572,7 +572,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       responses:
         "200":
           description: 게시글 조회 성공
@@ -640,7 +640,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       responses:
         "200":
           description: 삭제 성공
@@ -678,7 +678,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       requestBody:
         required: true
         content:
@@ -746,7 +746,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       requestBody:
         required: true
         content:
@@ -809,7 +809,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
         - in: query
           name: postId
           required: true
@@ -845,7 +845,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
         - in: query
           name: postId
           required: true
@@ -882,7 +882,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       requestBody:
         required: true
         content:
@@ -923,7 +923,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       requestBody:
         required: true
         content:
@@ -961,7 +961,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       responses:
         "200":
           description: 채팅방 정보 반환 성공
@@ -1041,7 +1041,7 @@ paths:
           description: Bearer 토큰
           schema:
             type: string
-            example: Bearer <your-jwt-token>
+            example: Bearer <your-jwt>
       requestBody:
         required: true
         content:
@@ -1082,6 +1082,49 @@ paths:
                   - content
                   - createdAt
                   - authorNickname
+        "403":
+          description: 차단되어 채팅방을 생성할 수 없음
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+  /api/blocks:
+    post:
+      summary: 사용자 차단
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          description: Bearer 토큰
+          schema:
+            type: string
+            example: Bearer <your-jwt>
+        - in: query
+          name: blockType
+          schema:
+            type: string
+            enum:
+              - post
+              - chatroom
+          required: true
+        - in: query
+          name: postId
+          schema:
+            type: integer
+        - in: query
+          name: chatroomId
+          schema:
+            type: integer
+      responses:
+        "201":
+          description: 사용자 차단 성공
 components:
   securitySchemes:
     bearerAuth:

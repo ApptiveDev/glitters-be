@@ -4,6 +4,7 @@ import {
   CreateChatroomRequestBodySchema,
   CreateChatroomResponseSchema, GetChatroomsResponseBodySchema,
 } from '../../../src/domains/chat/schema';
+import { ErrorSchema } from '../../../src/domains/error/schema';
 
 export const chatApiPaths = {
   [`${currentApiPrefix}/chatrooms`]: {
@@ -43,6 +44,14 @@ export const chatApiPaths = {
             },
           },
         },
+        403: {
+          description: '차단되어 채팅방을 생성할 수 없음',
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            },
+          }
+        }
       },
     },
   },
