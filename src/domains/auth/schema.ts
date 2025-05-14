@@ -27,6 +27,7 @@ export const RegisterRequestBodySchema = MemberSchema.pick({
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[{\]};:'",.<>/?\\|`~]).{10,25}$/,
   ),
   email: z.string().email(),
+  gender: z.number().int().min(0).max(1),
 });
 
 export const LoginRequestBodySchema = z.object({

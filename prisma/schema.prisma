@@ -19,6 +19,7 @@ model Member {
   name          String   @map("name") @db.VarChar(20)
   password      String   @map("password") @db.VarChar(88)
   birth         DateTime @default(now())
+  gender        Int      @default(0)
   joinedAt      DateTime @default(now()) @map("joined_at")
   reportedCount Int      @default(0) @map("reported_count")
   isDeactivated Boolean  @default(false) @map("is_deactivated")
@@ -138,6 +139,7 @@ model Chat {
 
   @@index(chatroomId)
   @@index(createdAt)
+  @@index([chatroomId, receiverId])
   @@map("chats")
 }
 

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ChatRoomSchema, ChatSchema, PostSchema } from '@/schemas';
 
-export const MessageType = z.enum(['sentChat', 'receivedChat', 'read', 'error', 'publish', 'unreadChats']);
+export const MessageType = z.enum(['sentChat', 'receivedChat', 'read', 'error', 'publish']);
 
 export const ErrorMessageSchema = z.object({
   type: z.literal(MessageType.enum.error),
@@ -29,11 +29,6 @@ export const OutboundChatSchema = z.object({
   })
 );
 
-export const UnreadChatsSchema = z.object({
-  type: z.literal(MessageType.enum.unreadChats),
-  chats: z.array(OutboundChatSchema),
-});
-
 export const PublishableChatSchema = OutboundChatSchema.extend({
   type: z.literal(MessageType.enum.publish),
   senderId: z.number(),
@@ -54,7 +49,6 @@ export const SocketMessageSchema = z.union([
   PublishableChatSchema,
   ReadChatroomMessageSchema,
   ErrorMessageSchema,
-  UnreadChatsSchema,
 ]);
 
 export const CreateChatroomRequestBodySchema = z.object({
@@ -108,6 +102,7 @@ export const GetChatroomsResponseBodySchema = z.object({
     id: true,
   }).extend({
     peerNickname: z.string(),
+    myNickname: z.string(),
     post: PostSchema.omit({
       authorId: true,
     }),
@@ -115,5 +110,6 @@ export const GetChatroomsResponseBodySchema = z.object({
       createdAt: true,
       content: true,
     }),
+    unreadMessageCount: z.number(),
   }))
 });

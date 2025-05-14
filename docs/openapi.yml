@@ -106,12 +106,17 @@ paths:
                 termsAccepted:
                   type: boolean
                   const: true
+                gender:
+                  type: integer
+                  minimum: 0
+                  maximum: 1
               required:
                 - email
                 - password
                 - name
                 - birth
                 - termsAccepted
+                - gender
       responses:
         "200":
           description: 회원가입 성공
@@ -133,6 +138,8 @@ paths:
                         type: string
                       birth:
                         type: string
+                      gender:
+                        type: integer
                       joinedAt:
                         type: string
                       reportedCount:
@@ -146,6 +153,7 @@ paths:
                       - email
                       - name
                       - birth
+                      - gender
                       - joinedAt
                       - reportedCount
                       - isDeactivated
@@ -221,6 +229,8 @@ paths:
                         type: string
                       birth:
                         type: string
+                      gender:
+                        type: integer
                       joinedAt:
                         type: string
                       reportedCount:
@@ -234,6 +244,7 @@ paths:
                       - email
                       - name
                       - birth
+                      - gender
                       - joinedAt
                       - reportedCount
                       - isDeactivated
@@ -494,6 +505,8 @@ paths:
                         type: string
                       birth:
                         type: string
+                      gender:
+                        type: integer
                       joinedAt:
                         type: string
                       reportedCount:
@@ -507,6 +520,7 @@ paths:
                       - email
                       - name
                       - birth
+                      - gender
                       - joinedAt
                       - reportedCount
                       - isDeactivated
@@ -1045,6 +1059,8 @@ paths:
                           type: integer
                         peerNickname:
                           type: string
+                        myNickname:
+                          type: string
                         post:
                           type: object
                           properties:
@@ -1089,11 +1105,15 @@ paths:
                           required:
                             - createdAt
                             - content
+                        unreadMessageCount:
+                          type: number
                       required:
                         - id
                         - peerNickname
+                        - myNickname
                         - post
                         - lastMessage
+                        - unreadMessageCount
                 required:
                   - chatrooms
     post:

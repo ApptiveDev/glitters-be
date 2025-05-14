@@ -4,7 +4,7 @@ async function createRandomPostAndMarker() {
   const randomTitle = `Title ${Math.random().toString(36).substring(7)}`;
   const randomContent = `Content ${Math.random().toString(36).substring(7)}`;
   const randomAddress = `Address ${Math.random().toString(36).substring(7)}`;
-  const authorIds = [2, 3, 7, 9, 10];
+  const authorIds = Array.from({ length: 21 }, (_, i) => i + 12);
   const randomAuthorId = authorIds[Math.floor(Math.random() * authorIds.length)];
 
   const post = await prisma.post.create({

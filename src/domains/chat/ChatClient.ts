@@ -12,7 +12,6 @@ import ChatServer, { REDIS_CHANNEL_PREFIX } from '@/domains/chat/ChatServer';
 import prisma from '@/utils/database';
 import { pub } from '@/utils/redis';
 import {
-  findUnreadChats,
   getJoinedChatroomWithId,
 } from '@/domains/chat/service';
 
@@ -29,13 +28,13 @@ export default class ChatClient {
     this._memberId = memberId;
     this.bindEventListeners();
     this.startPingChecker();
-    this.sendUnreadChats();
+    // this.sendUnreadChats();
   }
 
-  async sendUnreadChats() {
-    const chats = await findUnreadChats(this.memberId);
-    this.send({ chats, type: 'unreadChats' });
-  }
+  // async sendUnreadChats() {
+  //   const chats = await findUnreadChats(this.memberId);
+  //   this.send({ chats, type: 'unreadChats' });
+  // }
 
   async handleInboundChat(payload: InboundChat) {
     const { chatroomId, content } = InboundChatSchema.parse(payload);

@@ -33,16 +33,16 @@ import { z } from 'zod';
 
 
 export async function getChats(req: GetChatsRequest, res: GetChatsResponse) {
-  const { id } = GetChatsRequestPathSchema.parse(req.params);
+  const { id: chatroomId } = GetChatsRequestPathSchema.parse(req.params);
   const { cursor, limit } = GetChatsRequestQuerySchema.parse(req.query);
   const member = req.member!;
 
-  if(! await getJoinedChatroomWithId(member, id)) {
+  if(! await getJoinedChatroomWithId(member, chatroomId)) {
     throw new ForbiddenError('참여한 채팅방이 아닙니다.');
   }
 
   const chatData = await prisma.chat.findMany({
-    where: { chatroomId: id },
+    where: { chatroomId },
     take: limit,
     ...(cursor && {
       skip: 1,
@@ -56,6 +56,16 @@ export async function getChats(req: GetChatsRequest, res: GetChatsResponse) {
     content: chat.content,
     createdAt: chat.createdAt,
   }));
+
+  await prisma.chat.updateMany({
+    where: {
+      chatroomId,
+      receiverId: member.id,
+    },
+    data: {
+      isRead: true,
+    }
+  });
   res.status(StatusCodes.OK).json({
     chats
   });
@@ -86,14 +96,27 @@ export async function getChatrooms(req: AuthenticatedRequest, res: GetChatroomsR
           senderId: true,
           chatroomId: true,
         }
-      }
+      },
+      _count: {
+        select: {
+          chats: {
+            where: {
+              isRead: false,
+              receiverId: member.id,
+            },
+          },
+        },
+      },
     },
   });
-  const chatroomInfo = chatrooms.map(chatroom => ({
+  const chatroomInfo
+    = chatrooms.map(chatroom => ({
     id: chatroom.id,
     peerNickname: chatroom.authorId === member.id ? chatroom.requesterNickname : chatroom.authorNickname,
+    myNickname: chatroom.authorId === member.id ? chatroom.authorNickname : chatroom.requesterNickname,
     post: chatroom.post,
     lastMessage: chatroom.chats[0],
+    unreadMessageCount: chatroom._count.chats,
   }));
   res.status(StatusCodes.OK).json({
     chatrooms: chatroomInfo,
@@ -123,14 +146,7 @@ export async function createChatroom(req: CreateChatroomRequest, res: CreateChat
     throw new ForbiddenError('채팅방을 개설할 수 없습니다.');
   }
   if(chatroom) {
-    const chat = createPublishableChat(chatroom, member, content);
-    await ChatServer.getInstance().createChat(chat, post.authorId);
-    const outboundChat = createOutboundChat(chat, chatroom);
-    res.status(StatusCodes.OK).json({
-      ...outboundChat,
-      authorNickname: chatroom.authorNickname,
-    });
-    return;
+    throw new BadRequestError('이미 채팅방이 개설되어 있습니다.');
   }
 
   if(post.authorId === member.id) {
