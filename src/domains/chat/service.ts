@@ -96,15 +96,27 @@ export async function getChatrooms(req: AuthenticatedRequest, res: GetChatroomsR
           senderId: true,
           chatroomId: true,
         }
-      }
+      },
+      _count: {
+        select: {
+          chats: {
+            where: {
+              isRead: false,
+              receiverId: member.id,
+            },
+          },
+        },
+      },
     },
   });
-  const chatroomInfo = chatrooms.map(chatroom => ({
+  const chatroomInfo
+    = chatrooms.map(chatroom => ({
     id: chatroom.id,
     peerNickname: chatroom.authorId === member.id ? chatroom.requesterNickname : chatroom.authorNickname,
     myNickname: chatroom.authorId === member.id ? chatroom.authorNickname : chatroom.requesterNickname,
     post: chatroom.post,
     lastMessage: chatroom.chats[0],
+    unreadMessageCount: chatroom._count.chats,
   }));
   res.status(StatusCodes.OK).json({
     chatrooms: chatroomInfo,

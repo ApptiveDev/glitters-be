@@ -110,5 +110,6 @@ export const GetChatroomsResponseBodySchema = z.object({
       createdAt: true,
       content: true,
     }),
+    unreadMessageCount: z.number(),
   }))
 });
