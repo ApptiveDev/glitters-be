@@ -1016,8 +1016,11 @@ paths:
                         - createdAt
                         - type
                         - id
+                  lastChatId:
+                    type: number
                 required:
                   - chats
+                  - lastChatId
         "403":
           description: 본인이 참여하지 않은 채팅방 정보 조회 시도
           content:
