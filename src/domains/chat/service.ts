@@ -52,6 +52,7 @@ export async function getChats(req: GetChatsRequest, res: GetChatsResponse) {
   });
   const chats: z.infer<typeof GetChatsResponseBodySchema>['chats'] = chatData.map(chat => ({
     type: chat.senderId === member.id ? 'sentChat' : 'receivedChat',
+    id: chat.id,
     content: chat.content,
     createdAt: chat.createdAt,
   }));

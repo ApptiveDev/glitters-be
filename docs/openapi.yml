@@ -995,10 +995,13 @@ paths:
                           enum:
                             - receivedChat
                             - sentChat
+                        id:
+                          type: number
                       required:
                         - content
                         - createdAt
                         - type
+                        - id
                 required:
                   - chats
         "403":
