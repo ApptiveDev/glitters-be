@@ -161,6 +161,11 @@
                   "termsAccepted": {
                     "type": "boolean",
                     "const": true
+                  },
+                  "gender": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1
                   }
                 },
                 "required": [
@@ -168,7 +173,8 @@
                   "password",
                   "name",
                   "birth",
-                  "termsAccepted"
+                  "termsAccepted",
+                  "gender"
                 ]
               }
             }
@@ -200,6 +206,9 @@
                         "birth": {
                           "type": "string"
                         },
+                        "gender": {
+                          "type": "integer"
+                        },
                         "joinedAt": {
                           "type": "string"
                         },
@@ -218,6 +227,7 @@
                         "email",
                         "name",
                         "birth",
+                        "gender",
                         "joinedAt",
                         "reportedCount",
                         "isDeactivated",
@@ -336,6 +346,9 @@
                         "birth": {
                           "type": "string"
                         },
+                        "gender": {
+                          "type": "integer"
+                        },
                         "joinedAt": {
                           "type": "string"
                         },
@@ -354,6 +367,7 @@
                         "email",
                         "name",
                         "birth",
+                        "gender",
                         "joinedAt",
                         "reportedCount",
                         "isDeactivated",
@@ -763,6 +777,9 @@
                         "birth": {
                           "type": "string"
                         },
+                        "gender": {
+                          "type": "integer"
+                        },
                         "joinedAt": {
                           "type": "string"
                         },
@@ -781,6 +798,7 @@
                         "email",
                         "name",
                         "birth",
+                        "gender",
                         "joinedAt",
                         "reportedCount",
                         "isDeactivated",
@@ -1640,6 +1658,9 @@
                           "peerNickname": {
                             "type": "string"
                           },
+                          "myNickname": {
+                            "type": "string"
+                          },
                           "post": {
                             "type": "object",
                             "properties": {
@@ -1701,13 +1722,18 @@
                               "createdAt",
                               "content"
                             ]
+                          },
+                          "unreadMessageCount": {
+                            "type": "number"
                           }
                         },
                         "required": [
                           "id",
                           "peerNickname",
+                          "myNickname",
                           "post",
-                          "lastMessage"
+                          "lastMessage",
+                          "unreadMessageCount"
                         ]
                       }
                     }
