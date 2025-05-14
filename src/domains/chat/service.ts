@@ -123,14 +123,7 @@ export async function createChatroom(req: CreateChatroomRequest, res: CreateChat
     throw new ForbiddenError('채팅방을 개설할 수 없습니다.');
   }
   if(chatroom) {
-    const chat = createPublishableChat(chatroom, member, content);
-    await ChatServer.getInstance().createChat(chat, post.authorId);
-    const outboundChat = createOutboundChat(chat, chatroom);
-    res.status(StatusCodes.OK).json({
-      ...outboundChat,
-      authorNickname: chatroom.authorNickname,
-    });
-    return;
+    throw new BadRequestError('이미 채팅방이 개설되어 있습니다.');
   }
 
   if(post.authorId === member.id) {
