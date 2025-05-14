@@ -33,16 +33,16 @@ import { z } from 'zod';
 
 
 export async function getChats(req: GetChatsRequest, res: GetChatsResponse) {
-  const { id } = GetChatsRequestPathSchema.parse(req.params);
+  const { id: chatroomId } = GetChatsRequestPathSchema.parse(req.params);
   const { cursor, limit } = GetChatsRequestQuerySchema.parse(req.query);
   const member = req.member!;
 
-  if(! await getJoinedChatroomWithId(member, id)) {
+  if(! await getJoinedChatroomWithId(member, chatroomId)) {
     throw new ForbiddenError('참여한 채팅방이 아닙니다.');
   }
 
   const chatData = await prisma.chat.findMany({
-    where: { chatroomId: id },
+    where: { chatroomId },
     take: limit,
     ...(cursor && {
       skip: 1,
@@ -56,6 +56,16 @@ export async function getChats(req: GetChatsRequest, res: GetChatsResponse) {
     content: chat.content,
     createdAt: chat.createdAt,
   }));
+
+  await prisma.chat.updateMany({
+    where: {
+      chatroomId,
+      receiverId: member.id,
+    },
+    data: {
+      isRead: true,
+    }
+  });
   res.status(StatusCodes.OK).json({
     chats
   });

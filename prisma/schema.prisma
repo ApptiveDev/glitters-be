@@ -139,6 +139,7 @@ model Chat {
 
   @@index(chatroomId)
   @@index(createdAt)
+  @@index([chatroomId, receiverId])
   @@map("chats")
 }
 
