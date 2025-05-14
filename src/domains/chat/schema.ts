@@ -108,6 +108,7 @@ export const GetChatroomsResponseBodySchema = z.object({
     id: true,
   }).extend({
     peerNickname: z.string(),
+    myNickname: z.string(),
     post: PostSchema.omit({
       authorId: true,
     }),
