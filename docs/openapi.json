@@ -1497,6 +1497,106 @@
         }
       }
     },
+    "/api/chatrooms/:id": {
+      "get": {
+        "summary": "채팅방의 채팅 내역 반환. 채팅 id값이 cursor-(limit+1)~cursor-1 인 채팅을 반환.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Bearer 토큰",
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt>"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "id값이 cursor-(limit+1)~cursor-1 인 채팅을 반환.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "chats": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "content": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "receivedChat",
+                              "sentChat"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "content",
+                          "createdAt",
+                          "type"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "chats"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "본인이 참여하지 않은 채팅방 정보 조회 시도",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/chatrooms": {
       "get": {
         "summary": "채팅방 정보 반환",
@@ -1751,14 +1851,16 @@
             "in": "query",
             "name": "postId",
             "schema": {
-              "type": "integer"
+              "type": "number",
+              "minimum": 1
             }
           },
           {
             "in": "query",
             "name": "chatroomId",
             "schema": {
-              "type": "integer"
+              "type": "number",
+              "minimum": 1
             }
           }
         ],

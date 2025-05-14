@@ -68,6 +68,40 @@ export const CreateChatroomResponseSchema = OutboundChatSchema.merge(
   })
 );
 
+export const GetChatsRequestPathSchema = z.object({
+  id: z.preprocess(val => {
+  if (typeof val === 'string' && /^\d+$/.test(val)) {
+    return Number(val);
+  }
+  return val;
+}, z.number().int().min(1)),
+});
+
+export const GetChatsRequestQuerySchema = z.object({
+  cursor: z.preprocess(val => {
+    if (typeof val === 'string' && /^\d+$/.test(val)) {
+      return Number(val);
+    }
+    return val;
+  }, z.number().int().min(1).optional()),
+  limit: z.preprocess(val => {
+    if (typeof val === 'string' && /^\d+$/.test(val)) {
+      return Number(val);
+    }
+    return val;
+  }, z.number().int().min(1).max(100).optional()),
+});
+
+export const GetChatsResponseBodySchema = z.object({
+  chats: z.array(OutboundChatSchema.pick({
+    content: true,
+    createdAt: true,
+  }).extend({
+    type: z.enum([MessageType.enum.receivedChat, MessageType.enum.sentChat]),
+  })),
+});
+
+
 export const GetChatroomsResponseBodySchema = z.object({
   chatrooms: z.array(ChatRoomSchema.pick({
     id: true,
