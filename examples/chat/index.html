@@ -8,17 +8,25 @@
     #log { white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; margin-bottom: 10px; }
     #inputArea { display: flex; gap: 10px; }
     #inputArea input, #inputArea button { font-size: 1rem; }
+    #connectArea { display: flex; gap: 10px; margin-bottom: 10px; }
+    #connectArea input { font-size: 1rem; }
   </style>
 </head>
 <body>
 
 <h1>WebSocket 채팅 클라이언트</h1>
 
-<label>
-  토큰:
-  <input id="token" placeholder="JWT" style="width: 400px">
-</label>
-<button onclick="connect()">서버 연결</button>
+<div id="connectArea">
+  <label>
+    서버 URL:
+    <input id="serverUrl" placeholder="wss://example.com:1234" style="width: 300px" value="wss://banjjak.me:8444">
+  </label>
+  <label>
+    토큰:
+    <input id="token" placeholder="JWT" style="width: 300px">
+  </label>
+  <button onclick="connect()">서버 연결</button>
+</div>
 
 <div id="log"></div>
 
@@ -39,9 +47,11 @@
 
   function connect() {
     const token = document.getElementById('token').value.trim();
+    const serverUrl = document.getElementById('serverUrl').value.trim();
     if (!token) return alert("토큰을 입력하세요.");
+    if (!serverUrl) return alert("서버 URL을 입력하세요.");
 
-    socket = new WebSocket(`ws://localhost:3000?token=${token}`);
+    socket = new WebSocket(`${serverUrl}?token=${token}`);
 
     socket.addEventListener('open', () => log('✅ 서버에 연결됨'));
     socket.addEventListener('message', (event) => {
@@ -77,6 +87,12 @@
     log(`💬 [보냄] 채팅방 ${chatroomId} → ${content}`);
     document.getElementById('message').value = '';
   }
+
+  document.getElementById('message').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
 </script>
 
 </body>
