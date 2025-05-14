@@ -273,7 +273,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -409,7 +409,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -488,7 +488,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -595,13 +595,13 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "마커 목록 반환",
+            "description": "마커 목록 반환 (차단된 마커 제외)",
             "content": {
               "application/json": {
                 "schema": {
@@ -708,7 +708,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -733,7 +733,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -832,7 +832,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -892,7 +892,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -994,7 +994,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -1057,7 +1057,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -1162,7 +1162,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -1263,7 +1263,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           },
           {
@@ -1322,7 +1322,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           },
           {
@@ -1383,7 +1383,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -1450,7 +1450,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -1513,7 +1513,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -1632,7 +1632,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -1694,6 +1694,77 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "차단되어 채팅방을 생성할 수 없음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/blocks": {
+      "post": {
+        "summary": "사용자 차단",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Bearer 토큰",
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt>"
+            }
+          },
+          {
+            "in": "query",
+            "name": "blockType",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "post",
+                "chatroom"
+              ]
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "postId",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "chatroomId",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "사용자 차단 성공"
           }
         }
       }
