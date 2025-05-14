@@ -12,5 +12,5 @@ export const tokenHeader = z
     required: true,
     description: 'Bearer 토큰',
   },
-  example: 'Bearer <your-jwt-token>',
+  example: 'Bearer <your-jwt>',
 });
