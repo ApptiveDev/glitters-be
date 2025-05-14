@@ -94,6 +94,7 @@ export const GetChatsResponseBodySchema = z.object({
     type: z.enum([MessageType.enum.receivedChat, MessageType.enum.sentChat]),
     id: z.number(),
   })),
+  lastChatId: z.number(),
 });
 
 
