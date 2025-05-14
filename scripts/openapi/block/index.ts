@@ -8,7 +8,10 @@ export const blockApiPaths: ZodOpenApiPathsObject = {
     post: {
       summary: '사용자 차단',
       security: [{ bearerAuth: [] }],
-      parameters: [tokenHeader, BlockRequestQuerySchema],
+      parameters: [tokenHeader],
+      requestParams: {
+        query: BlockRequestQuerySchema
+      },
       responses: {
         201: {
           description: '사용자 차단 성공',
