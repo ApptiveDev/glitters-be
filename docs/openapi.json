@@ -1589,10 +1589,14 @@
                           "id"
                         ]
                       }
+                    },
+                    "lastChatId": {
+                      "type": "number"
                     }
                   },
                   "required": [
-                    "chats"
+                    "chats",
+                    "lastChatId"
                   ]
                 }
               }
