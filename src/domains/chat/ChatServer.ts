@@ -6,7 +6,7 @@ import { sub } from '@/utils/redis';
 import { PublishableChatSchema } from '@/domains/chat/schema';
 import prisma from '@/utils/database';
 import { sendPushToMember } from '@/domains/notification/utils';
-import { PublishableChat } from '@/domains/chat/types';
+import { OutboundChat, PublishableChat } from '@/domains/chat/types';
 import { JsonWebTokenError } from 'jsonwebtoken';
 
 export const REDIS_CHANNEL_PREFIX = `chatroom-${process.env.NODE_ENV}:`;
@@ -65,16 +65,15 @@ export default class ChatServer {
       senderId,
       senderNickname,
     } = PublishableChatSchema.parse(payload);
-    let isRead = false;
+    const outboundChat = {
+      chatroomId,
+      createdAt,
+      content
+    };
     if(this.clients.has(receiverId)) {
-      isRead = true;
-      this.clients.get(receiverId)!.sendChat({
-        chatroomId,
-        createdAt,
-        content,
-      });
+      this.clients.get(receiverId)!.sendChat(outboundChat);
     } else {
-      await this.sendChatNotification(receiverId, senderNickname, content);
+      await this.sendChatNotification(receiverId, senderNickname, outboundChat);
     }
     await prisma.chat.create({
       data: {
@@ -82,11 +81,19 @@ export default class ChatServer {
         content,
         senderId,
         receiverId,
-        isRead, // 현재 전송 가능한 경우 true
+        isRead: false,
         createdAt,
       }
     });
   }
+
+  async sendChatNotification(receiverId: number, senderNickname: string,
+                             payload: Omit<OutboundChat, 'type'>) {
+    const receiver = await prisma.member.findUniqueOrThrow({
+      where: { id: receiverId },
+    });
+    return sendPushToMember(receiver, senderNickname, payload.content, payload);
+  };
 
   async handleMessagePublish(_: string, channel: string, message: string) {
     // 누군가 메시지 publish
@@ -98,13 +105,6 @@ export default class ChatServer {
       console.error(e);
     }
   }
-
-  async sendChatNotification(receiverId: number, senderNickname: string, content: string) {
-    const receiver = await prisma.member.findUniqueOrThrow({
-      where: { id: receiverId },
-    });
-    return sendPushToMember(receiver, senderNickname, content);
-  };
 
   bindPubSubHandler() {
     sub.psubscribe(`${REDIS_CHANNEL_PREFIX}*`, (err) => {
