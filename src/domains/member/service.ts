@@ -7,7 +7,19 @@ import { StatusCodes } from 'http-status-codes';
 import { omitPrivateFields } from '@/domains/member/utils';
 
 export async function getMyInfo(req: AuthenticatedRequest, res: GetMyInfoResponse) {
-  res.status(StatusCodes.OK).json({ member: omitPrivateFields(req.member!) });
+  const member = omitPrivateFields(req.member!);
+  const hasUnreadChat = (await prisma.chat.count({
+    where: {
+      receiverId: member.id,
+      isRead: false,
+    }
+  })) > 0;
+  res.status(StatusCodes.OK).json({
+    member: {
+      ...member,
+      hasUnreadChat
+    }
+  });
 }
 
 export async function getActivePostCount(req: AuthenticatedRequest, res: GetActivePostCountResponse) {
