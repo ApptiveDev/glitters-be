@@ -148,6 +148,8 @@ paths:
                         type: boolean
                       termsAccepted:
                         type: boolean
+                      institutionId:
+                        type: integer
                     required:
                       - id
                       - email
@@ -158,6 +160,7 @@ paths:
                       - reportedCount
                       - isDeactivated
                       - termsAccepted
+                      - institutionId
                   token:
                     type: string
                 required:
@@ -239,6 +242,8 @@ paths:
                         type: boolean
                       termsAccepted:
                         type: boolean
+                      institutionId:
+                        type: integer
                     required:
                       - id
                       - email
@@ -249,6 +254,7 @@ paths:
                       - reportedCount
                       - isDeactivated
                       - termsAccepted
+                      - institutionId
                   token:
                     type: string
                 required:
@@ -515,8 +521,32 @@ paths:
                         type: boolean
                       termsAccepted:
                         type: boolean
+                      institutionId:
+                        type: integer
                       hasUnreadChat:
                         type: boolean
+                      institution:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                          emailDomain:
+                            type: string
+                          isActive:
+                            type: boolean
+                          createdAt:
+                            type: string
+                          updatedAt:
+                            type: string
+                        required:
+                          - id
+                          - name
+                          - emailDomain
+                          - isActive
+                          - createdAt
+                          - updatedAt
                     required:
                       - id
                       - email
@@ -527,6 +557,7 @@ paths:
                       - reportedCount
                       - isDeactivated
                       - termsAccepted
+                      - institutionId
                       - hasUnreadChat
                 required:
                   - member

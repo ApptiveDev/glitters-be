@@ -220,6 +220,9 @@
                         },
                         "termsAccepted": {
                           "type": "boolean"
+                        },
+                        "institutionId": {
+                          "type": "integer"
                         }
                       },
                       "required": [
@@ -231,7 +234,8 @@
                         "joinedAt",
                         "reportedCount",
                         "isDeactivated",
-                        "termsAccepted"
+                        "termsAccepted",
+                        "institutionId"
                       ]
                     },
                     "token": {
@@ -360,6 +364,9 @@
                         },
                         "termsAccepted": {
                           "type": "boolean"
+                        },
+                        "institutionId": {
+                          "type": "integer"
                         }
                       },
                       "required": [
@@ -371,7 +378,8 @@
                         "joinedAt",
                         "reportedCount",
                         "isDeactivated",
-                        "termsAccepted"
+                        "termsAccepted",
+                        "institutionId"
                       ]
                     },
                     "token": {
@@ -792,8 +800,42 @@
                         "termsAccepted": {
                           "type": "boolean"
                         },
+                        "institutionId": {
+                          "type": "integer"
+                        },
                         "hasUnreadChat": {
                           "type": "boolean"
+                        },
+                        "institution": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "emailDomain": {
+                              "type": "string"
+                            },
+                            "isActive": {
+                              "type": "boolean"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "emailDomain",
+                            "isActive",
+                            "createdAt",
+                            "updatedAt"
+                          ]
                         }
                       },
                       "required": [
@@ -806,6 +848,7 @@
                         "reportedCount",
                         "isDeactivated",
                         "termsAccepted",
+                        "institutionId",
                         "hasUnreadChat"
                       ]
                     }

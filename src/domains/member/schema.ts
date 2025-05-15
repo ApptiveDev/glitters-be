@@ -1,4 +1,4 @@
-import { MemberSchema} from '@/schemas';
+import { InstitutionSchema, MemberSchema } from '@/schemas';
 import { z } from 'zod';
 
 export const PublicMemberSchema = MemberSchema.omit({ password: true, expoToken: true });
@@ -6,6 +6,7 @@ export const InternalMemberSchema = MemberSchema.omit({ password: true });
 export const GetMyInfoSchema = z.object({
   member: PublicMemberSchema.extend({
     hasUnreadChat: z.boolean(),
+    institution: InstitutionSchema.optional(),
   }),
 });
 
