@@ -1,6 +1,6 @@
 import {
   CreateChatroomRequest,
-  CreateChatroomResponse,
+  CreateChatroomResponse, DeactivateChatroomRequest,
   GetChatroomsResponse,
   GetChatsRequest,
   GetChatsResponse,
@@ -8,7 +8,7 @@ import {
   PublishableChat,
 } from '@/domains/chat/types';
 import {
-  CreateChatroomRequestBodySchema,
+  CreateChatroomRequestBodySchema, DeactivateChatroomRequestPathSchema,
   GetChatsRequestPathSchema,
   GetChatsRequestQuerySchema, GetChatsResponseBodySchema,
 } from '@/domains/chat/schema';
@@ -28,7 +28,8 @@ import { ChatRoom } from '@/schemas';
 import { InternalMember, PublicMember } from '@/domains/member/types';
 import { Prisma } from '.prisma/client';
 import { AuthenticatedRequest } from '@/domains/auth/types';
-  import { isBlocked } from '@/domains/block/service';
+import { Response } from 'express';
+import { isBlocked } from '@/domains/block/service';
 import { z } from 'zod';
 
 
@@ -122,6 +123,24 @@ export async function getChatrooms(req: AuthenticatedRequest, res: GetChatroomsR
   res.status(StatusCodes.OK).json({
     chatrooms: chatroomInfo,
   });
+}
+
+export async function deactivateChatroom(req: DeactivateChatroomRequest, res: Response) {
+  const { id: chatroomId } = DeactivateChatroomRequestPathSchema.parse(req.params);
+  const member = req.member!;
+  const chatroom = await getJoinedChatroomWithId(member, chatroomId);
+  if(! chatroom) {
+    throw new ForbiddenError('본인이 입장한 채팅방이 아닙니다.');
+  }
+  await prisma.chatRoom.update({
+    where: {
+      id: chatroomId,
+    },
+    data: {
+      isDeactivated: true,
+    }
+  });
+  res.status(StatusCodes.OK).send();
 }
 
 export async function createChatroom(req: CreateChatroomRequest, res: CreateChatroomResponse) {

@@ -11,6 +11,24 @@ import { ErrorSchema } from '../../../src/domains/error/schema';
 
 export const chatApiPaths = {
   [`${currentApiPrefix}/chatrooms/:id`]: {
+    delete: {
+      summary: '채팅방 비활성화 (나가기)',
+      security: [{ bearerAuth: [] }],
+      parameters: [tokenHeader],
+      responses: {
+        200: {
+          description: '채팅방 나가기 완료',
+        },
+        403: {
+          description: '본인이 참여하지 않은 채팅방 나가기 시도',
+          content: {
+            'application/json': {
+              schema: ErrorSchema,
+            }
+          }
+        }
+      }
+    },
     get: {
       summary: '채팅방의 채팅 내역 반환. 채팅 id값이 cursor-(limit+1)~cursor-1 인 채팅을 반환.',
       security: [{ bearerAuth: [] }],
