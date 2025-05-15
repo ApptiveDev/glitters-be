@@ -97,6 +97,15 @@ export const GetChatsResponseBodySchema = z.object({
   lastChatId: z.number(),
 });
 
+export const DeactivateChatroomRequestPathSchema = z.object({
+  id: z.preprocess(val => {
+    if (typeof val === 'string' && /^\d+$/.test(val)) {
+      return Number(val);
+    }
+    return val;
+  }, z.number().int().min(1)),
+});
+
 
 export const GetChatroomsResponseBodySchema = z.object({
   chatrooms: z.array(ChatRoomSchema.pick({

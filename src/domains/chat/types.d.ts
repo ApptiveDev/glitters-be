@@ -6,13 +6,12 @@ import {
   OutboundChatSchema,
   ErrorMessageSchema,
   PublishableChatSchema,
-  UnreadChatsSchema,
   CreateChatroomRequestBodySchema,
   CreateChatroomResponseSchema,
   GetChatroomsResponseBodySchema,
   GetChatsRequestPathSchema,
   GetChatsRequestQuerySchema,
-  GetChatsResponseBodySchema,
+  GetChatsResponseBodySchema, DeactivateChatroomRequestPathSchema,
 } from '@/domains/chat/schema';
 import { AuthenticatedRequest } from '@/domains/auth/types';
 import { Response } from 'express';
@@ -32,5 +31,7 @@ export type GetChatroomsResponse = Response<z.infer<typeof GetChatroomsResponseB
 
 export type GetChatsRequest = AuthenticatedRequest<z.infer<typeof GetChatsRequestPathSchema>, {}, z.infer<typeof GetChatsRequestQuerySchema>>;
 export type GetChatsResponse = Response<z.infer<typeof GetChatsResponseBodySchema>>;
+
+export type DeactivateChatroomRequest = AuthenticatedRequest<z.infer<typeof DeactivateChatroomRequestPathSchema>>;
 
 export type UnreadChats = z.infer<typeof UnreadChatsSchema>;
