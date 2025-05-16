@@ -25,7 +25,11 @@ import {
 } from '@/domains/auth/schema';
 import jwt from 'jsonwebtoken';
 import redis from '@/utils/redis';
-import { BadRequestError, ForbiddenError } from '@/domains/error/HttpError';
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} from '@/domains/error/HttpError';
 
 export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Response) {
   const { email, code } = EmailCodeInputRequestBodySchema.parse(req.body);
@@ -122,6 +126,15 @@ export async function handleRegister(req: RegisterRequest, res: RegisterResponse
   }
 
   const hashedPassword = await hashPassword(password);
+  const domain = email.split('@')[1];
+  const institution = (await prisma.institution.findFirstOrThrow({
+    where: {
+      emailDomain: domain,
+    }
+  }));
+  if(! institution) {
+    throw new NotFoundError('해당 이메일을 도메인으로 하는 기관이 존재하지 않습니다.');
+  }
   const member = await prisma.member.create({
     data: {
       email,
@@ -129,6 +142,7 @@ export async function handleRegister(req: RegisterRequest, res: RegisterResponse
       birth,
       termsAccepted,
       password: hashedPassword,
+      institutionId: institution.id,
     },
   });
   const token = generateToken(member);
