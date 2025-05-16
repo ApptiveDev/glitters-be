@@ -77,6 +77,7 @@ export async function getChatrooms(req: AuthenticatedRequest, res: GetChatroomsR
   const member = req.member!;
   const chatrooms = await prisma.chatRoom.findMany({
     where: {
+      isDeactivated: false,
       OR: [{ authorId: member.id }, { requesterId: member.id }],
     },
     select: {
@@ -85,7 +86,7 @@ export async function getChatrooms(req: AuthenticatedRequest, res: GetChatroomsR
       authorNickname: true,
       requesterNickname: true,
       id: true,
-      isDeactivated: false,
+      isDeactivated: true,
       post: {
         omit: {
           authorId: true,
