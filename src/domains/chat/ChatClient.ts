@@ -45,7 +45,7 @@ export default class ChatClient {
       return;
     }
     if(chatroom.isDeactivated) {
-      this.sendError('종료된 채팅방입니다. 더이상 메시지를 보낼 수 없습니다.');
+      this.sendChatroomError('종료된 채팅방입니다. 더이상 메시지를 보낼 수 없습니다.', chatroomId);
       return;
     }
     // sender가 아닌 사용자가 receiver
@@ -108,10 +108,15 @@ export default class ChatClient {
     });
   }
 
-  sendError(message: string) {
+  sendChatroomError(message: string, chatroomId: number) {
+    this.sendError(message, { chatroomId });
+  }
+
+  sendError(message: string, payload: Record<string, unknown> = {}) {
     this.send({
       type: 'error',
       message,
+      ...payload
     });
   }
 

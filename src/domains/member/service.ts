@@ -14,9 +14,15 @@ export async function getMyInfo(req: AuthenticatedRequest, res: GetMyInfoRespons
       isRead: false,
     }
   })) > 0;
+  const institution = await prisma.institution.findUnique({
+    where: {
+      id: member.institutionId,
+    }
+  });
   res.status(StatusCodes.OK).json({
     member: {
       ...member,
+      ...(institution ? { institution } : {}),
       hasUnreadChat
     }
   });

@@ -25,17 +25,19 @@ model Member {
   isDeactivated Boolean  @default(false) @map("is_deactivated")
   termsAccepted Boolean  @default(false) @map("terms_accepted")
   expoToken     String?  @map("expo_token") @db.VarChar(255)
+  institutionId Int      @default(1) @map("institution_id")
 
   posts              Post[]
   likes              Like[]
-  authoredChatRooms  ChatRoom[] @relation("AuthoredRooms")
-  requestedChatRooms ChatRoom[] @relation("RequestedRooms")
-  sentChats          Chat[]     @relation("SentChats")
-  receivedChats      Chat[]     @relation("ReceivedChats")
-  createdReports     Report[]   @relation("CreatedReports")
-  reportedReports    Report[]   @relation("ReportedReports")
-  issuedBlocks       Block[]    @relation("IssuedBlocks")
-  targetedBlocks     Block[]    @relation("TargetedBlocks")
+  authoredChatRooms  ChatRoom[]  @relation("AuthoredRooms")
+  requestedChatRooms ChatRoom[]  @relation("RequestedRooms")
+  sentChats          Chat[]      @relation("SentChats")
+  receivedChats      Chat[]      @relation("ReceivedChats")
+  createdReports     Report[]    @relation("CreatedReports")
+  reportedReports    Report[]    @relation("ReportedReports")
+  issuedBlocks       Block[]     @relation("IssuedBlocks")
+  targetedBlocks     Block[]     @relation("TargetedBlocks")
+  institution        Institution @relation(fields: [institutionId], references: [id], onDelete: NoAction)
 
   @@map("members")
 }
@@ -173,6 +175,7 @@ model Institution {
   createdAt   DateTime           @default(now()) @map("created_at")
   updatedAt   DateTime           @default(now()) @updatedAt @map("updated_at")
   bounds      InstitutionBound[]
+  members     Member[]
 
   @@map("institutions")
 }

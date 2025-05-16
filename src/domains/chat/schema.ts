@@ -8,6 +8,10 @@ export const ErrorMessageSchema = z.object({
   message: z.string(),
 });
 
+export const ChatroomErrorMessageSchema = ErrorMessageSchema.extend({
+  chatroomId: z.number(),
+});
+
 export const InboundChatSchema = z.object({
   type: z.literal(MessageType.enum.sentChat),
 }).merge(
@@ -49,6 +53,7 @@ export const SocketMessageSchema = z.union([
   PublishableChatSchema,
   ReadChatroomMessageSchema,
   ErrorMessageSchema,
+  ChatroomErrorMessageSchema,
 ]);
 
 export const CreateChatroomRequestBodySchema = z.object({
