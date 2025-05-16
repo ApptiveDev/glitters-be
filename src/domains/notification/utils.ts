@@ -1,12 +1,13 @@
 import Expo, { ExpoPushMessage } from 'expo-server-sdk';
 import { InternalMember } from '@/domains/member/types';
 import prisma from '@/utils/database';
+import { NotificationData } from '@/domains/notification/types';
 
 const expo = new Expo({
   accessToken: process.env.EXPO_ACCESS_TOKEN,
 });
 
-export async function sendPushMessage(token: string, title: string, body: string, payload?: Record<string, unknown>) {
+export async function sendPushMessage(token: string, title: string, body: string, payload?: NotificationData) {
   const message: ExpoPushMessage = {
     to: token,
     sound: 'default',
@@ -18,7 +19,7 @@ export async function sendPushMessage(token: string, title: string, body: string
   return result;
 }
 
-export async function sendPushToMember(member: InternalMember, title: string, body: string, payload?: Record<string, unknown>) {
+export async function sendPushToMember(member: InternalMember, title: string, body: string, payload?: NotificationData) {
   const { expoToken: token } = member;
   if(! Expo.isExpoPushToken(token)) {
     console.error(`Invalid push token for member id ${member.id}`);
