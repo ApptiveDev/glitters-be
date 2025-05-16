@@ -92,7 +92,10 @@ export default class ChatServer {
     const receiver = await prisma.member.findUniqueOrThrow({
       where: { id: receiverId },
     });
-    return sendPushToMember(receiver, senderNickname, payload.content, payload);
+    return sendPushToMember(receiver, senderNickname, payload.content, {
+      type: 'chat',
+      ...payload,
+    });
   };
 
   async handleMessagePublish(_: string, channel: string, message: string) {
