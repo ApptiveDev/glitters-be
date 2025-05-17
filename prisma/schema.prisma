@@ -45,6 +45,7 @@ model Member {
 model Post {
   id            Int      @id @default(autoincrement()) @map("id")
   authorId      Int      @map("author_id")
+  markerId      Int?     @map("marker_id") @unique
   iconIdx       Int      @default(0) @map("icon_idx")
   title         String   @map("title") @db.VarChar(63)
   content       String   @map("content") @db.VarChar(255)
@@ -57,12 +58,23 @@ model Post {
 
   author   Member     @relation(fields: [authorId], references: [id])
   chatroom ChatRoom[]
-  marker   Marker?
+  marker   Marker?    @relation("PostMarker", fields: [markerId], references: [id], onDelete: SetNull)
   reports  Report[]
   likes    Like[]
   blocks   Block[]
 
   @@map("posts")
+}
+
+model Marker {
+  id        Int   @id @default(autoincrement())
+  latitude  Float @map("latitude")
+  longitude Float @map("longitude")
+
+  post Post? @relation("PostMarker")
+
+  @@index([latitude, longitude])
+  @@map("markers")
 }
 
 model Block {
@@ -92,18 +104,6 @@ model Like {
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@map("likes")
-}
-
-model Marker {
-  id        Int   @id @default(autoincrement())
-  postId    Int   @unique @map("post_id")
-  latitude  Float @map("latitude")
-  longitude Float @map("longitude")
-
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  @@index([latitude, longitude])
-  @@map("markers")
 }
 
 model ChatRoom {
