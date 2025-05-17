@@ -14,6 +14,7 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
           expiresAt: true,
           createdAt: true,
           authorId: true,
+          id: true,
         }
       }
     },
@@ -36,11 +37,11 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
   });
   const flattened = markers.map(marker => ({
     id: marker.id,
-    postId: marker.postId,
+    postId: marker.post?.id,
     latitude: marker.latitude,
     longitude: marker.longitude,
-    expiresAt: marker.post?.expiresAt ?? null,
-    createdAt: marker.post?.createdAt,
+    expiresAt: marker.post!.expiresAt,
+    createdAt: marker.post!.createdAt,
     isWrittenBySelf: marker.post?.authorId === req.member?.id
   }));
   res.status(StatusCodes.OK).json({

@@ -7,8 +7,20 @@ async function createRandomPostAndMarker() {
   const authorIds = Array.from({ length: 21 }, (_, i) => i + 12);
   const randomAuthorId = authorIds[Math.floor(Math.random() * authorIds.length)];
 
+  const baseLat = 35.237145278897785;
+  const baseLon = 129.07761905755973;
+  const noise = () => (Math.random() - 0.5) * 0.001;
+
+  const marker = await prisma.marker.create({
+    data: {
+      latitude: baseLat + noise(),
+      longitude: baseLon + noise(),
+    }
+  });
+
   const post = await prisma.post.create({
     data: {
+      markerId: marker.id,
       authorId: randomAuthorId,
       title: randomTitle,
       content: randomContent,
@@ -18,18 +30,6 @@ async function createRandomPostAndMarker() {
   });
 
   console.log(`Created Post with ID: ${post.id}, Author ID: ${randomAuthorId}`);
-
-  const baseLat = 35.237145278897785;
-  const baseLon = 129.07761905755973;
-  const noise = () => (Math.random() - 0.5) * 0.001;
-
-  await prisma.marker.create({
-    data: {
-      postId: post.id,
-      latitude: baseLat + noise(),
-      longitude: baseLon + noise(),
-    }
-  });
 
   console.log(`Created Marker for Post ID: ${post.id}`);
 }
