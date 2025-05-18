@@ -117,6 +117,7 @@ paths:
                 - birth
                 - termsAccepted
                 - gender
+              additionalProperties: false
       responses:
         "200":
           description: 회원가입 성공
@@ -149,6 +150,8 @@ paths:
                       termsAccepted:
                         type: boolean
                       institutionId:
+                        type: integer
+                      isAdmin:
                         type: integer
                       institution:
                         type: object
@@ -183,6 +186,7 @@ paths:
                       - isDeactivated
                       - termsAccepted
                       - institutionId
+                      - isAdmin
                   token:
                     type: string
                 required:
@@ -266,6 +270,8 @@ paths:
                         type: boolean
                       institutionId:
                         type: integer
+                      isAdmin:
+                        type: integer
                       institution:
                         type: object
                         properties:
@@ -299,6 +305,7 @@ paths:
                       - isDeactivated
                       - termsAccepted
                       - institutionId
+                      - isAdmin
                   token:
                     type: string
                 required:
@@ -470,6 +477,8 @@ paths:
                           type: string
                         createdAt:
                           type: string
+                        markerIdx:
+                          type: integer
                         isWrittenBySelf:
                           type: boolean
                       required:
@@ -478,6 +487,7 @@ paths:
                         - longitude
                         - expiresAt
                         - createdAt
+                        - markerIdx
                         - isWrittenBySelf
                 required:
                   - markers
@@ -564,6 +574,8 @@ paths:
                         type: boolean
                       institutionId:
                         type: integer
+                      isAdmin:
+                        type: integer
                       institution:
                         type: object
                         properties:
@@ -599,6 +611,7 @@ paths:
                       - isDeactivated
                       - termsAccepted
                       - institutionId
+                      - isAdmin
                       - hasUnreadChat
                 required:
                   - member
@@ -678,6 +691,8 @@ paths:
                       - "null"
                   iconIdx:
                     type: integer
+                  markerIdx:
+                    type: integer
                   title:
                     type: string
                   content:
@@ -702,6 +717,7 @@ paths:
                   - id
                   - markerId
                   - iconIdx
+                  - markerIdx
                   - title
                   - content
                   - createdAt
@@ -791,6 +807,8 @@ paths:
                   maxLength: 63
                 iconIdx:
                   type: integer
+                markerIdx:
+                  type: integer
                 latitude:
                   type: number
                 longitude:
@@ -800,8 +818,10 @@ paths:
                 - content
                 - address
                 - iconIdx
+                - markerIdx
                 - latitude
                 - longitude
+              additionalProperties: false
       responses:
         "200":
           description: 생성 성공
@@ -1181,6 +1201,8 @@ paths:
                                 - "null"
                             iconIdx:
                               type: integer
+                            markerIdx:
+                              type: integer
                             title:
                               type: string
                             content:
@@ -1201,6 +1223,7 @@ paths:
                             - id
                             - markerId
                             - iconIdx
+                            - markerIdx
                             - title
                             - content
                             - createdAt

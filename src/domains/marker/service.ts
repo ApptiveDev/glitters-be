@@ -14,6 +14,7 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
           expiresAt: true,
           createdAt: true,
           authorId: true,
+          markerIdx: true,
           id: true,
         }
       }
@@ -38,6 +39,7 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
   const flattened = markers.map(marker => ({
     id: marker.id,
     postId: marker.post?.id,
+    markerIdx: marker.post!.markerIdx,
     latitude: marker.latitude,
     longitude: marker.longitude,
     expiresAt: marker.post!.expiresAt,

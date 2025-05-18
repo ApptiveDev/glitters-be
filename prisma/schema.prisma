@@ -26,6 +26,7 @@ model Member {
   termsAccepted Boolean  @default(false) @map("terms_accepted")
   expoToken     String?  @map("expo_token") @db.VarChar(255)
   institutionId Int      @default(1) @map("institution_id")
+  isAdmin       Int      @default(0) @map("is_admin")
 
   posts              Post[]
   likes              Like[]
@@ -47,6 +48,7 @@ model Post {
   authorId      Int      @map("author_id")
   markerId      Int?     @map("marker_id") @unique
   iconIdx       Int      @default(0) @map("icon_idx")
+  markerIdx     Int      @default(0) @map("marker_idx")
   title         String   @map("title") @db.VarChar(63)
   content       String   @map("content") @db.VarChar(255)
   createdAt     DateTime @default(now()) @map("created_at")
