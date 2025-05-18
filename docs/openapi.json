@@ -1234,6 +1234,9 @@
                   "iconIdx": {
                     "type": "integer"
                   },
+                  "markerIdx": {
+                    "type": "integer"
+                  },
                   "latitude": {
                     "type": "number"
                   },
@@ -1246,6 +1249,7 @@
                   "content",
                   "address",
                   "iconIdx",
+                  "markerIdx",
                   "latitude",
                   "longitude"
                 ],

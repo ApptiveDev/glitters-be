@@ -807,6 +807,8 @@ paths:
                   maxLength: 63
                 iconIdx:
                   type: integer
+                markerIdx:
+                  type: integer
                 latitude:
                   type: number
                 longitude:
@@ -816,6 +818,7 @@ paths:
                 - content
                 - address
                 - iconIdx
+                - markerIdx
                 - latitude
                 - longitude
               additionalProperties: false
