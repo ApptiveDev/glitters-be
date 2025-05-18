@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { PublicMember } from '@/domains/member/types';
 import prisma from '@/utils/database';
 import { Member } from '.prisma/client';
-import { deactivateMember } from '@/domains/member/service';
+import { maskMember } from '@/domains/member/service';
 import { BadRequestError, NotFoundError } from '@/domains/error/HttpError';
 export async function createReport(req: CreateReportRequest, res: Response) {
   const createInput = CreateReportRequestBodySchema.parse(req.body);
@@ -59,7 +59,7 @@ async function handleReportIncrement(updateResult: Member) {
         memberId: updateResult.id,
       }
     });
-    await deactivateMember(updateResult);
+    await maskMember(updateResult);
   }
 }
 

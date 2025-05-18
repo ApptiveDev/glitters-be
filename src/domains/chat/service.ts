@@ -126,22 +126,52 @@ export async function getChatrooms(req: AuthenticatedRequest, res: GetChatroomsR
   });
 }
 
-export async function deactivateChatroom(req: DeactivateChatroomRequest, res: Response) {
+export async function applyChatroomDeletion(chatroomId: number) {
+  return prisma.$transaction([
+    prisma.chatRoom.update({
+      where: {
+        id: chatroomId,
+      },
+      data: {
+        isDeactivated: true,
+      }
+    }),
+    prisma.chat.deleteMany({
+      where: {
+        chatroomId,
+      }
+    }),
+  ]);
+}
+
+export async function deleteChatroom(req: DeactivateChatroomRequest, res: Response) {
   const { id: chatroomId } = DeactivateChatroomRequestPathSchema.parse(req.params);
   const member = req.member!;
   const chatroom = await getJoinedChatroomWithId(member, chatroomId);
   if(! chatroom) {
     throw new ForbiddenError('본인이 입장한 채팅방이 아닙니다.');
   }
-  await prisma.chatRoom.update({
-    where: {
-      id: chatroomId,
-    },
-    data: {
-      isDeactivated: true,
-    }
-  });
+  await applyChatroomDeletion(chatroomId);
   res.status(StatusCodes.OK).send();
+}
+
+export function deleteAllChatsByMember(member: InternalMember) {
+  const { id } = member;
+  return prisma.$transaction([
+    prisma.chatRoom.updateMany({
+      where: {
+        OR: [{ requesterId: id }, { authorId: id }],
+      },
+      data: {
+        isDeactivated: true,
+      }
+    }),
+    prisma.chat.deleteMany({
+      where: {
+        senderId: id,
+      }
+    })
+  ]);
 }
 
 export async function createChatroom(req: CreateChatroomRequest, res: CreateChatroomResponse) {
@@ -190,33 +220,6 @@ export async function createChatroom(req: CreateChatroomRequest, res: CreateChat
     ...outboundChat,
     authorNickname: createdChatroom.authorNickname,
   });
-}
-
-export async function findUnreadChats(member: PublicMember | number, chatroomId?: number) {
-  if(typeof member === 'object') {
-    member = member.id;
-  }
-  return (await prisma.chat.findMany({
-    where: {
-      receiverId: member,
-      isRead: false,
-      ...(chatroomId && { chatroomId }),
-      ...(chatroomId && {
-        chatroom: {
-          isDeactivated: false,
-        }
-      }),
-    },
-    select: {
-      chatroomId: true,
-      content: true,
-      createdAt: true,
-    },
-    orderBy: { createdAt: 'desc' },
-  })).map((chat) => ({
-    ...chat,
-    type: 'receivedChat',
-  } as OutboundChat));
 }
 
 export async function getJoinedChatroomWithId(member: PublicMember | number, chatroomId: number) {

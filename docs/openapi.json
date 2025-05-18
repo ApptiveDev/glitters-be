@@ -223,6 +223,37 @@
                         },
                         "institutionId": {
                           "type": "integer"
+                        },
+                        "institution": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "emailDomain": {
+                              "type": "string"
+                            },
+                            "isActive": {
+                              "type": "boolean"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "emailDomain",
+                            "isActive",
+                            "createdAt",
+                            "updatedAt"
+                          ]
                         }
                       },
                       "required": [
@@ -367,6 +398,37 @@
                         },
                         "institutionId": {
                           "type": "integer"
+                        },
+                        "institution": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "emailDomain": {
+                              "type": "string"
+                            },
+                            "isActive": {
+                              "type": "boolean"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "emailDomain",
+                            "isActive",
+                            "createdAt",
+                            "updatedAt"
+                          ]
                         }
                       },
                       "required": [
@@ -637,9 +699,6 @@
                           "id": {
                             "type": "integer"
                           },
-                          "postId": {
-                            "type": "integer"
-                          },
                           "latitude": {
                             "type": "number"
                           },
@@ -658,7 +717,6 @@
                         },
                         "required": [
                           "id",
-                          "postId",
                           "latitude",
                           "longitude",
                           "expiresAt",
@@ -803,9 +861,6 @@
                         "institutionId": {
                           "type": "integer"
                         },
-                        "hasUnreadChat": {
-                          "type": "boolean"
-                        },
                         "institution": {
                           "type": "object",
                           "properties": {
@@ -836,6 +891,9 @@
                             "createdAt",
                             "updatedAt"
                           ]
+                        },
+                        "hasUnreadChat": {
+                          "type": "boolean"
                         }
                       },
                       "required": [
@@ -972,6 +1030,12 @@
                     "id": {
                       "type": "integer"
                     },
+                    "markerId": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
                     "iconIdx": {
                       "type": "integer"
                     },
@@ -1008,6 +1072,7 @@
                   },
                   "required": [
                     "id",
+                    "markerId",
                     "iconIdx",
                     "title",
                     "content",
@@ -1761,6 +1826,12 @@
                               "id": {
                                 "type": "integer"
                               },
+                              "markerId": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
                               "iconIdx": {
                                 "type": "integer"
                               },
@@ -1791,6 +1862,7 @@
                             },
                             "required": [
                               "id",
+                              "markerId",
                               "iconIdx",
                               "title",
                               "content",

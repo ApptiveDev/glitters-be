@@ -15,7 +15,7 @@ import {
 } from '@/domains/post/schema';
 import { z } from 'zod';
 import { Post } from '@/schemas';
-import { PublicMember } from '@/domains/member/types';
+import { InternalMember, PublicMember } from '@/domains/member/types';
 import redis from '@/utils/redis';
 import { BadRequestError, NotFoundError } from '@/domains/error/HttpError';
 
@@ -85,6 +85,7 @@ export async function deletePost(req: DeletePostRequest, res: Response) {
     },
     data: {
       isDeactivated: true,
+      markerId: null,
     }
   });
   res.status(StatusCodes.OK).json({ message: '삭제가 완료되었습니다.' });
@@ -114,4 +115,35 @@ export async function createPost(req: CreatePostRequest, res: CreatePostResponse
     markerId: marker.id,
     postId: post.id,
   });
+}
+
+export function unlinkPostsByMember(member: InternalMember) {
+  const { id } = member;
+  return prisma.post.updateMany({
+    where: {
+      authorId: id,
+      markerId: { not: null }
+    },
+    data: {
+      markerId: null
+    }
+  });
+}
+
+export async function unlinkExpiredMarkers() {
+  const now = new Date();
+
+  const result = await prisma.post.updateMany({
+    where: {
+      expiresAt: { lt: now },
+      markerId: { not: null }
+    },
+    data: {
+      markerId: null
+    }
+  });
+
+  if (result.count > 0) {
+    console.log(`[${now.toISOString()}] Unlinked ${result.count} expired markers.`);
+  }
 }
