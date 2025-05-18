@@ -594,8 +594,8 @@
                   "type": "object",
                   "properties": {
                     "bounds": {
-                      "type": "array",
-                      "items": {
+                      "type": "object",
+                      "additionalProperties": {
                         "type": "object",
                         "properties": {
                           "id": {
