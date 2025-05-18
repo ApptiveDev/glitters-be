@@ -174,7 +174,7 @@ export async function handleLogout(req: AuthenticatedRequest, res: Response) {
   res.status(StatusCodes.OK).send();
 }
 
-async function saveInvalidatedToken(accessToken: string) {
+export async function saveInvalidatedToken(accessToken: string) {
   const decoded = jwt.decode(accessToken) as AuthenticatedJWTPayload;
 
   if (!decoded || !decoded.exp) {
