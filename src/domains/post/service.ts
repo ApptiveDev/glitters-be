@@ -92,7 +92,7 @@ export async function deletePost(req: DeletePostRequest, res: Response) {
 }
 
 export async function createPost(req: CreatePostRequest, res: CreatePostResponse) {
-  const { latitude, longitude, title, content, address, iconIdx } = CreatePostRequestBodySchema.parse(req.body);
+  const { latitude, longitude, title, content, address, iconIdx, markerIdx } = CreatePostRequestBodySchema.parse(req.body);
   const expiresAt = new Date((new Date()).getTime() + 24 * 60 * 60 * 1000);
   const marker = await prisma.marker.create({
     data: {
@@ -106,6 +106,7 @@ export async function createPost(req: CreatePostRequest, res: CreatePostResponse
       content,
       address,
       iconIdx,
+      markerIdx,
       expiresAt,
       authorId: req.member?.id as number,
       markerId: marker.id,

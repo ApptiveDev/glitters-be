@@ -21,6 +21,7 @@ export const CreatePostRequestBodySchema = z.object({
   content: z.string().max(255),
   address: z.string().max(63),
   iconIdx: z.number().int(),
+  markerIdx: z.number().int(),
 }).merge(MarkerSchema.pick({
   latitude: true,
   longitude: true,
