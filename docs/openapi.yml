@@ -150,6 +150,28 @@ paths:
                         type: boolean
                       institutionId:
                         type: integer
+                      institution:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                          emailDomain:
+                            type: string
+                          isActive:
+                            type: boolean
+                          createdAt:
+                            type: string
+                          updatedAt:
+                            type: string
+                        required:
+                          - id
+                          - name
+                          - emailDomain
+                          - isActive
+                          - createdAt
+                          - updatedAt
                     required:
                       - id
                       - email
@@ -244,6 +266,28 @@ paths:
                         type: boolean
                       institutionId:
                         type: integer
+                      institution:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                          emailDomain:
+                            type: string
+                          isActive:
+                            type: boolean
+                          createdAt:
+                            type: string
+                          updatedAt:
+                            type: string
+                        required:
+                          - id
+                          - name
+                          - emailDomain
+                          - isActive
+                          - createdAt
+                          - updatedAt
                     required:
                       - id
                       - email
@@ -418,8 +462,6 @@ paths:
                       properties:
                         id:
                           type: integer
-                        postId:
-                          type: integer
                         latitude:
                           type: number
                         longitude:
@@ -432,7 +474,6 @@ paths:
                           type: boolean
                       required:
                         - id
-                        - postId
                         - latitude
                         - longitude
                         - expiresAt
@@ -523,8 +564,6 @@ paths:
                         type: boolean
                       institutionId:
                         type: integer
-                      hasUnreadChat:
-                        type: boolean
                       institution:
                         type: object
                         properties:
@@ -547,6 +586,8 @@ paths:
                           - isActive
                           - createdAt
                           - updatedAt
+                      hasUnreadChat:
+                        type: boolean
                     required:
                       - id
                       - email
@@ -631,6 +672,10 @@ paths:
                 properties:
                   id:
                     type: integer
+                  markerId:
+                    type:
+                      - integer
+                      - "null"
                   iconIdx:
                     type: integer
                   title:
@@ -655,6 +700,7 @@ paths:
                     type: boolean
                 required:
                   - id
+                  - markerId
                   - iconIdx
                   - title
                   - content
@@ -1129,6 +1175,10 @@ paths:
                           properties:
                             id:
                               type: integer
+                            markerId:
+                              type:
+                                - integer
+                                - "null"
                             iconIdx:
                               type: integer
                             title:
@@ -1149,6 +1199,7 @@ paths:
                               type: integer
                           required:
                             - id
+                            - markerId
                             - iconIdx
                             - title
                             - content
