@@ -28,7 +28,7 @@ export const RegisterRequestBodySchema = MemberSchema.pick({
   ),
   email: z.string().email(),
   gender: z.number().int().min(0).max(1),
-});
+}).strict();
 
 export const LoginRequestBodySchema = z.object({
   email: z.string().email(),

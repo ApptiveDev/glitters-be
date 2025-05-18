@@ -24,7 +24,7 @@ export const CreatePostRequestBodySchema = z.object({
 }).merge(MarkerSchema.pick({
   latitude: true,
   longitude: true,
-}));
+})).strict();
 
 export const CreatePostResponseBodySchema = z.object({
   postId: z.number(),
