@@ -22,6 +22,7 @@ export async function start() {
   await registerRoutes(app);
   // privacy policy, tos, api docs
   await registerDocumentRoutes(app);
+  await scheduleCronJobs();
 
   const httpServer = http.createServer(app);
   new ChatServer(httpServer);
@@ -42,6 +43,28 @@ export async function registerDocumentRoutes(app: express.Application) {
   app.get('/terms-of-service', async(_, res) => {
     res.send(await getMarkdownHtml('terms_of_service.md'));
   });
+}
+
+export async function scheduleCronJobs() {
+  const domainsPath = path.join(__dirname, 'domains');
+  const isDev = process.env.NODE_ENV === 'development';
+  const ext = isDev ? '.ts' : '.js';
+
+  for (const domain of fs.readdirSync(domainsPath)) {
+    const schedulerFile = path.join(domainsPath, domain, `scheduler${ext}`);
+
+    try {
+      if (isDev) {
+        await import(pathToFileURL(schedulerFile).href);
+      } else {
+        require(schedulerFile);
+      }
+      console.log('scheduler for', domain, 'registered successfully.');
+    } catch (_) {
+      console.warn(`scheduler${ext} not found in ${domain}, skipping`);
+    }
+  }
+
 }
 
 export async function registerRoutes(app: express.Application) {
