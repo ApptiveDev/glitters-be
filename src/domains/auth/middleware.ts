@@ -3,7 +3,6 @@ import {
 } from '@/domains/auth/types';
 import { NextFunction, Response } from 'express';
 import { isInvalidatedToken, verifyToken } from '@/domains/auth/utils';
-import prisma from '@/utils/database';
 import rateLimit from 'express-rate-limit';
 import { UnauthorizedError } from '@/domains/error/HttpError';
 
@@ -44,21 +43,10 @@ export async function authMiddleware(
     throw new UnauthorizedError('토큰이 필요합니다.');
   }
 
-  const member = await prisma.member.findUnique({
-    where: { id: decoded.id },
-    omit: {
-      password: true,
-    },
-  });
-
-  if (!member) {
-    throw new UnauthorizedError('토큰 검증 실패');
-  }
-
-  if (member.isDeactivated) {
-    throw new UnauthorizedError('탈퇴한 사용자입니다.');
-  }
-
-  req.member = member;
+  req.member = {
+    id: decoded.id,
+    email: decoded.email,
+    name: decoded.name,
+  };
   next();
 }

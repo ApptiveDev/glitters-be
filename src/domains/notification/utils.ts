@@ -20,7 +20,19 @@ export async function sendPushMessage(token: string, title: string, body: string
 }
 
 export async function sendPushToMember(member: InternalMember, title: string, body: string, payload?: NotificationData) {
-  const { expoToken: token } = member;
+  const prismaMember = await prisma.member.findUnique({
+    where: {
+      id: member.id,
+    },
+    select: {
+      expoToken: true,
+    }
+  });
+  if(! prismaMember || ! prismaMember.expoToken) {
+    console.error(`Trying to send notification to invalid member or nullified token ${member.id}`);
+    return;
+  }
+  const { expoToken: token } = prismaMember;
   if(! Expo.isExpoPushToken(token)) {
     console.error(`Invalid push token for member id ${member.id}`);
     // revoke
