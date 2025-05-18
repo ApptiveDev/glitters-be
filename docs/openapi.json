@@ -175,7 +175,8 @@
                   "birth",
                   "termsAccepted",
                   "gender"
-                ]
+                ],
+                "additionalProperties": false
               }
             }
           }
@@ -224,6 +225,9 @@
                         "institutionId": {
                           "type": "integer"
                         },
+                        "isAdmin": {
+                          "type": "integer"
+                        },
                         "institution": {
                           "type": "object",
                           "properties": {
@@ -266,7 +270,8 @@
                         "reportedCount",
                         "isDeactivated",
                         "termsAccepted",
-                        "institutionId"
+                        "institutionId",
+                        "isAdmin"
                       ]
                     },
                     "token": {
@@ -399,6 +404,9 @@
                         "institutionId": {
                           "type": "integer"
                         },
+                        "isAdmin": {
+                          "type": "integer"
+                        },
                         "institution": {
                           "type": "object",
                           "properties": {
@@ -441,7 +449,8 @@
                         "reportedCount",
                         "isDeactivated",
                         "termsAccepted",
-                        "institutionId"
+                        "institutionId",
+                        "isAdmin"
                       ]
                     },
                     "token": {
@@ -711,6 +720,9 @@
                           "createdAt": {
                             "type": "string"
                           },
+                          "markerIdx": {
+                            "type": "integer"
+                          },
                           "isWrittenBySelf": {
                             "type": "boolean"
                           }
@@ -721,6 +733,7 @@
                           "longitude",
                           "expiresAt",
                           "createdAt",
+                          "markerIdx",
                           "isWrittenBySelf"
                         ]
                       }
@@ -861,6 +874,9 @@
                         "institutionId": {
                           "type": "integer"
                         },
+                        "isAdmin": {
+                          "type": "integer"
+                        },
                         "institution": {
                           "type": "object",
                           "properties": {
@@ -907,6 +923,7 @@
                         "isDeactivated",
                         "termsAccepted",
                         "institutionId",
+                        "isAdmin",
                         "hasUnreadChat"
                       ]
                     }
@@ -1039,6 +1056,9 @@
                     "iconIdx": {
                       "type": "integer"
                     },
+                    "markerIdx": {
+                      "type": "integer"
+                    },
                     "title": {
                       "type": "string"
                     },
@@ -1074,6 +1094,7 @@
                     "id",
                     "markerId",
                     "iconIdx",
+                    "markerIdx",
                     "title",
                     "content",
                     "createdAt",
@@ -1227,7 +1248,8 @@
                   "iconIdx",
                   "latitude",
                   "longitude"
-                ]
+                ],
+                "additionalProperties": false
               }
             }
           }
@@ -1835,6 +1857,9 @@
                               "iconIdx": {
                                 "type": "integer"
                               },
+                              "markerIdx": {
+                                "type": "integer"
+                              },
                               "title": {
                                 "type": "string"
                               },
@@ -1864,6 +1889,7 @@
                               "id",
                               "markerId",
                               "iconIdx",
+                              "markerIdx",
                               "title",
                               "content",
                               "createdAt",
