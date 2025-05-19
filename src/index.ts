@@ -69,6 +69,7 @@ export async function scheduleCronJobs() {
 
 export async function registerRoutes(app: express.Application) {
   app.use(await loadRouters());
+  app.use(errorHandler);
 }
 
 export async function loadRouters() {
@@ -99,7 +100,6 @@ export async function loadRouters() {
     }
   }
 
-  apiRouter.use(currentApiPrefix, errorHandler);
   return apiRouter;
 }
 
