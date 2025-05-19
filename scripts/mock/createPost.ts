@@ -7,8 +7,8 @@ async function createRandomPostAndMarker() {
   const authorIds = Array.from({ length: 21 }, (_, i) => i + 12);
   const randomAuthorId = authorIds[Math.floor(Math.random() * authorIds.length)];
 
-  const baseLat = 35.237145278897785;
-  const baseLon = 129.07761905755973;
+  const baseLat = 35.235789;
+  const baseLon = 129.081399;
   const noise = () => (Math.random() - 0.5) * 0.001;
 
   const marker = await prisma.marker.create({
