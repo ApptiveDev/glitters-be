@@ -5,6 +5,7 @@ async function createRandomPostAndMarker() {
   const randomContent = `Content ${Math.random().toString(36).substring(7)}`;
   const randomAddress = `Address ${Math.random().toString(36).substring(7)}`;
   const authorIds = Array.from({ length: 21 }, (_, i) => i + 12);
+  const markerIdx = Math.floor(Math.random() * 4);
   const randomAuthorId = authorIds[Math.floor(Math.random() * authorIds.length)];
 
   const baseLat = 35.235789;
@@ -25,7 +26,8 @@ async function createRandomPostAndMarker() {
       title: randomTitle,
       content: randomContent,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7일 후
-      address: randomAddress
+      address: randomAddress,
+      markerIdx,
     }
   });
 
