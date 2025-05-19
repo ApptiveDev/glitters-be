@@ -8,4 +8,4 @@ export const CreateReportRequestBodySchema = ReportSchema.omit({
 }).partial({
   chatroomId: true,
   postId: true,
-});
+}).strict();

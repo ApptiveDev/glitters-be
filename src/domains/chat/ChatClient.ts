@@ -14,6 +14,7 @@ import { pub } from '@/utils/redis';
 import {
   getJoinedChatroomWithId,
 } from '@/domains/chat/service';
+import { chatRateLimiter } from '@/domains/chat/utils';
 
 export default class ChatClient {
   private readonly ws: WebSocket;
@@ -38,6 +39,10 @@ export default class ChatClient {
 
   async handleInboundChat(payload: InboundChat) {
     const { chatroomId, content } = InboundChatSchema.parse(payload);
+    if((await chatRateLimiter.get(this.memberId))?.remainingPoints === 0) {
+      return;
+    }
+    await chatRateLimiter.consume(this.memberId);
     // 채팅을 보낸 사용자가 참여한 채팅방 조회.
     const chatroom = await getJoinedChatroomWithId(this.memberId, chatroomId);
     if(! chatroom) {

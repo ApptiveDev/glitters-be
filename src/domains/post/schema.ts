@@ -16,6 +16,11 @@ export const GetPostResponseSchema = PostSchema.omit({
   authorId: true,
 }).extend({ isWrittenBySelf: z.boolean(), isLikedBySelf: z.boolean() });
 
+export const GetCreationAvailabilityResponseBodySchema = z.object({
+  isAvailable: z.boolean(),
+  nextAvailableAt: z.coerce.date().nullable(),
+});
+
 export const CreatePostRequestBodySchema = z.object({
   title: z.string().max(63),
   content: z.string().max(255),

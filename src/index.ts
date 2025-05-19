@@ -9,6 +9,7 @@ import { getMarkdownHtml } from '@/utils/docs';
 import { pathToFileURL } from 'node:url';
 import * as http from 'node:http';
 import ChatServer from '@/domains/chat/ChatServer';
+import rateLimit from 'express-rate-limit';
 
 export async function start() {
   const app = express();
@@ -18,6 +19,7 @@ export async function start() {
   app.use(express.json());
   app.set('trust proxy', 1);
 
+  await registerBaseLimiter(app);
   // domain 내부 컨트롤러들 등록
   await registerRoutes(app);
   // privacy policy, tos, api docs
@@ -30,6 +32,17 @@ export async function start() {
   httpServer.listen(PORT, () => {
     console.log(`서버가 http://localhost:${PORT} 에서 실행 중입니다.`);
   });
+}
+
+export async function registerBaseLimiter(app: express.Application) {
+  const apiRateLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 100, // 1분에 100번 요청 가능
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: '요청이 너무 많습니다. 잠시 후 다시 시도하세요.',
+  });
+  app.use(currentApiPrefix, apiRateLimiter);
 }
 
 export async function registerDocumentRoutes(app: express.Application) {
@@ -69,6 +82,7 @@ export async function scheduleCronJobs() {
 
 export async function registerRoutes(app: express.Application) {
   app.use(await loadRouters());
+  app.use(errorHandler);
 }
 
 export async function loadRouters() {
@@ -99,7 +113,6 @@ export async function loadRouters() {
     }
   }
 
-  apiRouter.use(currentApiPrefix, errorHandler);
   return apiRouter;
 }
 
