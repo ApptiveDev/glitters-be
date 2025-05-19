@@ -886,6 +886,7 @@ paths:
               required:
                 - reportType
                 - reason
+              additionalProperties: false
       responses:
         "201":
           description: 신고 등록 성공
