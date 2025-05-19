@@ -65,6 +65,8 @@ model Post {
   likes    Like[]
   blocks   Block[]
 
+  @@index(createdAt)
+
   @@map("posts")
 }
 
