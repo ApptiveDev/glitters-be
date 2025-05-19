@@ -180,6 +180,7 @@ export async function getLatestPostCreationTime(member: number | InternalMember)
   const latestPost = await prisma.post.findFirst({
     where: {
       authorId: member,
+      isDeactivated: false,
     },
     orderBy: {
       createdAt: 'desc',
@@ -204,6 +205,7 @@ export function countPostsInLast24Hours(member: number | InternalMember){
       createdAt: {
         gte,
       },
+      isDeactivated: false,
     },
   });
 }

@@ -9,7 +9,10 @@ import { Member } from '.prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { omitPrivateFields } from '@/domains/member/utils';
 import { deleteAllChatsByMember } from '@/domains/chat/service';
-import { unlinkPostsByMember } from '@/domains/post/service';
+import {
+  countPostsInLast24Hours,
+  unlinkPostsByMember,
+} from '@/domains/post/service';
 import { saveInvalidatedToken } from '@/domains/auth/service';
 
 export async function getMyInfo(req: AuthenticatedRequest, res: GetMyInfoResponse) {
@@ -38,15 +41,7 @@ export async function getMyInfo(req: AuthenticatedRequest, res: GetMyInfoRespons
 }
 
 export async function getActivePostCount(req: AuthenticatedRequest, res: GetActivePostCountResponse) {
-  const memberId = req.member?.id as number;
-  const count = await prisma.post.count({
-    where: {
-      authorId: memberId,
-      expiresAt: {
-        gt: new Date(),
-      }
-    }
-  });
+  const count = await countPostsInLast24Hours(req.member!);
   res.status(StatusCodes.OK).json({ count });
 }
 
