@@ -21,6 +21,7 @@ import { InternalMember, PublicMember } from '@/domains/member/types';
 import redis from '@/utils/redis';
 import { BadRequestError, NotFoundError } from '@/domains/error/HttpError';
 import { AuthenticatedRequest } from '@/domains/auth/types';
+import { notifyPostCreation } from '@/domains/notification/service';
 
 export async function getPost(req: GetPostRequest, res: GetPostResponse) {
   const { postId } = GetPostPathSchema.parse(req.params);
@@ -144,6 +145,7 @@ export async function deletePost(req: DeletePostRequest, res: Response) {
 
 export async function createPost(req: CreatePostRequest, res: CreatePostResponse) {
   const { latitude, longitude, title, content, address, iconIdx, markerIdx } = CreatePostRequestBodySchema.parse(req.body);
+  await notifyPostCreation();
   const { isAvailable, nextAvailableAt } = await canCreatePost(req.member!);
   if(! isAvailable) {
     throw new BadRequestError(`아직 게시글을 생성할 수 없습니다. 다음 생성 가능 시간: ${nextAvailableAt}`);

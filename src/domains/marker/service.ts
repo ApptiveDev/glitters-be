@@ -52,7 +52,7 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
 }
 
 export async function getNearbyMarkerInfo
-(member: InternalMember, lat: number, lon: number, radiusKm = 0.1): Promise<NearbyMarkerInfo> {
+(member: InternalMember | number, lat: number, lon: number, radiusKm = 0.1): Promise<NearbyMarkerInfo> {
   const markers = await getNearbyMarkers(member, lat, lon, radiusKm);
   const markerCount = markers.length;
   const nearestMarker = markers[0] ?? null;
@@ -61,7 +61,7 @@ export async function getNearbyMarkerInfo
   };
 }
 
-export async function getNearbyMarkers(member: InternalMember, lat: number, lon: number, radiusKm = 0.1) {
+export async function getNearbyMarkers(member: InternalMember | number, lat: number, lon: number, radiusKm = 0.1) {
   return (await findNearbyMarkers(member, lat, lon, radiusKm)).map(marker => {
     const toRad = (deg: number) => deg * (Math.PI / 180);
     const R = 6371; // Earth radius in km
@@ -81,7 +81,7 @@ export async function getNearbyMarkers(member: InternalMember, lat: number, lon:
   }).sort((a, b) => a.distance - b.distance);
 }
 
-export async function findNearbyMarkers(member: InternalMember, lat: number, lon: number, radiusKm = 0.1) {
+export async function findNearbyMarkers(member: InternalMember | number, lat: number, lon: number, radiusKm = 0.1) {
   const blockedIds = await getBlockedMembers(member);
   const latDelta = radiusKm / 111;
   const lonDelta = radiusKm / (111 * Math.cos((lat * Math.PI) / 180));
@@ -105,7 +105,7 @@ export async function findNearbyMarkers(member: InternalMember, lat: number, lon
   });
 }
 
-export async function getNearbyMarkerCount(member: InternalMember, lat: number, lon: number, radiusKm = 0.1): Promise<number> {
+export async function getNearbyMarkerCount(member: InternalMember | number, lat: number, lon: number, radiusKm = 0.1): Promise<number> {
   const blockedIds = await getBlockedMembers(member);
   const latDelta = radiusKm / 111;
   const lonDelta = radiusKm / (111 * Math.cos((lat * Math.PI) / 180));
