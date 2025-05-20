@@ -14,6 +14,7 @@ import {
   LoginResponse,
   RegisterRequest,
   RegisterResponse,
+  ResetPasswordEmailInputRequest,
 } from '@/domains/auth/types';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
@@ -31,6 +32,42 @@ import {
   NotFoundError,
 } from '@/domains/error/HttpError';
 
+export async function handleResetPasswordEmailInput(req: ResetPasswordEmailInputRequest, res: Response) {
+  const { email } = EmailVerifyRequestBodySchema.parse(req.body);
+  if(! (await isValidEmail(email))) {
+    throw new BadRequestError('잘못된 이메일입니다.');
+  }
+  const blacklisted = await prisma.blacklist.findFirst({
+    where: {
+      email
+    }
+  });
+  if(blacklisted) {
+    const date = blacklisted.createdAt;
+    throw new ForbiddenError(`이용약관을 위반하여 재가입이 제한된 이메일입니다(${date.toDateString()}). 관리자에게 문의해주세요`);
+  }
+  const code = await sendVerificationCodeEmail(email);
+  await prisma.emailVerification.updateMany({
+    where: {
+      email,
+      type: 'RESET_PASSWORD',
+    },
+    data: {
+      expiresAt: new Date(),
+    }
+  });
+  await prisma.emailVerification.create({
+    data: {
+      email,
+      verificationNumber: code,
+      isVerified: false,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+    }
+  });
+  res.status(StatusCodes.CREATED).send();
+
+}
+
 export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Response) {
   const { email, code } = EmailCodeInputRequestBodySchema.parse(req.body);
   const targetEmail = await prisma.emailVerification.findFirst({
@@ -38,6 +75,7 @@ export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Resp
       email,
       verificationNumber: code,
       isVerified: false,
+      type: 'REGISTER',
       expiresAt: {
         gt: new Date(),
       }},
@@ -78,6 +116,7 @@ export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Res
   await prisma.emailVerification.updateMany({
     where: {
       email,
+      type: 'REGISTER',
     },
     data: {
       expiresAt: new Date(),
@@ -112,6 +151,7 @@ export async function handleRegister(req: RegisterRequest, res: RegisterResponse
       expiresAt: {
         gt: new Date(),
       },
+      type: 'REGISTER',
     },
     orderBy: {
       createdAt: 'desc',
@@ -167,6 +207,7 @@ export async function handleLogin(req: LoginRequest, res: LoginResponse) {
   const token = generateToken(member);
   res.status(StatusCodes.OK).json({ token, member: omitPrivateFields(member) });
 }
+
 
 export async function handleLogout(req: AuthenticatedRequest, res: Response) {
   const token = req.headers.authorization!.split(' ')[1];

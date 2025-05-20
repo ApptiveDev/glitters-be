@@ -2,9 +2,11 @@ import { Member } from '@/schemas';
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import {
+  EmailCodeInputRequestBodySchema,
   EmailVerifyRequestBodySchema,
   LoginRequestBodySchema,
   LoginResponseBodySchema,
+  PasswordChangeRequestBodySchema,
   RegisterRequestBodySchema,
   RegisterResponseBodySchema,
 } from '@/domains/auth/schema';
@@ -31,3 +33,7 @@ export type RegisterRequest = Request<{}, {}, z.infer<typeof RegisterRequestBody
 export type LoginRequest = Request<{}, {}, z.infer<typeof LoginRequestBodySchema>>;
 export type RegisterResponse = Response<z.infer<typeof RegisterResponseBodySchema>>;
 export type LoginResponse = Response<z.infer<typeof LoginResponseBodySchema>>;
+
+export type ResetPasswordEmailInputRequest = Request<{}, {}, z.infer<typeof EmailVerifyRequestBodySchema>>;
+export type ResetPasswordCodeInputRequest = Request<{}, {}, z.infer<typeof EmailCodeInputRequestBodySchema>>;
+export type PasswordChangeRequest = Request<{}, {}, z.infer<typeof PasswordChangeRequestBodySchema>>;

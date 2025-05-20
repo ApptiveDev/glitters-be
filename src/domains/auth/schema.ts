@@ -2,6 +2,17 @@ import { z } from 'zod';
 import { PublicMemberSchema } from '@/domains/member/schema';
 import { MemberSchema } from '@/schemas';
 
+export const PasswordChangeRequestBodySchema = MemberSchema.pick({
+  email: true,
+}).extend({
+  password: z.string()
+  .min(10)
+  .max(25)
+  .regex(
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[{\]};:'",.<>/?\\|`~]).{10,25}$/,
+  ),
+});
+
 export const EmailCodeInputRequestBodySchema = z.object({
   email: z.string().email(),
   code: z.string().max(6),
