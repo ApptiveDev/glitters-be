@@ -19,26 +19,30 @@ export async function sendPushMessage(token: string, title: string, body: string
   return result;
 }
 
-export async function sendPushToMember(member: InternalMember, title: string, body: string, payload?: NotificationData) {
+export async function sendPushToMember(member: InternalMember | number, title: string, body: string, payload?: NotificationData) {
+  if(typeof member === 'object') {
+    member = member.id;
+  }
   const prismaMember = await prisma.member.findUnique({
     where: {
-      id: member.id,
+      id: member,
+      isDeactivated: false,
     },
     select: {
       expoToken: true,
     }
   });
   if(! prismaMember || ! prismaMember.expoToken) {
-    console.error(`Trying to send notification to invalid member or nullified token ${member.id}`);
+    console.error(`Trying to send notification to invalid member or nullified token ${member}`);
     return;
   }
   const { expoToken: token } = prismaMember;
   if(! Expo.isExpoPushToken(token)) {
-    console.error(`Invalid push token for member id ${member.id}`);
+    console.error(`Invalid push token for member id ${member}`);
     // revoke
     await prisma.member.update({
       where: {
-        id: member.id,
+        id: member,
       },
       data: {
         expoToken: null

@@ -4,10 +4,22 @@ import {
   LocationInputRequestBodySchema,
 } from '@/domains/notification/schema';
 import { z } from 'zod';
+import { NearbyMarkerInfo } from '@/domains/marker/types';
 
 export type LocationInputRequest = AuthenticatedRequest<{}, z.infer<typeof LocationInputRequestBodySchema>>;
 export type ExpoTokenInputRequest = AuthenticatedRequest<{}, z.infer<typeof ExpoTokenInputRequestBodySchema>>;
 
 export interface NotificationData extends Record<string, unknown> {
-  type: 'chat' | 'nearby';
+  type: 'chat' | 'nearby' | 'likes' | 'views';
 }
+
+export interface NearbyNotificationData extends NotificationData, NearbyMarkerInfo {
+  type: 'nearby',
+}
+
+export interface PostNotificationData extends NotificationData {
+  type: 'likes' | 'views',
+  postId: number,
+  count: number,
+}
+
