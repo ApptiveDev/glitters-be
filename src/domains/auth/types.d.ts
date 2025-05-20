@@ -5,6 +5,7 @@ import {
   EmailVerifyRequestBodySchema,
   LoginRequestBodySchema,
   LoginResponseBodySchema,
+  PasswordChangeRequestBodySchema,
   RegisterRequestBodySchema,
   RegisterResponseBodySchema,
 } from '@/domains/auth/schema';
@@ -31,3 +32,5 @@ export type RegisterRequest = Request<{}, {}, z.infer<typeof RegisterRequestBody
 export type LoginRequest = Request<{}, {}, z.infer<typeof LoginRequestBodySchema>>;
 export type RegisterResponse = Response<z.infer<typeof RegisterResponseBodySchema>>;
 export type LoginResponse = Response<z.infer<typeof LoginResponseBodySchema>>;
+
+export type PasswordChangeRequest = Request<{}, {}, z.infer<typeof PasswordChangeRequestBodySchema>>;

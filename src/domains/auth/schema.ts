@@ -1,14 +1,26 @@
 import { z } from 'zod';
 import { PublicMemberSchema } from '@/domains/member/schema';
-import { MemberSchema } from '@/schemas';
+import { EmailVerificationSchema, MemberSchema } from '@/schemas';
+
+export const PasswordChangeRequestBodySchema = z.object({
+  email: z.string().email(),
+  password: z.string()
+  .min(10)
+  .max(25)
+  .regex(
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[{\]};:'",.<>/?\\|`~]).{10,25}$/,
+  ),
+});
 
 export const EmailCodeInputRequestBodySchema = z.object({
   email: z.string().email(),
   code: z.string().max(6),
+  type: EmailVerificationSchema.shape.type,
 });
 
 export const EmailVerifyRequestBodySchema = z.object({
   email: z.string().email(),
+  type: EmailVerificationSchema.shape.type,
 });
 
 export const RegisterRequestBodySchema = MemberSchema.pick({
