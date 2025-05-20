@@ -18,6 +18,7 @@ import {
   isNotified,
   storeNotificationStatus,
 } from '@/domains/notification/store';
+import { Post } from '@/schemas';
 
 export async function handleLocationInput(req: LocationInputRequest, res: Response) {
   const { latitude, longitude } = LocationInputRequestBodySchema.parse(req.body);
@@ -39,6 +40,26 @@ export async function handleExpoTokenInput(req: ExpoTokenInputRequest, res: Resp
   res.status(StatusCodes.OK).send();
 }
 
+export async function notifyPostLike(likedPost: Post) {
+  const { authorId, likeCount } = likedPost;
+  if(likeCount === 50 || likeCount === 100) {
+    await sendPushToMember(authorId, `당신이 올린 반짝이가 ${likeCount}번 반짝였어요!`, '반짝이 앱을 통해 확인해봐요', {
+      postId: likedPost.id,
+      type: 'likes',
+    });
+  }
+}
+
+export async function notifyPostView(viewedPost: Post) {
+  const { authorId, viewCount } = viewedPost;
+  if(viewCount === 50 || viewCount === 100) {
+    await sendPushToMember(authorId, `당신이 올린 반짝이의 조회수가 ${viewCount}회를 돌파했어요!`, '반짝이 앱을 통해 확인해봐요', {
+      postId: viewedPost.id,
+      type: 'likes',
+    });
+  }
+}
+
 export async function notifyPostCreation() {
   const locations = await getStoredLocations();
   if(! locations) {
@@ -53,7 +74,7 @@ export async function notifyPostCreation() {
       return;
     }
     await storeNotificationStatus(memberId);
-    await sendPushToMember(memberId, `주변에 ${nearbyMarkerInfo.markerCount}개 반짝이가 올라왔어요!`, '반짝이 앱을 통해 확인해봐요', {
+    await sendPushToMember(memberId, '주변에 반짝이 대량 생성!', '반짝이 앱을 통해 확인해봐요', {
       ...nearbyMarkerInfo,
       type: 'nearby',
     });

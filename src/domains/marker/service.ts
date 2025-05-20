@@ -77,7 +77,15 @@ export async function getNearbyMarkers(member: InternalMember | number, lat: num
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c;
 
-    return { ...marker, distance };
+    return {
+      marker: {
+        markerId: marker.id,
+        postId: marker.post!.id,
+        latitude: marker.latitude,
+        longitude: marker.longitude,
+      },
+      distance
+    };
   }).sort((a, b) => a.distance - b.distance);
 }
 
@@ -101,6 +109,12 @@ export async function findNearbyMarkers(member: InternalMember | number, lat: nu
           notIn: blockedIds,
         }
       },
+    },
+    select: {
+      latitude: true,
+      longitude: true,
+      post: true,
+      id: true,
     },
   });
 }

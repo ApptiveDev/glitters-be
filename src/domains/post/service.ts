@@ -21,7 +21,10 @@ import { InternalMember, PublicMember } from '@/domains/member/types';
 import redis from '@/utils/redis';
 import { BadRequestError, NotFoundError } from '@/domains/error/HttpError';
 import { AuthenticatedRequest } from '@/domains/auth/types';
-import { notifyPostCreation } from '@/domains/notification/service';
+import {
+  notifyPostCreation,
+  notifyPostView,
+} from '@/domains/notification/service';
 
 export async function getPost(req: GetPostRequest, res: GetPostResponse) {
   const { postId } = GetPostPathSchema.parse(req.params);
@@ -106,6 +109,7 @@ export async function applyPostView(member: PublicMember, post: Post) {
   if(await redis.exists(viewCountKey))
     return post;
   await redis.set(viewCountKey, '1', 'EX', ttl);
+  await notifyPostView(post);
   return prisma.post.update({
     data: {
       viewCount: {

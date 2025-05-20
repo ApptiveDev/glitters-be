@@ -26,6 +26,7 @@ export async function sendPushToMember(member: InternalMember | number, title: s
   const prismaMember = await prisma.member.findUnique({
     where: {
       id: member,
+      isDeactivated: false,
     },
     select: {
       expoToken: true,

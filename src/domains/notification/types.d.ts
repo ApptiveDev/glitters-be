@@ -9,5 +9,5 @@ export type LocationInputRequest = AuthenticatedRequest<{}, z.infer<typeof Locat
 export type ExpoTokenInputRequest = AuthenticatedRequest<{}, z.infer<typeof ExpoTokenInputRequestBodySchema>>;
 
 export interface NotificationData extends Record<string, unknown> {
-  type: 'chat' | 'nearby';
+  type: 'chat' | 'nearby' | 'likes' | 'views';
 }

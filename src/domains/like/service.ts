@@ -4,6 +4,7 @@ import { LikePostRequestQuerySchema } from '@/domains/like/schema';
 import prisma from '@/utils/database';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequestError, NotFoundError } from '@/domains/error/HttpError';
+import { notifyPostLike } from '@/domains/notification/service';
 
 export async function deleteLike(req: LikePostRequest, res: Response) {
 
@@ -69,7 +70,7 @@ export async function createLike(req: LikePostRequest, res: Response) { const { 
   if(like) {
     throw new BadRequestError('이미 좋아요한 게시글입니다.');
   }
-  await prisma.$transaction([
+  const [_, updatedPost] = await prisma.$transaction([
     prisma.like.create({
       data: {
         memberId: req.member!.id,
@@ -83,6 +84,7 @@ export async function createLike(req: LikePostRequest, res: Response) { const { 
       }
     })
   ]);
+  await notifyPostLike(updatedPost);
 
   res.status(StatusCodes.CREATED).send();
 }
