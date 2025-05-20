@@ -67,9 +67,10 @@ export async function getChats(req: GetChatsRequest, res: GetChatsResponse) {
       isRead: true,
     }
   });
+  const lastChat = chats[chats.length-1];
   res.status(StatusCodes.OK).json({
     chats,
-    lastChatId: chats[chats.length-1]?.id,
+    lastChatId: lastChat ? lastChat.id : cursor,
   });
 }
 
