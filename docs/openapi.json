@@ -1826,8 +1826,7 @@
                     }
                   },
                   "required": [
-                    "chats",
-                    "lastChatId"
+                    "chats"
                   ]
                 }
               }
