@@ -1,32 +1,18 @@
 import {
-  ExpoTokenInputRequest,
-  LocationInputRequest,
-  NearbyNotificationData,
+  ExpoTokenInputRequest, PostCreationNotificationData,
   PostNotificationData,
 } from '@/domains/notification/types';
 import {
   ExpoTokenInputRequestBodySchema,
-  LocationInputRequestBodySchema,
 } from '@/domains/notification/schema';
 import { Response } from 'express';
-import { sendPushToMember } from '@/domains/notification/utils';
 import {
-  getNearbyMarkerInfo,
-} from '@/domains/marker/service';
+  sendPushMessage,
+  sendPushToMember,
+} from '@/domains/notification/utils';
 import { StatusCodes } from 'http-status-codes';
 import prisma from '@/utils/database';
-import { getStoredLocations, storeLocation } from '@/domains/location/store';
-import {
-  isNotified,
-  storeNotificationStatus,
-} from '@/domains/notification/store';
 import { Post } from '@/schemas';
-
-export async function handleLocationInput(req: LocationInputRequest, res: Response) {
-  const { latitude, longitude } = LocationInputRequestBodySchema.parse(req.body);
-  await storeLocation(req.member!.id, latitude, longitude);
-  res.status(StatusCodes.OK).send();
-}
 
 export async function handleExpoTokenInput(req: ExpoTokenInputRequest, res: Response) {
   const { token } = ExpoTokenInputRequestBodySchema.parse(req.body);
@@ -50,7 +36,8 @@ export async function notifyPostLike(likedPost: Post) {
       type: 'likes',
       count: likeCount,
     };
-    await sendPushToMember(authorId, `당신이 올린 반짝이가 ${likeCount}번 반짝였어요!`, '반짝이 앱을 통해 확인해봐요', notificationData);
+    const result = await sendPushToMember(authorId, `당신이 올린 반짝이가 ${likeCount}번 반짝였어요!`, '반짝이 앱을 통해 확인해봐요', notificationData);
+    console.log(`알림 전송: ${result?.status}`);
   }
 }
 
@@ -62,32 +49,44 @@ export async function notifyPostView(viewedPost: Post) {
       type: 'views',
       count: viewCount,
     };
-    await sendPushToMember(authorId, `당신이 올린 반짝이의 조회수가 ${viewCount}회를 돌파했어요!`,
+    const result = await sendPushToMember(authorId, `당신이 올린 반짝이의 조회수가 ${viewCount}회를 돌파했어요!`,
       '반짝이 앱을 통해 확인해봐요', notificationData);
+    console.log(`알림 전송: ${result?.status}`);
   }
 }
 
-export async function notifyPostCreation() {
-  const locations = await getStoredLocations();
-  if(! locations) {
+export async function notifyPostCreation(createdPost: Post) {
+  const { institutionId } = createdPost;
+  const postCount = await prisma.post.count({
+    where: {
+      institutionId,
+      createdAt: {
+        gte: new Date(new Date().getTime() - 60 * 60 * 1000),
+      }
+    }
+  });
+  if(postCount < 30) {
     return;
   }
-  for (const [memberIdString, location] of Object.entries(locations)) {
-    const memberId = Number(memberIdString);
-    const [latitude, longitude] = location;
-    const nearbyMarkerInfo = await getNearbyMarkerInfo(memberId, latitude, longitude);
-    const { markerCount, nearestMarker } = nearbyMarkerInfo;
+  return sendPostsNotification(institutionId);
+}
 
-    if(nearbyMarkerInfo.markerCount < 10 || await isNotified(memberId)) {
+export async function sendPostsNotification(institutionId: number) {
+  const notificationData: PostCreationNotificationData = {
+    type: 'posts',
+  };
+  const members = await prisma.member.findMany({
+    where: {
+      institutionId,
+    },
+    select: {
+      expoToken: true,
+    }
+  });
+  return Promise.all(members.filter(m => m.expoToken).map((member) => {
+    if(! member.expoToken){
       return;
     }
-    const nearbyNotificationData: NearbyNotificationData = {
-      type: 'nearby',
-      markerCount,
-      nearestMarker,
-    };
-    await storeNotificationStatus(memberId);
-    await sendPushToMember(memberId, '주변에 반짝이 대량 생성!', '반짝이 앱을 통해 확인해봐요',
-      nearbyNotificationData);
-  }
+    return sendPushMessage(member.expoToken, '학교에 반짝이 다량 생성!', '반짝이맵 앱을 통해 확인해봐요', notificationData);
+  }));
 }
