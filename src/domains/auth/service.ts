@@ -106,7 +106,7 @@ export async function handleRegister(req: RegisterRequest, res: RegisterResponse
   const domain = email.split('@')[1];
   const institution = (await prisma.institution.findFirstOrThrow({
     where: {
-      emailDomain: domain,
+      emailDomain: `@${domain}`
     }
   }));
   if(! institution) {
