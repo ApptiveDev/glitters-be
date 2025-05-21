@@ -149,7 +149,15 @@ export async function deletePost(req: DeletePostRequest, res: Response) {
 
 export async function createPost(req: CreatePostRequest, res: CreatePostResponse) {
   const { latitude, longitude, title, content, address, iconIdx, markerIdx } = CreatePostRequestBodySchema.parse(req.body);
-  await notifyPostCreation();
+
+  const { institutionId } = (await prisma.member.findUnique({
+    where: {
+      id: req.member!.id,
+    },
+    select: {
+      institutionId: true,
+    }
+  }))!;
   const { isAvailable, nextAvailableAt } = await canCreatePost(req.member!);
   if(! isAvailable) {
     throw new BadRequestError(`아직 게시글을 생성할 수 없습니다. 다음 생성 가능 시간: ${nextAvailableAt}`);
@@ -169,10 +177,12 @@ export async function createPost(req: CreatePostRequest, res: CreatePostResponse
       iconIdx,
       markerIdx,
       expiresAt,
+      institutionId,
       authorId: req.member?.id as number,
       markerId: marker.id,
     }
   });
+  await notifyPostCreation(post);
   res.status(StatusCodes.OK).json({
     markerId: marker.id,
     postId: post.id,

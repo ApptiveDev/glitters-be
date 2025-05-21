@@ -49,7 +49,7 @@ async function handleReportIncrement(updateResult: Member) {
     return;
   }
   // 경고 5회 이상일 경우 계정 삭제 및 블랙리스트 등록
-  if(updateResult.reportedCount >= 5) {
+  if(updateResult.reportedCount >= 10) {
     // 이미 블랙리스트인 경우
     if(await prisma.blacklist.count({ where: { email: updateResult.email } }))
       return;
