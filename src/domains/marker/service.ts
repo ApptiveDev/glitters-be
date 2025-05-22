@@ -7,6 +7,14 @@ import { InternalMember } from '@/domains/member/types';
 
 export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersResponse) {
   const blockedIds = await getBlockedMembers(req.member!);
+  const institutionId = (await prisma.member.findUniqueOrThrow({
+    where: {
+      id: req.member!.id,
+    },
+    select: {
+      institutionId: true,
+    }
+  })).institutionId;
   const markers = await prisma.marker.findMany({
     include: {
       post: {
@@ -27,7 +35,8 @@ export async function getMarkers(req: AuthenticatedRequest, res: GetMarkersRespo
         isDeactivated: false,
         authorId: {
           notIn: blockedIds,
-        }
+        },
+        institutionId,
       },
     },
     orderBy: {
