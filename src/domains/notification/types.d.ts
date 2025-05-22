@@ -10,7 +10,7 @@ export type LocationInputRequest = AuthenticatedRequest<{}, z.infer<typeof Locat
 export type ExpoTokenInputRequest = AuthenticatedRequest<{}, z.infer<typeof ExpoTokenInputRequestBodySchema>>;
 
 export interface NotificationData extends Record<string, unknown> {
-  type: 'chat' | 'nearby' | 'likes' | 'views';
+  type: 'chat' | 'posts' | 'likes' | 'views' | 'nearby';
 }
 
 export interface NearbyNotificationData extends NotificationData, NearbyMarkerInfo {
@@ -21,5 +21,9 @@ export interface PostNotificationData extends NotificationData {
   type: 'likes' | 'views',
   postId: number,
   count: number,
+}
+
+export interface PostCreationNotificationData extends NotificationData {
+  type: 'posts';
 }
 

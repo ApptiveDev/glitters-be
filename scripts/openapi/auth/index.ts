@@ -4,6 +4,7 @@ import {
   EmailVerifyRequestBodySchema,
   LoginRequestBodySchema,
   LoginResponseBodySchema,
+  PasswordChangeRequestBodySchema,
   RegisterRequestBodySchema,
   RegisterResponseBodySchema,
 } from '../../../src/domains/auth/schema';
@@ -11,6 +12,24 @@ import { ErrorSchema } from '../../../src/domains/error/schema';
 import { tokenHeader } from '../headers';
 
 export const authApiPaths = {
+  [`${currentApiPrefix}/password`]: {
+    put: {
+      summary: '패스워드 변경 요청 (이메일 인증 선행 필요)',
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: PasswordChangeRequestBodySchema,
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: '패스워드 변경 성공',
+        }
+      }
+    }
+  },
   [`${currentApiPrefix}/verify-email`]: {
     post: {
       summary: '이메일 인증 코드 요청',

@@ -57,7 +57,9 @@ model Post {
   isDeactivated Boolean  @default(false) @map("is_deactivated")
   likeCount     Int      @default(0) @map("like_count")
   viewCount     Int      @default(0) @map("view_count")
+  institutionId Int      @default(1) @map("institution_id")
 
+  institution Institution @relation(fields: [institutionId], references: [id])
   author   Member     @relation(fields: [authorId], references: [id])
   chatroom ChatRoom[]
   marker   Marker?    @relation("PostMarker", fields: [markerId], references: [id], onDelete: SetNull)
@@ -66,6 +68,7 @@ model Post {
   blocks   Block[]
 
   @@index(createdAt)
+  @@index(institutionId)
 
   @@map("posts")
 }
@@ -156,6 +159,7 @@ model EmailVerification {
   email              String   @map("email") @db.VarChar(255)
   createdAt          DateTime @default(now()) @map("created_at")
   expiresAt          DateTime @map("expires_at")
+  type               VerificationType @default(REGISTER)
 
   @@index([email])
   @@map("verifications")
@@ -180,6 +184,7 @@ model Institution {
   updatedAt   DateTime           @default(now()) @updatedAt @map("updated_at")
   bounds      InstitutionBound[]
   members     Member[]
+  posts   Post[]
 
   @@map("institutions")
 }
@@ -222,4 +227,9 @@ model Report {
 enum ReportType {
   POST_REPORT
   CHATROOM_REPORT
+}
+
+enum VerificationType {
+  REGISTER
+  RESET_PASSWORD
 }

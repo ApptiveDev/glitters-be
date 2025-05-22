@@ -9,6 +9,30 @@ servers:
   - url: https://banjjak.me:8444
     description: 개발 서버
 paths:
+  /api/password:
+    put:
+      summary: 패스워드 변경 요청 (이메일 인증 선행 필요)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  pattern: ^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[{\]};:'",.<>/?\\|`~]).{10,25}$
+                  minLength: 10
+                  maxLength: 25
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          description: 패스워드 변경 성공
   /api/verify-email:
     post:
       summary: 이메일 인증 코드 요청
@@ -22,8 +46,14 @@ paths:
                 email:
                   type: string
                   format: email
+                type:
+                  type: string
+                  enum: &a1
+                    - REGISTER
+                    - RESET_PASSWORD
               required:
                 - email
+                - type
       responses:
         "201":
           description: 인증 코드 전송 성공
@@ -64,9 +94,13 @@ paths:
                 code:
                   type: string
                   maxLength: 6
+                type:
+                  type: string
+                  enum: *a1
               required:
                 - email
                 - code
+                - type
       responses:
         "201":
           description: 인증 성공
@@ -479,6 +513,8 @@ paths:
                           type: string
                         markerIdx:
                           type: integer
+                        title:
+                          type: string
                         isWrittenBySelf:
                           type: boolean
                       required:
@@ -488,6 +524,7 @@ paths:
                         - expiresAt
                         - createdAt
                         - markerIdx
+                        - title
                         - isWrittenBySelf
                 required:
                   - markers
@@ -739,6 +776,8 @@ paths:
                     type: integer
                   viewCount:
                     type: integer
+                  institutionId:
+                    type: integer
                   isWrittenBySelf:
                     type: boolean
                   isLikedBySelf:
@@ -756,6 +795,7 @@ paths:
                   - isDeactivated
                   - likeCount
                   - viewCount
+                  - institutionId
                   - isWrittenBySelf
                   - isLikedBySelf
         "404":
@@ -1249,6 +1289,8 @@ paths:
                               type: integer
                             viewCount:
                               type: integer
+                            institutionId:
+                              type: integer
                           required:
                             - id
                             - markerId
@@ -1262,6 +1304,7 @@ paths:
                             - isDeactivated
                             - likeCount
                             - viewCount
+                            - institutionId
                         lastMessage:
                           type: object
                           properties:
