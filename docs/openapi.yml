@@ -513,6 +513,8 @@ paths:
                           type: string
                         markerIdx:
                           type: integer
+                        title:
+                          type: string
                         isWrittenBySelf:
                           type: boolean
                       required:
@@ -522,6 +524,7 @@ paths:
                         - expiresAt
                         - createdAt
                         - markerIdx
+                        - title
                         - isWrittenBySelf
                 required:
                   - markers
@@ -773,6 +776,8 @@ paths:
                     type: integer
                   viewCount:
                     type: integer
+                  institutionId:
+                    type: integer
                   isWrittenBySelf:
                     type: boolean
                   isLikedBySelf:
@@ -790,6 +795,7 @@ paths:
                   - isDeactivated
                   - likeCount
                   - viewCount
+                  - institutionId
                   - isWrittenBySelf
                   - isLikedBySelf
         "404":
@@ -1283,6 +1289,8 @@ paths:
                               type: integer
                             viewCount:
                               type: integer
+                            institutionId:
+                              type: integer
                           required:
                             - id
                             - markerId
@@ -1296,6 +1304,7 @@ paths:
                             - isDeactivated
                             - likeCount
                             - viewCount
+                            - institutionId
                         lastMessage:
                           type: object
                           properties:
