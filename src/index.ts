@@ -3,19 +3,20 @@ import path from 'path';
 import fs from 'fs';
 import { currentApiPrefix } from '@/constants';
 import { errorHandler } from '@/domains/error/middleware';
-import logger from '@/utils/logger';
 import swaggerUi from 'swagger-ui-express';
 import { getMarkdownHtml } from '@/utils/docs';
 import { pathToFileURL } from 'node:url';
 import * as http from 'node:http';
 import ChatServer from '@/domains/chat/ChatServer';
 import rateLimit from 'express-rate-limit';
+import { accessLogStream, setupStdoutLogStream } from '@/utils/logger';
 
 export async function start() {
   const app = express();
   const PORT = process.env.SERVER_PORT || 3000;
 
-  app.use(logger);
+  setupStdoutLogStream();
+  app.use(accessLogStream);
   app.use(express.json());
   app.set('trust proxy', 1);
 
@@ -74,7 +75,7 @@ export async function scheduleCronJobs() {
       }
       console.log('scheduler for', domain, 'registered successfully.');
     } catch (_) {
-      console.warn(`scheduler${ext} not found in ${domain}, skipping`);
+      continue;
     }
   }
 
@@ -109,7 +110,7 @@ export async function loadRouters() {
         apiRouter.use(currentApiPrefix, router);
       }
     } catch (err) {
-      console.warn(`controller${ext} not found in ${domain}, skipping`);
+      continue;
     }
   }
 
