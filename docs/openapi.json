@@ -775,6 +775,9 @@
                           "markerIdx": {
                             "type": "integer"
                           },
+                          "title": {
+                            "type": "string"
+                          },
                           "isWrittenBySelf": {
                             "type": "boolean"
                           }
@@ -786,6 +789,7 @@
                           "expiresAt",
                           "createdAt",
                           "markerIdx",
+                          "title",
                           "isWrittenBySelf"
                         ]
                       }
@@ -1184,6 +1188,9 @@
                     "viewCount": {
                       "type": "integer"
                     },
+                    "institutionId": {
+                      "type": "integer"
+                    },
                     "isWrittenBySelf": {
                       "type": "boolean"
                     },
@@ -1204,6 +1211,7 @@
                     "isDeactivated",
                     "likeCount",
                     "viewCount",
+                    "institutionId",
                     "isWrittenBySelf",
                     "isLikedBySelf"
                   ]
@@ -1988,6 +1996,9 @@
                               },
                               "viewCount": {
                                 "type": "integer"
+                              },
+                              "institutionId": {
+                                "type": "integer"
                               }
                             },
                             "required": [
@@ -2002,7 +2013,8 @@
                               "address",
                               "isDeactivated",
                               "likeCount",
-                              "viewCount"
+                              "viewCount",
+                              "institutionId"
                             ]
                           },
                           "lastMessage": {
