@@ -42,14 +42,6 @@ export async function blockByChatroomId(member: InternalMember, blockInput: z.in
     return true;
   }
   await createBlock(member.id, targetId, blockInput);
-  await prisma.chatRoom.update({
-    where: {
-      id: chatroomId,
-    },
-    data: {
-      isDeactivated: true,
-    }
-  });
   return true;
 }
 
