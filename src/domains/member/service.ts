@@ -56,11 +56,11 @@ export async function deactivateSelf(req: AuthenticatedRequest, res: Response) {
   res.status(StatusCodes.OK).send();
 }
 
-export async function maskMember(member: Member | number) {
+export function maskMember(member: Member | number) {
   if(typeof member !== 'number') {
     member = member.id;
   }
-  await prisma.member.update({
+  return prisma.member.update({
     where: {
       id: member,
     },
