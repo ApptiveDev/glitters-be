@@ -23,23 +23,25 @@ export async function createReport(req: CreateReportRequest, res: Response) {
   if(reportedId === reporterId) {
     throw new BadRequestError('자기 자신이 작성한 글은 신고할 수 없습니다.');
   }
-  await prisma.report.create({
-    data: {
-      ...createInput,
-      reporterId,
-      reportedId,
-    }
-  });
-  const updateResult = await prisma.member.update({
-    where: {
-      id: reportedId,
-    },
-    data: {
-      reportedCount: {
-        increment: 1,
+  const [_, updateResult] = await prisma.$transaction([
+    prisma.report.create({
+      data: {
+        ...createInput,
+        reporterId,
+        reportedId,
       }
-    }
-  });
+    }),
+    prisma.member.update({
+      where: {
+        id: reportedId,
+      },
+      data: {
+        reportedCount: {
+          increment: 1,
+        }
+      }
+    })
+  ]);
   await handleReportIncrement(updateResult);
   res.status(StatusCodes.CREATED).send();
 }
@@ -53,13 +55,15 @@ async function handleReportIncrement(updateResult: Member) {
     // 이미 블랙리스트인 경우
     if(await prisma.blacklist.count({ where: { email: updateResult.email } }))
       return;
-    await prisma.blacklist.create({
-      data: {
-        email: updateResult.email,
-        memberId: updateResult.id,
-      }
-    });
-    await maskMember(updateResult);
+    return prisma.$transaction([
+      prisma.blacklist.create({
+        data: {
+          email: updateResult.email,
+          memberId: updateResult.id,
+        }
+      }),
+      maskMember(updateResult),
+    ]);
   }
 }
 
