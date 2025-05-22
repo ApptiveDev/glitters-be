@@ -81,7 +81,7 @@ export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Res
 }
 
 export async function handleRegister(req: RegisterRequest, res: RegisterResponse) {
-  const { email, name, password, birth, termsAccepted } = RegisterRequestBodySchema.parse(req.body);
+  const { email, name, password, birth, termsAccepted, gender } = RegisterRequestBodySchema.parse(req.body);
   const blacklisted = await prisma.blacklist.findFirst({
     where: {
       email
@@ -117,6 +117,7 @@ export async function handleRegister(req: RegisterRequest, res: RegisterResponse
       email,
       name,
       birth,
+      gender,
       termsAccepted,
       password: hashedPassword,
       institutionId: institution.id,
