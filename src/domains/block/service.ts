@@ -42,15 +42,21 @@ export async function blockByChatroomId(member: InternalMember, blockInput: z.in
     return true;
   }
   await createBlock(member.id, targetId, blockInput);
-  await prisma.chatRoom.update({
+  return true;
+}
+
+export function deactivateBlockedChatroom(issuerId: number, targetId: number) {
+  return prisma.chatRoom.updateMany({
     where: {
-      id: chatroomId,
+      OR: [
+        { requesterId: issuerId, authorId: targetId },
+        { requesterId: targetId, authorId: issuerId },
+      ]
     },
     data: {
       isDeactivated: true,
     }
   });
-  return true;
 }
 
 export async function blockByPostId(member: InternalMember, blockInput: z.infer<typeof BlockRequestQuerySchema> ) {
@@ -79,13 +85,16 @@ export async function createBlock(issuerId: number, targetId: number, blockInput
     });
     return;
   }
-  await prisma.block.create({
-    data: {
-      chatroomId: blockInput.chatroomId!,
-      issuerId,
-      targetId,
-    }
-  });
+  await prisma.$transaction([
+    prisma.block.create({
+      data: {
+        chatroomId: blockInput.chatroomId!,
+        issuerId,
+        targetId,
+      }
+    }),
+    deactivateBlockedChatroom(issuerId, targetId)
+  ]);
 }
 
 export async function isBlocked(issuerId: number, targetId: number) {
