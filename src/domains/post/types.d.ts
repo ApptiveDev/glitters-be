@@ -3,7 +3,9 @@ import { z } from 'zod';
 import { Response } from 'express';
 import {
   CreatePostRequestBodySchema,
-  CreatePostResponseBodySchema, DeletePostPathSchema,
+  CreatePostResponseBodySchema,
+  DeletePostPathSchema,
+  GetCreationAvailabilityResponseBodySchema,
   GetPostPathSchema,
   GetPostResponseSchema,
 } from '@/domains/post/schema';
@@ -15,3 +17,5 @@ export type DeletePostRequest = AuthenticatedRequest<z.infer<typeof DeletePostPa
 
 export type CreatePostRequest = AuthenticatedRequest<{}, z.infer<typeof CreatePostRequestBodySchema>>;
 export type CreatePostResponse = Response<z.infer<typeof CreatePostResponseBodySchema>>;
+
+export type GetCreationAvailabilityResponse = Response<z.infer<typeof GetCreationAvailabilityResponseBodySchema>>;

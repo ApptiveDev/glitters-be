@@ -2,5 +2,6 @@ import { z } from 'zod';
 import { MarkerSchema, PostSchema } from '@/schemas';
 
 export const GetMarkersResponseBodySchema = z.object({
-  markers: z.array(MarkerSchema.merge(PostSchema.pick({ expiresAt: true, createdAt: true })).extend({ isWrittenBySelf: z.boolean() })),
+  markers: z.array(MarkerSchema.merge(PostSchema.pick({ expiresAt: true, createdAt: true, markerIdx: true, title: true, }))
+  .extend({ isWrittenBySelf: z.boolean() })),
 });

@@ -3,10 +3,10 @@ import { Response } from 'express';
 import { CreateReportRequestBodySchema } from '@/domains/report/schema';
 import { StatusCodes } from 'http-status-codes';
 import { z } from 'zod';
-import { PasswordExcludedMember } from '@/domains/member/types';
+import { PublicMember } from '@/domains/member/types';
 import prisma from '@/utils/database';
 import { Member } from '.prisma/client';
-import { deactivateMember } from '@/domains/member/service';
+import { maskMember } from '@/domains/member/service';
 import { BadRequestError, NotFoundError } from '@/domains/error/HttpError';
 export async function createReport(req: CreateReportRequest, res: Response) {
   const createInput = CreateReportRequestBodySchema.parse(req.body);
@@ -49,7 +49,7 @@ async function handleReportIncrement(updateResult: Member) {
     return;
   }
   // 경고 5회 이상일 경우 계정 삭제 및 블랙리스트 등록
-  if(updateResult.reportedCount >= 5) {
+  if(updateResult.reportedCount >= 10) {
     // 이미 블랙리스트인 경우
     if(await prisma.blacklist.count({ where: { email: updateResult.email } }))
       return;
@@ -59,11 +59,11 @@ async function handleReportIncrement(updateResult: Member) {
         memberId: updateResult.id,
       }
     });
-    await deactivateMember(updateResult);
+    await maskMember(updateResult);
   }
 }
 
-async function getReportedMemberId(createInput: z.infer<typeof CreateReportRequestBodySchema>, reporter: PasswordExcludedMember) {
+async function getReportedMemberId(createInput: z.infer<typeof CreateReportRequestBodySchema>, reporter: PublicMember) {
   let reportedId = 0;
   if(createInput.reportType === 'CHATROOM_REPORT') {
     // 채팅방 신고의 경우 채팅 요청자나 채팅 작성자 모두 신고당할 수 있음

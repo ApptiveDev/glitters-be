@@ -9,6 +9,8 @@ export const GetInstitutionsResponseBodySchema = z.object({
   })),
 });
 
+export const InstitutionBoundRecordSchema = z.record(z.number(), InstitutionBoundSchema);
+
 export const GetInstitutionBoundsResponseBodySchema = z.object({
-  bounds: z.array(InstitutionBoundSchema),
+  bounds: InstitutionBoundRecordSchema,
 });

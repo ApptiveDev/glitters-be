@@ -17,6 +17,42 @@
     }
   ],
   "paths": {
+    "/api/password": {
+      "put": {
+        "summary": "패스워드 변경 요청 (이메일 인증 선행 필요)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "pattern": "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_\\-+=[{\\]};:'\",.<>/?\\\\|`~]).{10,25}$",
+                    "minLength": 10,
+                    "maxLength": 25
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "패스워드 변경 성공"
+          }
+        }
+      }
+    },
     "/api/verify-email": {
       "post": {
         "summary": "이메일 인증 코드 요청",
@@ -30,10 +66,18 @@
                   "email": {
                     "type": "string",
                     "format": "email"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "REGISTER",
+                      "RESET_PASSWORD"
+                    ]
                   }
                 },
                 "required": [
-                  "email"
+                  "email",
+                  "type"
                 ]
               }
             }
@@ -97,11 +141,19 @@
                   "code": {
                     "type": "string",
                     "maxLength": 6
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "REGISTER",
+                      "RESET_PASSWORD"
+                    ]
                   }
                 },
                 "required": [
                   "email",
-                  "code"
+                  "code",
+                  "type"
                 ]
               }
             }
@@ -161,6 +213,11 @@
                   "termsAccepted": {
                     "type": "boolean",
                     "const": true
+                  },
+                  "gender": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1
                   }
                 },
                 "required": [
@@ -168,8 +225,10 @@
                   "password",
                   "name",
                   "birth",
-                  "termsAccepted"
-                ]
+                  "termsAccepted",
+                  "gender"
+                ],
+                "additionalProperties": false
               }
             }
           }
@@ -200,6 +259,9 @@
                         "birth": {
                           "type": "string"
                         },
+                        "gender": {
+                          "type": "integer"
+                        },
                         "joinedAt": {
                           "type": "string"
                         },
@@ -211,6 +273,43 @@
                         },
                         "termsAccepted": {
                           "type": "boolean"
+                        },
+                        "institutionId": {
+                          "type": "integer"
+                        },
+                        "isAdmin": {
+                          "type": "integer"
+                        },
+                        "institution": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "emailDomain": {
+                              "type": "string"
+                            },
+                            "isActive": {
+                              "type": "boolean"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "emailDomain",
+                            "isActive",
+                            "createdAt",
+                            "updatedAt"
+                          ]
                         }
                       },
                       "required": [
@@ -218,10 +317,13 @@
                         "email",
                         "name",
                         "birth",
+                        "gender",
                         "joinedAt",
                         "reportedCount",
                         "isDeactivated",
-                        "termsAccepted"
+                        "termsAccepted",
+                        "institutionId",
+                        "isAdmin"
                       ]
                     },
                     "token": {
@@ -273,7 +375,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -336,6 +438,9 @@
                         "birth": {
                           "type": "string"
                         },
+                        "gender": {
+                          "type": "integer"
+                        },
                         "joinedAt": {
                           "type": "string"
                         },
@@ -347,6 +452,43 @@
                         },
                         "termsAccepted": {
                           "type": "boolean"
+                        },
+                        "institutionId": {
+                          "type": "integer"
+                        },
+                        "isAdmin": {
+                          "type": "integer"
+                        },
+                        "institution": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "emailDomain": {
+                              "type": "string"
+                            },
+                            "isActive": {
+                              "type": "boolean"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "emailDomain",
+                            "isActive",
+                            "createdAt",
+                            "updatedAt"
+                          ]
                         }
                       },
                       "required": [
@@ -354,10 +496,13 @@
                         "email",
                         "name",
                         "birth",
+                        "gender",
                         "joinedAt",
                         "reportedCount",
                         "isDeactivated",
-                        "termsAccepted"
+                        "termsAccepted",
+                        "institutionId",
+                        "isAdmin"
                       ]
                     },
                     "token": {
@@ -409,7 +554,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -488,7 +633,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -501,8 +646,8 @@
                   "type": "object",
                   "properties": {
                     "bounds": {
-                      "type": "array",
-                      "items": {
+                      "type": "object",
+                      "additionalProperties": {
                         "type": "object",
                         "properties": {
                           "id": {
@@ -595,13 +740,13 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "마커 목록 반환",
+            "description": "마커 목록 반환 (차단된 마커 제외)",
             "content": {
               "application/json": {
                 "schema": {
@@ -613,9 +758,6 @@
                         "type": "object",
                         "properties": {
                           "id": {
-                            "type": "integer"
-                          },
-                          "postId": {
                             "type": "integer"
                           },
                           "latitude": {
@@ -630,17 +772,24 @@
                           "createdAt": {
                             "type": "string"
                           },
+                          "markerIdx": {
+                            "type": "integer"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
                           "isWrittenBySelf": {
                             "type": "boolean"
                           }
                         },
                         "required": [
                           "id",
-                          "postId",
                           "latitude",
                           "longitude",
                           "expiresAt",
                           "createdAt",
+                          "markerIdx",
+                          "title",
                           "isWrittenBySelf"
                         ]
                       }
@@ -708,7 +857,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -733,7 +882,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -763,6 +912,9 @@
                         "birth": {
                           "type": "string"
                         },
+                        "gender": {
+                          "type": "integer"
+                        },
                         "joinedAt": {
                           "type": "string"
                         },
@@ -774,6 +926,46 @@
                         },
                         "termsAccepted": {
                           "type": "boolean"
+                        },
+                        "institutionId": {
+                          "type": "integer"
+                        },
+                        "isAdmin": {
+                          "type": "integer"
+                        },
+                        "institution": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "emailDomain": {
+                              "type": "string"
+                            },
+                            "isActive": {
+                              "type": "boolean"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "emailDomain",
+                            "isActive",
+                            "createdAt",
+                            "updatedAt"
+                          ]
+                        },
+                        "hasUnreadChat": {
+                          "type": "boolean"
                         }
                       },
                       "required": [
@@ -781,10 +973,14 @@
                         "email",
                         "name",
                         "birth",
+                        "gender",
                         "joinedAt",
                         "reportedCount",
                         "isDeactivated",
-                        "termsAccepted"
+                        "termsAccepted",
+                        "institutionId",
+                        "isAdmin",
+                        "hasUnreadChat"
                       ]
                     }
                   },
@@ -832,7 +1028,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -876,6 +1072,55 @@
         }
       }
     },
+    "/api/posts/availability": {
+      "get": {
+        "summary": "게시글 생성 가능 여부 조회",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Bearer 토큰",
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt>"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "게시글 생성 가능 여부 (10분 간격, 24시간 내 최대 10개)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "isAvailable": {
+                      "type": "boolean"
+                    },
+                    "nextAvailableAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "isAvailable",
+                    "nextAvailableAt"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/posts/{postId}": {
       "get": {
         "summary": "게시글 단일 조회",
@@ -892,7 +1137,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -907,7 +1152,16 @@
                     "id": {
                       "type": "integer"
                     },
+                    "markerId": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
                     "iconIdx": {
+                      "type": "integer"
+                    },
+                    "markerIdx": {
                       "type": "integer"
                     },
                     "title": {
@@ -934,6 +1188,9 @@
                     "viewCount": {
                       "type": "integer"
                     },
+                    "institutionId": {
+                      "type": "integer"
+                    },
                     "isWrittenBySelf": {
                       "type": "boolean"
                     },
@@ -943,7 +1200,9 @@
                   },
                   "required": [
                     "id",
+                    "markerId",
                     "iconIdx",
+                    "markerIdx",
                     "title",
                     "content",
                     "createdAt",
@@ -952,6 +1211,7 @@
                     "isDeactivated",
                     "likeCount",
                     "viewCount",
+                    "institutionId",
                     "isWrittenBySelf",
                     "isLikedBySelf"
                   ]
@@ -994,7 +1254,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -1057,7 +1317,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -1083,6 +1343,9 @@
                   "iconIdx": {
                     "type": "integer"
                   },
+                  "markerIdx": {
+                    "type": "integer"
+                  },
                   "latitude": {
                     "type": "number"
                   },
@@ -1095,9 +1358,11 @@
                   "content",
                   "address",
                   "iconIdx",
+                  "markerIdx",
                   "latitude",
                   "longitude"
-                ]
+                ],
+                "additionalProperties": false
               }
             }
           }
@@ -1126,7 +1391,7 @@
             }
           },
           "400": {
-            "description": "요청 오류",
+            "description": "요청 오류 또는 게시글 생성 불가능",
             "content": {
               "application/json": {
                 "schema": {
@@ -1162,7 +1427,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           }
         ],
@@ -1199,7 +1464,8 @@
                 "required": [
                   "reportType",
                   "reason"
-                ]
+                ],
+                "additionalProperties": false
               }
             }
           }
@@ -1263,7 +1529,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           },
           {
@@ -1322,7 +1588,7 @@
             "description": "Bearer 토큰",
             "schema": {
               "type": "string",
-              "example": "Bearer <your-jwt-token>"
+              "example": "Bearer <your-jwt>"
             }
           },
           {
@@ -1363,6 +1629,583 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/locations": {
+      "post": {
+        "summary": "위치정보 제공",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Bearer 토큰",
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt>"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "latitude": {
+                    "type": "number"
+                  },
+                  "longitude": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "latitude",
+                  "longitude"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "위치정보 제공 성공"
+          },
+          "400": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notifications": {
+      "put": {
+        "summary": "푸쉬토큰 업데이트",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Bearer 토큰",
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt>"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "token"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "푸쉬토큰 업데이트 성공"
+          },
+          "400": {
+            "description": "권한 없음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/chatrooms/:id": {
+      "delete": {
+        "summary": "채팅방 비활성화 (나가기)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Bearer 토큰",
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt>"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "채팅방 나가기 완료"
+          },
+          "403": {
+            "description": "본인이 참여하지 않은 채팅방 나가기 시도",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "채팅방의 채팅 내역 반환. 채팅 id값이 cursor-(limit+1)~cursor-1 인 채팅을 반환.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Bearer 토큰",
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt>"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "id값이 cursor-(limit+1)~cursor-1 인 채팅을 반환.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "chats": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "content": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "receivedChat",
+                              "sentChat"
+                            ]
+                          },
+                          "id": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "content",
+                          "createdAt",
+                          "type",
+                          "id"
+                        ]
+                      }
+                    },
+                    "lastChatId": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "chats"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "본인이 참여하지 않은 채팅방 정보 조회 시도",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/chatrooms": {
+      "get": {
+        "summary": "채팅방 정보 반환",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Bearer 토큰",
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt>"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "채팅방 정보 반환 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "chatrooms": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "peerNickname": {
+                            "type": "string"
+                          },
+                          "myNickname": {
+                            "type": "string"
+                          },
+                          "post": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "markerId": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "iconIdx": {
+                                "type": "integer"
+                              },
+                              "markerIdx": {
+                                "type": "integer"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "content": {
+                                "type": "string"
+                              },
+                              "createdAt": {
+                                "type": "string"
+                              },
+                              "expiresAt": {
+                                "type": "string"
+                              },
+                              "address": {
+                                "type": "string"
+                              },
+                              "isDeactivated": {
+                                "type": "boolean"
+                              },
+                              "likeCount": {
+                                "type": "integer"
+                              },
+                              "viewCount": {
+                                "type": "integer"
+                              },
+                              "institutionId": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "markerId",
+                              "iconIdx",
+                              "markerIdx",
+                              "title",
+                              "content",
+                              "createdAt",
+                              "expiresAt",
+                              "address",
+                              "isDeactivated",
+                              "likeCount",
+                              "viewCount",
+                              "institutionId"
+                            ]
+                          },
+                          "lastMessage": {
+                            "type": "object",
+                            "properties": {
+                              "createdAt": {
+                                "type": "string"
+                              },
+                              "content": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "createdAt",
+                              "content"
+                            ]
+                          },
+                          "unreadMessageCount": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "peerNickname",
+                          "myNickname",
+                          "post",
+                          "lastMessage",
+                          "unreadMessageCount"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "chatrooms"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "채팅방 생성",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Bearer 토큰",
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt>"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "postId": {
+                    "type": "integer"
+                  },
+                  "content": {
+                    "type": "string",
+                    "maxLength": 255
+                  }
+                },
+                "required": [
+                  "postId",
+                  "content"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "채팅방 생성 완료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "receivedChat"
+                    },
+                    "chatroomId": {
+                      "type": "integer"
+                    },
+                    "content": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "authorNickname": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "chatroomId",
+                    "content",
+                    "createdAt",
+                    "authorNickname"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "차단되어 채팅방을 생성할 수 없음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/blocks": {
+      "post": {
+        "summary": "사용자 차단",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "description": "Bearer 토큰",
+            "schema": {
+              "type": "string",
+              "example": "Bearer <your-jwt>"
+            }
+          },
+          {
+            "in": "query",
+            "name": "blockType",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "post",
+                "chatroom"
+              ]
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "postId",
+            "schema": {
+              "type": "number",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "chatroomId",
+            "schema": {
+              "type": "number",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "사용자 차단 성공"
           }
         }
       }

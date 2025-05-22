@@ -5,10 +5,13 @@ import {
   EmailVerifyRequestBodySchema,
   LoginRequestBodySchema,
   LoginResponseBodySchema,
+  PasswordChangeRequestBodySchema,
   RegisterRequestBodySchema,
   RegisterResponseBodySchema,
 } from '@/domains/auth/schema';
-import { PasswordExcludedMemberSchema } from '@/domains/member/schema';
+import {
+  InternalMemberSchema,
+} from '@/domains/member/schema';
 import { JwtPayload } from 'jsonwebtoken';
 
 export interface AuthenticatedJWTPayload extends JwtPayload {
@@ -19,7 +22,7 @@ export interface AuthenticatedJWTPayload extends JwtPayload {
 
 export interface AuthenticatedRequest<Params = {}, ReqBody = {}, ReqQuery = {}> extends Request<
   Params, {}, ReqBody, ReqQuery> {
-  member?: z.infer<typeof PasswordExcludedMemberSchema>;
+  member?: z.infer<typeof InternalMemberSchema>;
 }
 
 export type EmailCodeInputRequest = Request<{}, {}, z.infer<typeof EmailVerifyRequestBodySchema>>;
@@ -29,3 +32,5 @@ export type RegisterRequest = Request<{}, {}, z.infer<typeof RegisterRequestBody
 export type LoginRequest = Request<{}, {}, z.infer<typeof LoginRequestBodySchema>>;
 export type RegisterResponse = Response<z.infer<typeof RegisterResponseBodySchema>>;
 export type LoginResponse = Response<z.infer<typeof LoginResponseBodySchema>>;
+
+export type PasswordChangeRequest = Request<{}, {}, z.infer<typeof PasswordChangeRequestBodySchema>>;

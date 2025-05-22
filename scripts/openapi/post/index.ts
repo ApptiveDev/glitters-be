@@ -2,13 +2,30 @@ import { currentApiPrefix } from '../../../src/constants';
 import { tokenHeader } from '../headers';
 import {
   CreatePostRequestBodySchema,
-  CreatePostResponseBodySchema,
+  CreatePostResponseBodySchema, GetCreationAvailabilityResponseBodySchema,
   GetPostResponseSchema,
 } from '../../../src/domains/post/schema';
 import { ErrorSchema } from '../../../src/domains/error/schema';
 import { ZodOpenApiPathsObject } from 'zod-openapi';
 
 export const postApiPaths: ZodOpenApiPathsObject = {
+  [`${currentApiPrefix}/posts/availability`]: {
+    get: {
+      summary: '게시글 생성 가능 여부 조회',
+      security: [{bearerAuth: []}],
+      parameters: [tokenHeader],
+      responses: {
+        200: {
+          description: '게시글 생성 가능 여부 (10분 간격, 24시간 내 최대 10개)',
+          content: {
+            'application/json': {
+              schema: GetCreationAvailabilityResponseBodySchema,
+            },
+          },
+        },
+      },
+    }
+  },
   [`${currentApiPrefix}/posts/{postId}`]: {
     get: {
       summary: '게시글 단일 조회',
@@ -83,7 +100,7 @@ export const postApiPaths: ZodOpenApiPathsObject = {
           },
         },
         400: {
-          description: '요청 오류',
+          description: '요청 오류 또는 게시글 생성 불가능',
           content: {
             'application/json': {
               schema: ErrorSchema,

@@ -5,6 +5,7 @@ import { AuthenticatedJWTPayload } from '@/domains/auth/types';
 import { sendEmail } from '@/utils/email';
 import '@/utils/config';
 import prisma from '@/utils/database';
+import redis from '@/utils/redis';
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 const PASSWORD_SECRET = process.env.PASSWORD_SECRET as string;
@@ -48,6 +49,10 @@ export function generateToken(member: Member) {
 
 export function verifyToken(token: string) {
   return jwt.verify(token, JWT_SECRET) as AuthenticatedJWTPayload;
+}
+
+export async function isInvalidatedToken(token: string) {
+  return redis.exists(`access_token:${token}`);
 }
 
 export function hashPassword(password: string) {

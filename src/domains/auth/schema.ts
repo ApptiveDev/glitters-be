@@ -1,14 +1,26 @@
 import { z } from 'zod';
-import { PasswordExcludedMemberSchema } from '@/domains/member/schema';
-import { MemberSchema } from '@/schemas';
+import { PublicMemberSchema } from '@/domains/member/schema';
+import { EmailVerificationSchema, MemberSchema } from '@/schemas';
+
+export const PasswordChangeRequestBodySchema = z.object({
+  email: z.string().email(),
+  password: z.string()
+  .min(10)
+  .max(25)
+  .regex(
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[{\]};:'",.<>/?\\|`~]).{10,25}$/,
+  ),
+});
 
 export const EmailCodeInputRequestBodySchema = z.object({
   email: z.string().email(),
   code: z.string().max(6),
+  type: EmailVerificationSchema.shape.type,
 });
 
 export const EmailVerifyRequestBodySchema = z.object({
   email: z.string().email(),
+  type: EmailVerificationSchema.shape.type,
 });
 
 export const RegisterRequestBodySchema = MemberSchema.pick({
@@ -27,7 +39,8 @@ export const RegisterRequestBodySchema = MemberSchema.pick({
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[{\]};:'",.<>/?\\|`~]).{10,25}$/,
   ),
   email: z.string().email(),
-});
+  gender: z.number().int().min(0).max(1),
+}).strict();
 
 export const LoginRequestBodySchema = z.object({
   email: z.string().email(),
@@ -35,7 +48,7 @@ export const LoginRequestBodySchema = z.object({
 });
 
 export const LoginResponseBodySchema = z.object({
-  member: PasswordExcludedMemberSchema,
+  member: PublicMemberSchema,
   token: z.string(),
 });
 
