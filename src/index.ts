@@ -7,15 +7,27 @@ import swaggerUi from 'swagger-ui-express';
 import { getMarkdownHtml } from '@/utils/docs';
 import { pathToFileURL } from 'node:url';
 import * as http from 'node:http';
+import cors from 'cors';
 import ChatServer from '@/domains/chat/ChatServer';
 import rateLimit from 'express-rate-limit';
 import { accessLogStream, setupStdoutLogStream } from '@/utils/logger';
 
 export async function start() {
   const app = express();
+  const allowedOrigins = [
+    'https://webview.banjjak.me'
+  ];
+  if(process.env.NODE_ENV === 'development') {
+    allowedOrigins.push('http://localhost:5173');
+  }
+  const corsPolicy = cors({
+    credentials: true,
+    origin: allowedOrigins,
+  });
   const PORT = process.env.SERVER_PORT || 3000;
 
   setupStdoutLogStream();
+  app.use(corsPolicy);
   app.use(accessLogStream);
   app.use(express.json());
   app.set('trust proxy', 1);
