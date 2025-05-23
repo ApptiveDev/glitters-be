@@ -17,7 +17,7 @@ export async function start() {
   const allowedOrigins = [
     'https://webview.banjjak.me'
   ];
-  if(process.env.NODE_ENV === 'development') {
+  if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') {
     allowedOrigins.push('http://localhost:5173');
   }
   const corsPolicy = cors({
