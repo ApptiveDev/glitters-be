@@ -3,6 +3,7 @@ import {
   comparePassword,
   generateToken,
   hashPassword,
+  isBirthInValidRange,
   isValidEmail,
   sendVerificationCodeEmail,
 } from '@/domains/auth/utils';
@@ -88,6 +89,10 @@ export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Res
 
 export async function handleRegister(req: RegisterRequest, res: RegisterResponse) {
   const { email, name, password, birth, termsAccepted, gender } = RegisterRequestBodySchema.parse(req.body);
+
+  if(! isBirthInValidRange(birth)) {
+    throw new BadRequestError('만 18세 이상만 가입이 가능한 앱입니다.');
+  }
   const blacklisted = await prisma.blacklist.findFirst({
     where: {
       email

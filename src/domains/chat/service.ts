@@ -182,6 +182,7 @@ export async function createChatroom(req: CreateChatroomRequest, res: CreateChat
     where: {
       postId,
       requesterId: member.id,
+      isDeactivated: false,
     }
   });
   const post = await prisma.post.findUnique({

@@ -28,9 +28,7 @@ export const RegisterRequestBodySchema = MemberSchema.pick({
   password: true,
   name: true,
 }).extend({
-  birth: z.coerce.date()
-    .min(new Date('1990-01-01'))
-    .max(new Date(new Date().getFullYear() - 21, 0, 1)),
+  birth: z.coerce.date(),
   termsAccepted: z.literal(true),
   password: z.string()
   .min(10)
