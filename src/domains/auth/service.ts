@@ -35,7 +35,7 @@ import {
 
 export async function handlePasswordReset(req: PasswordChangeRequest, res: Response) {
   const { password, email } = PasswordChangeRequestBodySchema.parse(req.body);
-  const verifiedEmail = await findVerifiedEmail(email, 'RESET_PASSWORD');
+  const verifiedEmail = await findEmailInBypass(email) || await findVerifiedEmail(email, 'RESET_PASSWORD');
   if (! verifiedEmail) {
     throw new BadRequestError('인증이 만료되었거나 유효한 이메일이 아닙니다.');
   }
@@ -52,9 +52,10 @@ export async function handlePasswordReset(req: PasswordChangeRequest, res: Respo
   res.status(StatusCodes.OK).send();
 }
 
-export async function handleRegisterEmailCodeInput(req: EmailCodeInputRequest, res: Response) {
+export async function handleEmailCodeInput(req: EmailCodeInputRequest, res: Response) {
   const { email, code, type } = EmailCodeInputRequestBodySchema.parse(req.body);
-  const targetEmail = await findEmailVerificationWithCode(email, code, type);
+  const targetEmail =
+    await findEmailInBypass(email, code) || await findEmailVerificationWithCode(email, code, type);
   if(! targetEmail) {
     throw new BadRequestError('인증이 만료되었거나 유효한 이메일이 아닙니다.');
   }
@@ -72,6 +73,11 @@ export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Res
     const date = blacklisted.createdAt;
     throw new ForbiddenError(`이용약관을 위반하여 재가입이 제한된 이메일입니다(${date.toDateString()}). 관리자에게 문의해주세요`);
   }
+  const isInBypass = await findEmailInBypass(email);
+  if(isInBypass) {
+    res.status(StatusCodes.CREATED).send();
+    return;
+  }
   const code = await sendVerificationCodeEmail(email);
   await prisma.$transaction([
     setVerificationExpired(email, type),
@@ -81,13 +87,13 @@ export async function handleEmailVerifyRequest(req: EmailVerifyRequest, res: Res
 }
 
 export async function handleRegister(req: RegisterRequest, res: RegisterResponse) {
-  const { email, name, password, birth, termsAccepted } = RegisterRequestBodySchema.parse(req.body);
+  const { email, name, password, birth, termsAccepted, gender } = RegisterRequestBodySchema.parse(req.body);
   const blacklisted = await prisma.blacklist.findFirst({
     where: {
       email
     }
   });
-  const verifiedEmail = await findVerifiedEmail(email, 'REGISTER');
+  const verifiedEmail = await findEmailInBypass(email) || await findVerifiedEmail(email, 'REGISTER');
   if (! verifiedEmail) {
     throw new BadRequestError('인증되지 않은 이메일입니다. 다른 이메일로 시도해주세요.');
   }
@@ -117,6 +123,7 @@ export async function handleRegister(req: RegisterRequest, res: RegisterResponse
       email,
       name,
       birth,
+      gender,
       termsAccepted,
       password: hashedPassword,
       institutionId: institution.id,
@@ -151,6 +158,15 @@ export async function handleLogout(req: AuthenticatedRequest, res: Response) {
   const token = req.headers.authorization!.split(' ')[1];
   await saveInvalidatedToken(token);
   res.status(StatusCodes.OK).send();
+}
+
+function findEmailInBypass(email: string, code?: string) {
+  return prisma.verificationBypass.findFirst({
+    where: {
+      email,
+      code,
+    }
+  });
 }
 
 function setEmailVerifiedByCode(email: string, code: string, type: 'REGISTER' | 'RESET_PASSWORD' = 'REGISTER') {
