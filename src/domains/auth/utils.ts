@@ -45,7 +45,7 @@ export async function sendVerificationCodeEmail(
 export function isBirthInValidRange(birth: Date) {
   const now = new Date();
 
-  const minDate = new Date(now.getFullYear() - 19, 0, 1);
+  const minDate = new Date(now.getFullYear() - 18, 0, 1);
   const maxDate = new Date(1980, 0, 31);
 
   return birth >= maxDate && birth <= minDate;
