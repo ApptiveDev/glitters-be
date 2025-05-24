@@ -42,6 +42,15 @@ export async function sendVerificationCodeEmail(
   return code;
 }
 
+export function isBirthInValidRange(birth: Date) {
+  const now = new Date();
+
+  const minDate = new Date(now.getFullYear() - 19, 0, 1);
+  const maxDate = new Date(1980, 0, 31);
+
+  return birth >= maxDate && birth <= minDate;
+}
+
 
 export function generateToken(member: Member) {
   return jwt.sign({ id: member.id, email: member.email }, JWT_SECRET, { expiresIn: '7d' });
