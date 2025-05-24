@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  handleRegisterEmailCodeInput,
+  handleEmailCodeInput,
   handleEmailVerifyRequest,
   handleLogin, handleLogout,
   handleRegister, handlePasswordReset,
@@ -17,7 +17,7 @@ authRouter.post('/register', handleRegister);
 authRouter.post('/login', handleLogin);
 authRouter.post('/logout', authMiddleware, handleLogout);
 authRouter.post('/verify-email', verifyEmailRequestLimiter(), handleEmailVerifyRequest);
-authRouter.put('/verify-email', verifyEmailCodeLimiter(), handleRegisterEmailCodeInput);
+authRouter.put('/verify-email', verifyEmailCodeLimiter(), handleEmailCodeInput);
 authRouter.put('/password', handlePasswordReset);
 
 export default authRouter;

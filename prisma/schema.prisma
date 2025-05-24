@@ -60,16 +60,15 @@ model Post {
   institutionId Int      @default(1) @map("institution_id")
 
   institution Institution @relation(fields: [institutionId], references: [id])
-  author   Member     @relation(fields: [authorId], references: [id])
-  chatroom ChatRoom[]
-  marker   Marker?    @relation("PostMarker", fields: [markerId], references: [id], onDelete: SetNull)
-  reports  Report[]
-  likes    Like[]
-  blocks   Block[]
+  author      Member      @relation(fields: [authorId], references: [id])
+  chatroom    ChatRoom[]
+  marker      Marker?     @relation("PostMarker", fields: [markerId], references: [id], onDelete: SetNull)
+  reports     Report[]
+  likes       Like[]
+  blocks      Block[]
 
   @@index(createdAt)
   @@index(institutionId)
-
   @@map("posts")
 }
 
@@ -153,16 +152,24 @@ model Chat {
 }
 
 model EmailVerification {
-  id                 Int      @id @default(autoincrement()) @map("id")
-  isVerified         Boolean  @map("is_verified")
-  verificationNumber String   @map("verification_number") @db.VarChar(6)
-  email              String   @map("email") @db.VarChar(255)
-  createdAt          DateTime @default(now()) @map("created_at")
-  expiresAt          DateTime @map("expires_at")
+  id                 Int              @id @default(autoincrement()) @map("id")
+  isVerified         Boolean          @map("is_verified")
+  verificationNumber String           @map("verification_number") @db.VarChar(6)
+  email              String           @map("email") @db.VarChar(255)
+  createdAt          DateTime         @default(now()) @map("created_at")
+  expiresAt          DateTime         @map("expires_at")
   type               VerificationType @default(REGISTER)
 
   @@index([email])
   @@map("verifications")
+}
+
+model VerificationBypass {
+  id    Int    @id @default(autoincrement())
+  email String @unique @db.VarChar(255)
+  code  String
+
+  @@map("verification_bypass")
 }
 
 model Blacklist {
@@ -184,7 +191,7 @@ model Institution {
   updatedAt   DateTime           @default(now()) @updatedAt @map("updated_at")
   bounds      InstitutionBound[]
   members     Member[]
-  posts   Post[]
+  posts       Post[]
 
   @@map("institutions")
 }
