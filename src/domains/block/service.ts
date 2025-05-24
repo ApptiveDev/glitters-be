@@ -23,7 +23,11 @@ export async function blockByPostOrChatroom(req: BlockRequest, res: Response) {
   }
 
   if(! isBlocked) {
-    throw new NotFoundError('존재하지 않는 게시글입니다.');
+    throw new NotFoundError(
+      blockType === 'post'
+        ? '존재하지 않는 게시글입니다.'
+        : '존재하지 않는 채팅방입니다.'
+    );
   }
   res.status(StatusCodes.CREATED).send();
 }
@@ -76,13 +80,16 @@ export async function blockByPostId(member: InternalMember, blockInput: z.infer<
 
 export async function createBlock(issuerId: number, targetId: number, blockInput: z.infer<typeof BlockRequestQuerySchema> ) {
   if(blockInput.blockType === 'post') {
-    await prisma.block.create({
-      data: {
-        postId: blockInput.postId!,
-        issuerId,
-        targetId,
-      }
-    });
+    await prisma.$transaction([
+      prisma.block.create({
+        data: {
+          postId: blockInput.postId!,
+          issuerId,
+          targetId,
+        }
+      }),
+      deactivateBlockedChatroom(issuerId, targetId)
+    ]);
     return;
   }
   await prisma.$transaction([
