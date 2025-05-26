@@ -6,6 +6,7 @@ import {
   isBirthInValidRange,
   isValidEmail,
   sendVerificationCodeEmail,
+  verifyToken,
 } from '@/domains/auth/utils';
 import {
   AuthenticatedJWTPayload,
@@ -22,7 +23,7 @@ import { StatusCodes } from 'http-status-codes';
 import { omitPrivateFields } from '@/domains/member/utils';
 import {
   EmailCodeInputRequestBodySchema,
-  EmailVerifyRequestBodySchema,
+  EmailVerifyRequestBodySchema, LoginRequestBodySchema,
   PasswordChangeRequestBodySchema,
   RegisterRequestBodySchema,
 } from '@/domains/auth/schema';
@@ -140,8 +141,27 @@ export async function handleRegister(req: RegisterRequest, res: RegisterResponse
 }
 
 export async function handleLogin(req: LoginRequest, res: LoginResponse) {
-  const { email, password } = req.body;
+  const authHeader = req.headers.authorization;
+  if (authHeader?.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const decoded = verifyToken(token);
+      const member = await prisma.member.findUnique({
+        where: { id: decoded.id },
+      });
+      if (member) {
+        res.status(StatusCodes.OK).json({
+          token,
+          member: omitPrivateFields(member),
+        });
+        return;
+      }
+    } catch (_) {
+      // 만료된 경우 로그인 절차 계속 진행
+    }
+  }
 
+  const { email, password } = LoginRequestBodySchema.parse(req.body);
   const member = await prisma.member.findUnique({
     where: { email },
   });
@@ -157,7 +177,6 @@ export async function handleLogin(req: LoginRequest, res: LoginResponse) {
   const token = generateToken(member);
   res.status(StatusCodes.OK).json({ token, member: omitPrivateFields(member) });
 }
-
 
 export async function handleLogout(req: AuthenticatedRequest, res: Response) {
   const token = req.headers.authorization!.split(' ')[1];
