@@ -150,10 +150,11 @@ export async function handleLogin(req: LoginRequest, res: LoginResponse) {
         where: { id: decoded.id },
       });
       if (member) {
-        return res.status(StatusCodes.OK).json({
+        res.status(StatusCodes.OK).json({
           token,
           member: omitPrivateFields(member),
         });
+        return;
       }
     } catch (_) {
       // 만료된 경우 로그인 절차 계속 진행
