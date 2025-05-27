@@ -15,11 +15,9 @@ import { accessLogStream, setupStdoutLogStream } from '@/utils/logger';
 export async function start() {
   const app = express();
   const allowedOrigins = [
-    'https://webview.banjjak.me'
+    'https://webview.banjjak.me',
+    'http://localhost:5173'
   ];
-  if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') {
-    allowedOrigins.push('http://localhost:5173');
-  }
   const corsPolicy = cors({
     credentials: true,
     origin: allowedOrigins,
